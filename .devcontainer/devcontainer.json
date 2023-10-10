@@ -15,7 +15,8 @@
 		"vscode": {
 			"extensions": [
 				"ms-toolsai.jupyter",
-				"julialang.language-julia"
+				"julialang.language-julia",
+				"ms-vsliveshare.vsliveshare"
 			]
 		}
 	},
