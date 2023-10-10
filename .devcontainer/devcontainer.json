@@ -1,0 +1,25 @@
+{
+	"name": "intervalAHP",
+	"image": "jupyter/datascience-notebook:latest",
+	"features": {},
+	"forwardPorts": [8888],
+	"portsAttributes": {
+		"8888": {
+			"label": "Jupyter",
+			"requireLocalPort": true,
+			"onAutoForward": "ignore"
+		}
+	},
+	"postCreateCommand": "julia ./.devcontainer/init.jl",
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"ms-toolsai.jupyter",
+				"julialang.language-julia"
+			]
+		}
+	},
+	"containerEnv": {
+		"JULIA_NUM_THREADS": "4"
+	}
+}
