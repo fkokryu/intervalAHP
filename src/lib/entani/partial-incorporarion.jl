@@ -12,7 +12,8 @@ LPResult_PartialIncorporation = @NamedTuple{
     W::Vector{Interval{T}}, # ([wᵢᴸ, wᵢᵁ])
     ŵᴸ::Matrix{T}, ŵᵁ::Matrix{T},
     Ŵ::Vector{Vector{Interval{T}}}, # ([ŵᵢᴸ, ŵᵢᵁ])
-    Wₖ::Vector{Vector{T}}
+    valw::Vector{T}, 
+    w::Vector{Vector{T}},
     optimalValue::T
     } where {T <: Real}
 
@@ -46,6 +47,8 @@ function solvePartialIncorporationLP(matrices::Vector{Matrix{T}})::LPResult_Part
         @variable(model, wᴸ[i=1:n] ≥ ε); @variable(model, wᵁ[i=1:n] ≥ ε)
         # ŵₖᵢᴸ ≥ ε, ŵₖᵢᵁ ≥ ε
         @variable(model, ŵᴸ[k=1:l,i=1:n] ≥ ε); @variable(model, ŵᵁ[k=1:l,i=1:n] ≥ ε)
+        # wₖᵢ ≥ ε
+        @variable(model, valw[i=1:n] ≥ ε)
 
         for k = 1:l
             ŵₖᴸ = ŵᴸ[k,:]; ŵₖᵁ = ŵᵁ[k,:]
@@ -67,6 +70,12 @@ function solvePartialIncorporationLP(matrices::Vector{Matrix{T}})::LPResult_Part
                 end
             end
 
+            wₖ = valw[k,:]
+            wₖᵢ = wₖ[i]
+
+            # 正規性条件
+            @constraint(model, sum(wₖᵢ) == 1)
+
             for i = 1:n
                 ŵₖᵢᴸ = ŵₖᴸ[i]; ŵₖᵢᵁ = ŵₖᵁ[i]
 
@@ -76,10 +85,12 @@ function solvePartialIncorporationLP(matrices::Vector{Matrix{T}})::LPResult_Part
                 ∑ŵₖⱼᵁ = sum(map(j -> ŵₖᵁ[j], filter(j -> i != j, 1:n)))
                 @constraint(model, ∑ŵₖⱼᵁ + ŵₖᵢᴸ ≥ 1)
 
-                wᵢᴸ = wᴸ[i]; wᵢᵁ = wᵁ[i] 
-                @constraint(model, ŵₖᵢᴸ ≥ wᵢᴸ)
-                @constraint(model, ŵₖᵢᵁ ≥ ŵₖᵢᴸ)
-                @constraint(model, wᵢᵁ ≥ ŵₖᵢᵁ)
+                wᵢᴸ = wᴸ[i]; wᵢᵁ = wᵁ[i]; wₖᵢ = wₖ[i]
+                @constraint(model, wₖᵢ ≥ wᵢᴸ)
+                @constraint(model, ŵₖᵢᵁ ≥ wₖᵢ)
+
+                @constraint(model, wₖᵢ ≥ ŵₖᵢᴸ)
+                @constraint(model, wᵢᵁ ≥ wₖᵢ)
             end
         end
 
@@ -111,12 +122,21 @@ function solvePartialIncorporationLP(matrices::Vector{Matrix{T}})::LPResult_Part
         Ŵ_value = map(
             k -> map(i -> (ŵᴸ_value[k,i])..(ŵᵁ_value[k,i]), 1:n),
             1:l)
+        
+        valw_value = value.(valw)
+        # precision error 対応
+        for k = 1:l, i = 1:n
+            if valw_value[k,i] > valw_value[k,i]
+                valw_value[k,i] = valw_value[k,i]
+            end
+        end
 
         return (
             wᴸ=wᴸ_value, wᵁ=wᵁ_value,
             W=W_value,
             ŵᴸ=ŵᴸ_value, ŵᵁ=ŵᵁ_value,
             Ŵ=Ŵ_value,
+            valw=valw_value,
             optimalValue=optimalValue
         )
     finally
