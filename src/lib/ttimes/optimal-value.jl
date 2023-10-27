@@ -5,14 +5,14 @@ import HiGHS
 include("../crisp-pcm.jl")
 include("../nearly-equal.jl")
 
-LPResult_Individual = @NamedTuple{
+LPResult_Crisp = @NamedTuple{
     # 区間重みベクトル
     vᴸ::Vector{T}, vᵁ::Vector{T},
-    V::Vector{Interval{T}}, # ([wᵢᴸ, wᵢᵁ])
+    V::Vector{Interval{T}}, # ([Vᵢᴸ, Vᵢᵁ])
     optimalValue::T
     } where {T <: Real}
 
-function solveIntervalAHPLP(A::Matrix{T})::LPResult_Individual{T} where {T <: Real}
+function solveCrispAHPLP(A::Matrix{T})::LPResult_Crisp{T} where {T <: Real}
     ε = 1e-8 # << 1
 
     if !isCrispPCM(A)
@@ -27,7 +27,7 @@ function solveIntervalAHPLP(A::Matrix{T})::LPResult_Individual{T} where {T <: Re
         # wᵢᴸ ≥ ε, wᵢᵁ ≥ ε
         @variable(model, vᴸ[i=1:n] ≥ ε); @variable(model, vᵁ[i=1:n] ≥ ε)
         # s ≥ ε
-        @variable(model, s[i=1:n] ≥ ε)
+        @variable(model, s ≥ ε)
 
         # 上三角成分に対応する i, j
         for i = 1:n-1
@@ -54,7 +54,7 @@ function solveIntervalAHPLP(A::Matrix{T})::LPResult_Individual{T} where {T <: Re
             @constraint(model, vᵢᵁ ≥ vᵢᴸ)
         end
 
-        # 目的関数 ∑(wᵢᵁ - wᵢᴸ)
+        # 目的関数 ∑(vᵢᵁ - vᵢᴸ)
         @objective(model, Min, sum(vᵁ) - sum(vᴸ))
 
         optimize!(model)
@@ -63,6 +63,11 @@ function solveIntervalAHPLP(A::Matrix{T})::LPResult_Individual{T} where {T <: Re
 
         vᴸ_value = value.(vᴸ)
         vᵁ_value = value.(vᵁ)
+
+        vᴸ_value ./= value.(s)
+        vᵁ_value ./= value.(s)
+        optimalValue /= value.(s)
+
         # precision error 対応
         for i = 1:n
             if vᴸ_value[i] > vᵁ_value[i]
