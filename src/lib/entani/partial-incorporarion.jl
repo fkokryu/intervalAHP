@@ -48,7 +48,7 @@ function solvePartialIncorporationLP(matrices::Vector{Matrix{T}})::LPResult_Part
         # ŵₖᵢᴸ ≥ ε, ŵₖᵢᵁ ≥ ε
         @variable(model, ŵᴸ[k=1:l,i=1:n] ≥ ε); @variable(model, ŵᵁ[k=1:l,i=1:n] ≥ ε)
         # wₖᵢ ≥ ε
-        @variable(model, valw[i=1:n] ≥ ε)
+        @variable(model, valw[k=1:i=1:n] ≥ ε)
 
         for k = 1:l
             ŵₖᴸ = ŵᴸ[k,:]; ŵₖᵁ = ŵᵁ[k,:]
@@ -71,13 +71,13 @@ function solvePartialIncorporationLP(matrices::Vector{Matrix{T}})::LPResult_Part
             end
 
             wₖ = valw[k,:]
-            wₖᵢ = wₖ[i]
 
             # 正規性条件
-            @constraint(model, sum(wₖᵢ) == 1)
+            @constraint(model, sum(wₖ) == 1)
 
             for i = 1:n
                 ŵₖᵢᴸ = ŵₖᴸ[i]; ŵₖᵢᵁ = ŵₖᵁ[i]
+                wₖᵢ = wₖ[i]
 
                 # 正規性条件
                 ∑ŵₖⱼᴸ = sum(map(j -> ŵₖᴸ[j], filter(j -> i != j, 1:n)))
