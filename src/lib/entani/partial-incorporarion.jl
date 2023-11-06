@@ -12,12 +12,13 @@ LPResult_PartialIncorporation = @NamedTuple{
     W::Vector{Interval{T}}, # ([wᵢᴸ, wᵢᵁ])
     ŵᴸ::Matrix{T}, ŵᵁ::Matrix{T},
     Ŵ::Vector{Vector{Interval{T}}}, # ([ŵᵢᴸ, ŵᵢᵁ])
-    valw::Vector{T}, 
     w::Vector{Vector{T}},
     optimalValue::T
     } where {T <: Real}
 
-function solvePartialIncorporationLP(matrices::Vector{Matrix{T}})::LPResult_PartialIncorporation{T} where {T <: Real}
+function solvePartialIncorporationLP(
+        matrices::Vector{Matrix{T}}
+        )::LPResult_PartialIncorporation{T} where {T <: Real}
     ε = 1e-8 # << 1
 
     if isempty(matrices)
@@ -27,7 +28,7 @@ function solvePartialIncorporationLP(matrices::Vector{Matrix{T}})::LPResult_Part
     if !all(Aₖ -> isCrispPCM(Aₖ), matrices)
         throw(ArgumentError("Aₖ is not a crisp PCM"))
     end
-    
+
     l = length(matrices) # 人数
     m, n = size(matrices[1])
 
@@ -37,21 +38,22 @@ function solvePartialIncorporationLP(matrices::Vector{Matrix{T}})::LPResult_Part
 
     ḋ = map(Aₖ -> solveIntervalAHPLP(Aₖ).optimalValue, matrices)
 
-    print(ḋ)
-
     model = Model(HiGHS.Optimizer)
     set_silent(model)
 
     try
         # wᵢᴸ ≥ ε, wᵢᵁ ≥ ε
-        @variable(model, wᴸ[i=1:n] ≥ ε); @variable(model, wᵁ[i=1:n] ≥ ε)
+        @variable(model, wᴸ[i=1:n] ≥ ε)
+        @variable(model, wᵁ[i=1:n] ≥ ε)
         # ŵₖᵢᴸ ≥ ε, ŵₖᵢᵁ ≥ ε
-        @variable(model, ŵᴸ[k=1:l,i=1:n] ≥ ε); @variable(model, ŵᵁ[k=1:l,i=1:n] ≥ ε)
+        @variable(model, ŵᴸ[k=1:l,i=1:n] ≥ ε)
+        @variable(model, ŵᵁ[k=1:l,i=1:n] ≥ ε)
         # wₖᵢ ≥ ε
-        @variable(model, valw[k=1:i=1:n] ≥ ε)
+        @variable(model, w[k=1:l,i=1:n] ≥ ε)
 
         for k = 1:l
             ŵₖᴸ = ŵᴸ[k,:]; ŵₖᵁ = ŵᵁ[k,:]
+            wₖ = w[k,:]
 
             Aₖ = matrices[k]
 
@@ -60,23 +62,22 @@ function solvePartialIncorporationLP(matrices::Vector{Matrix{T}})::LPResult_Part
 
             for i = 1:n-1
                 ŵₖᵢᴸ = ŵₖᴸ[i]; ŵₖᵢᵁ = ŵₖᵁ[i]
-    
+
                 for j = i+1:n
                     aₖᵢⱼ = Aₖ[i,j]
                     ŵₖⱼᴸ = ŵₖᴸ[j]; ŵₖⱼᵁ = ŵₖᵁ[j]
-                    
+
                     @constraint(model, ŵₖᵢᴸ ≤ aₖᵢⱼ * ŵₖⱼᵁ)
                     @constraint(model, aₖᵢⱼ * ŵₖⱼᴸ ≤ ŵₖᵢᵁ)
                 end
             end
-
-            wₖ = valw[k,:]
 
             # 正規性条件
             @constraint(model, sum(wₖ) == 1)
 
             for i = 1:n
                 ŵₖᵢᴸ = ŵₖᴸ[i]; ŵₖᵢᵁ = ŵₖᵁ[i]
+                wᵢᴸ = wᴸ[i]; wᵢᵁ = wᵁ[i]
                 wₖᵢ = wₖ[i]
 
                 # 正規性条件
@@ -85,7 +86,6 @@ function solvePartialIncorporationLP(matrices::Vector{Matrix{T}})::LPResult_Part
                 ∑ŵₖⱼᵁ = sum(map(j -> ŵₖᵁ[j], filter(j -> i != j, 1:n)))
                 @constraint(model, ∑ŵₖⱼᵁ + ŵₖᵢᴸ ≥ 1)
 
-                wᵢᴸ = wᴸ[i]; wᵢᵁ = wᵁ[i]; wₖᵢ = wₖ[i]
                 @constraint(model, wₖᵢ ≥ wᵢᴸ)
                 @constraint(model, ŵₖᵢᵁ ≥ wₖᵢ)
 
@@ -101,8 +101,7 @@ function solvePartialIncorporationLP(matrices::Vector{Matrix{T}})::LPResult_Part
 
         optimalValue = sum(value.(wᵁ)) - sum(value.(wᴸ))
 
-        wᴸ_value = value.(wᴸ)
-        wᵁ_value = value.(wᵁ)
+        wᴸ_value = value.(wᴸ); wᵁ_value = value.(wᵁ)
         # precision error 対応
         for i = 1:n
             if wᴸ_value[i] > wᵁ_value[i]
@@ -110,9 +109,8 @@ function solvePartialIncorporationLP(matrices::Vector{Matrix{T}})::LPResult_Part
             end
         end
         W_value = map(i -> (wᴸ_value[i])..(wᵁ_value[i]), 1:n)
-        
-        ŵᴸ_value = value.(ŵᴸ)
-        ŵᵁ_value = value.(ŵᵁ)
+
+        ŵᴸ_value = value.(ŵᴸ); ŵᵁ_value = value.(ŵᵁ)
         # precision error 対応
         for k = 1:l, i = 1:n
             if ŵᴸ_value[k,i] > ŵᵁ_value[k,i]
@@ -122,21 +120,15 @@ function solvePartialIncorporationLP(matrices::Vector{Matrix{T}})::LPResult_Part
         Ŵ_value = map(
             k -> map(i -> (ŵᴸ_value[k,i])..(ŵᵁ_value[k,i]), 1:n),
             1:l)
-        
-        valw_value = value.(valw)
-        # precision error 対応
-        for k = 1:l, i = 1:n
-            if valw_value[k,i] > valw_value[k,i]
-                valw_value[k,i] = valw_value[k,i]
-            end
-        end
+
+        w_value = map(k -> value.(w[k,:]), 1:l)
 
         return (
             wᴸ=wᴸ_value, wᵁ=wᵁ_value,
             W=W_value,
             ŵᴸ=ŵᴸ_value, ŵᵁ=ŵᵁ_value,
             Ŵ=Ŵ_value,
-            valw=valw_value,
+            w=w_value,
             optimalValue=optimalValue
         )
     finally
