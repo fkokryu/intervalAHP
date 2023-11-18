@@ -24,7 +24,7 @@ function solveCrispAHPLP(A::Matrix{T})::LPResult_Crisp{T} where {T <: Real}
     set_silent(model)
 
     try
-        # wᵢᴸ ≥ ε, wᵢᵁ ≥ ε
+        # vᵢᴸ ≥ ε, vᵢᵁ ≥ ε
         @variable(model, vᴸ[i=1:n] ≥ ε); @variable(model, vᵁ[i=1:n] ≥ ε)
         # s ≥ ε
         @variable(model, s ≥ ε)
@@ -53,6 +53,8 @@ function solveCrispAHPLP(A::Matrix{T})::LPResult_Crisp{T} where {T <: Real}
 
             @constraint(model, vᵢᵁ ≥ vᵢᴸ)
         end
+
+        @constraint(model, sum(vᵁ) + sum(vᴸ) == 2)
 
         # 目的関数 ∑(vᵢᵁ - vᵢᴸ)
         @objective(model, Min, sum(vᵁ) - sum(vᴸ))
