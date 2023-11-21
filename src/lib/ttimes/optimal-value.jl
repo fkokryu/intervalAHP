@@ -26,8 +26,6 @@ function solveCrispAHPLP(A::Matrix{T})::LPResult_Crisp{T} where {T <: Real}
     try
         # vᵢᴸ ≥ ε, vᵢᵁ ≥ ε
         @variable(model, vᴸ[i=1:n] ≥ ε); @variable(model, vᵁ[i=1:n] ≥ ε)
-        # s ≥ ε
-        @variable(model, s ≥ ε)
 
         # 上三角成分に対応する i, j
         for i = 1:n-1
@@ -47,9 +45,9 @@ function solveCrispAHPLP(A::Matrix{T})::LPResult_Crisp{T} where {T <: Real}
             
             # 正規性条件
             ∑vⱼᴸ = sum(map(j -> vᴸ[j], filter(j -> i != j, 1:n)))
-            @constraint(model, ∑vⱼᴸ + vᵢᵁ ≤ s)
+            @constraint(model, ∑vⱼᴸ + vᵢᵁ ≤ 1)
             ∑vⱼᵁ = sum(map(j -> vᵁ[j], filter(j -> i != j, 1:n)))
-            @constraint(model, ∑vⱼᵁ + vᵢᴸ ≥ s)
+            @constraint(model, ∑vⱼᵁ + vᵢᴸ ≥ 1)
 
             @constraint(model, vᵢᵁ ≥ vᵢᴸ)
         end
@@ -65,10 +63,6 @@ function solveCrispAHPLP(A::Matrix{T})::LPResult_Crisp{T} where {T <: Real}
 
         vᴸ_value = value.(vᴸ)
         vᵁ_value = value.(vᵁ)
-
-        vᴸ_value ./= value.(s)
-        vᵁ_value ./= value.(s)
-        optimalValue /= value.(s)
 
         # precision error 対応
         for i = 1:n
