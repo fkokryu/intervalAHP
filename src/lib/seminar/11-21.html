@@ -7475,7 +7475,18 @@ a.anchor-link {
 </style>
 <!-- End of mermaid configuration --></head>
 <body class="jp-Notebook" data-jp-theme-light="true" data-jp-theme-name="JupyterLab Light">
-<main><div class="jp-Cell jp-CodeCell jp-Notebook-cell">
+<main>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h1 id="11%E6%9C%8821%E6%97%A5%E3%80%80%E3%82%BC%E3%83%9F">11月21日　ゼミ<a class="anchor-link" href="#11%E6%9C%8821%E6%97%A5%E3%80%80%E3%82%BC%E3%83%9F">¶</a></h1>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -7725,17 +7736,37 @@ $V = \begin{pmatrix} \left[ 0.5, 0.5 \right] \\ \left[ 0.25, 0.25 \right] \\ \le
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [7]:</div>
-<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-<div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-julia"><pre><span></span>
-</pre></div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h3 id="%E8%B3%AA%E5%95%8F">質問<a class="anchor-link" href="#%E8%B3%AA%E5%95%8F">¶</a></h3><p>perfect incorporation approach</p>
+<p>$$
+    \begin{align}
+        \begin{split}
+            \text{minimize} ~~ &amp; ~~ \sum_{i\in N} (w_{i}^{R} - w_{i}^{L}) \\
+            ~~ &amp; ~~ \sum_{i\in N} (w_{ki}^{R} - w_{ki}^{L}) \leq \hat{d_{k}} , k\in M \\
+            \text{subject to} ~~ &amp; ~~ w_{ki}^{L}\leq a_{kij}w_{kj}^{R},\, a_{kij}w_{kj}^{L}\leq w_{ki}^{R},\, i,j,\in N(i&lt;j) , k\in M\\
+            ~~ &amp; ~~ \sum_{j\in N\setminus i} w_{kj}^{R} + w_{ki}^{L}\geq 1, k\in M, i\in N, \\
+            ~~ &amp; ~~ \sum_{j\in N\setminus i} w_{kj}^{L} + w_{ki}^{R}\leq 1, k\in M, i\in N, \\
+            ~~ &amp; ~~ \epsilon \geq w_{i}^{L}\geq w_{ki}^{L}\geq w_{ki}\geq w_{ki}^{R} \geq w_{i}^{R}, k\in M, i\in N.
+        \end{split}
+    \end{align}
+$$</p>
+<p>重みをt倍するときに、kごとに$t_{k}$みたいな感じにするのか？</p>
 </div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
 </div>
 </div>
 </div>
