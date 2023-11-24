@@ -6,17 +6,17 @@ include("../crisp-pcm.jl")
 include("../nearly-equal.jl")
 include("./optimal-value.jl")
 
-LPResult_t_PerfectIncorporation = @NamedTuple{
+LPResult_t_CommonGround = @NamedTuple{
     # 区間重みベクトル
     wᴸ::Vector{T}, wᵁ::Vector{T},
     W::Vector{Interval{T}}, # ([wᵢᴸ, wᵢᵁ])
     vᴸ::Matrix{T}, vᵁ::Matrix{T},
     v::Vector{Vector{Interval{T}}}, # ([vᵢᴸ, vᵢᵁ])
     optimalValue::T,
-    s :: Vector{T}
+    s::Vector{T}
     } where {T <: Real}
 
-function solvetPerfectIncorporationLP(matrices::Vector{Matrix{T}})::LPResult_t_PerfectIncorporation{T} where {T <: Real}
+function solvetCommonGroundLP(matrices::Vector{Matrix{T}})::LPResult_t_CommonGround{T} where {T <: Real}
     ε = 1e-8 # << 1
 
     if isempty(matrices)
@@ -44,7 +44,7 @@ function solvetPerfectIncorporationLP(matrices::Vector{Matrix{T}})::LPResult_t_P
     try
         # wᵢᴸ ≥ ε, wᵢᵁ ≥ ε
         @variable(model, wᴸ[i=1:n] ≥ ε); @variable(model, wᵁ[i=1:n] ≥ ε)
-        # ŵₖᵢᴸ ≥ ε, ŵₖᵢᵁ ≥ ε
+        # vₖᵢᴸ ≥ ε, vₖᵢᵁ ≥ ε
         @variable(model, vᴸ[k=1:l,i=1:n] ≥ ε); @variable(model, vᵁ[k=1:l,i=1:n] ≥ ε)
         # s ≥ ε
         @variable(model, s[k=1:l] ≥ ε)
@@ -54,8 +54,8 @@ function solvetPerfectIncorporationLP(matrices::Vector{Matrix{T}})::LPResult_t_P
 
             Aₖ = matrices[k]
 
-            # ∑(ŵₖᵢᵁ - ŵₖᵢᴸ) ≤ sₖḋₖ
-            @constraint(model, sum(vₖᵁ) - sum(vₖᴸ) ≤ s[k] * ḋ[k])
+            # ∑(vₖᵢᵁ - vₖᵢᴸ) ≤ sₖḋₖ
+            @constraint(model, sum(vₖᵁ) - sum(vₖᴸ) ≤ s[k]ḋ[k])
 
             for i = 1:n-1
                 vₖᵢᴸ = vₖᴸ[i]; vₖᵢᵁ = vₖᵁ[i]
@@ -78,16 +78,24 @@ function solvetPerfectIncorporationLP(matrices::Vector{Matrix{T}})::LPResult_t_P
                 ∑vₖⱼᵁ = sum(map(j -> vₖᵁ[j], filter(j -> i != j, 1:n)))
                 @constraint(model, ∑vₖⱼᵁ + vₖᵢᴸ ≥ 1)
 
-                wᵢᴸ = wᴸ[i]; wᵢᵁ = wᵁ[i] 
-                @constraint(model, vₖᵢᴸ ≥ wᵢᴸ)
-                @constraint(model, vₖᵢᵁ ≥ vₖᵢᴸ)
-                @constraint(model, wᵢᵁ ≥ vₖᵢᵁ)
+                wᵢᴸ = wᴸ[i]; wᵢᵁ = wᵁ[i]
+                @constraint(model, wᵢᴸ ≥ vₖᵢᴸ)
+                @constraint(model, wᵢᵁ ≥ wᵢᴸ)
+                @constraint(model, vₖᵢᵁ ≥ wᵢᵁ)
             end
-            
+        end
+
+        for i = 1:n
+            wᵢᴸ = wᴸ[i]; wᵢᵁ = wᵁ[i] 
+            # kなしの正規性条件
+            ∑wⱼᴸ = sum(map(j -> wᴸ[j], filter(j -> i != j, 1:n)))
+            @constraint(model, ∑wⱼᴸ + wᵢᵁ ≤ 1)
+            ∑wⱼᵁ = sum(map(j -> wᵁ[j], filter(j -> i != j, 1:n)))
+            @constraint(model, ∑wⱼᵁ + wᵢᴸ ≥ 1)
         end
 
         # 目的関数 ∑(wᵢᵁ - wᵢᴸ)
-        @objective(model, Min, sum(wᵁ) - sum(wᴸ))
+        @objective(model, Max, sum(wᵁ) - sum(wᴸ))
 
         optimize!(model)
 
@@ -95,7 +103,6 @@ function solvetPerfectIncorporationLP(matrices::Vector{Matrix{T}})::LPResult_t_P
 
         wᴸ_value = value.(wᴸ)
         wᵁ_value = value.(wᵁ)
-
         # precision error 対応
         for i = 1:n
             if wᴸ_value[i] > wᵁ_value[i]
