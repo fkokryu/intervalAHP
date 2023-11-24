@@ -11,8 +11,8 @@ LPResult_t_PerfectIncorporation = @NamedTuple{
     # 区間重みベクトル
     wᴸ::Vector{T}, wᵁ::Vector{T},
     W::Vector{Interval{T}}, # ([wᵢᴸ, wᵢᵁ])
-    ŵᴸ::Matrix{T}, ŵᵁ::Matrix{T},
-    Ŵ::Vector{Vector{Interval{T}}}, # ([ŵᵢᴸ, ŵᵢᵁ])
+    vᴸ::Matrix{T}, vᵁ::Matrix{T},
+    v::Vector{Vector{Interval{T}}}, # ([vᵢᴸ, vᵢᵁ])
     optimalValue::T
     } where {T <: Real}
 
@@ -45,47 +45,47 @@ function solvetPerfectIncorporationLP(matrices::Vector{Matrix{T}})::LPResult_t_P
         # wᵢᴸ ≥ ε, wᵢᵁ ≥ ε
         @variable(model, wᴸ[i=1:n] ≥ ε); @variable(model, wᵁ[i=1:n] ≥ ε)
         # ŵₖᵢᴸ ≥ ε, ŵₖᵢᵁ ≥ ε
-        @variable(model, ŵᴸ[k=1:l,i=1:n] ≥ ε); @variable(model, ŵᵁ[k=1:l,i=1:n] ≥ ε)
+        @variable(model, vᴸ[k=1:l,i=1:n] ≥ ε); @variable(model, vᵁ[k=1:l,i=1:n] ≥ ε)
         # s ≥ ε
         @variable(model, s[k=1;l] ≥ ε)
 
         for k = 1:l
-            ŵₖᴸ = ŵᴸ[k,:]; ŵₖᵁ = ŵᵁ[k,:]
+            vₖᴸ = vᴸ[k,:]; vₖᵁ = vᵁ[k,:]
 
             Aₖ = matrices[k]
 
             # ∑(ŵₖᵢᵁ - ŵₖᵢᴸ) ≤ ḋₖ
-            @constraint(model, sum(ŵₖᵁ) - sum(ŵₖᴸ) ≤ s[k]ḋ[k])
+            @constraint(model, sum(vₖᵁ) - sum(vₖᴸ) ≤ s[k]ḋ[k])
 
             for i = 1:n-1
-                ŵₖᵢᴸ = ŵₖᴸ[i]; ŵₖᵢᵁ = ŵₖᵁ[i]
+                vₖᵢᴸ = vₖᴸ[i]; vₖᵢᵁ = vₖᵁ[i]
     
                 for j = i+1:n
                     aₖᵢⱼ = Aₖ[i,j]
-                    ŵₖⱼᴸ = ŵₖᴸ[j]; ŵₖⱼᵁ = ŵₖᵁ[j]
+                    vₖⱼᴸ = vₖᴸ[j]; vₖⱼᵁ = vₖᵁ[j]
                     
-                    @constraint(model, ŵₖᵢᴸ ≤ aₖᵢⱼ * ŵₖⱼᵁ)
-                    @constraint(model, aₖᵢⱼ * ŵₖⱼᴸ ≤ ŵₖᵢᵁ)
+                    @constraint(model, vₖᵢᴸ ≤ aₖᵢⱼ * vₖⱼᵁ)
+                    @constraint(model, aₖᵢⱼ * vₖⱼᴸ ≤ vₖᵢᵁ)
                 end
             end
 
             for i = 1:n
-                ŵₖᵢᴸ = ŵₖᴸ[i]; ŵₖᵢᵁ = ŵₖᵁ[i]
+                vₖᵢᴸ = vₖᴸ[i]; vₖᵢᵁ = vₖᵁ[i]
 
                 # 正規性条件
-                ∑ŵₖⱼᴸ = sum(map(j -> ŵₖᴸ[j], filter(j -> i != j, 1:n)))
-                @constraint(model, ∑ŵₖⱼᴸ + ŵₖᵢᵁ ≤ s[k])
-                ∑ŵₖⱼᵁ = sum(map(j -> ŵₖᵁ[j], filter(j -> i != j, 1:n)))
-                @constraint(model, ∑ŵₖⱼᵁ + ŵₖᵢᴸ ≥ s[k])
+                ∑vₖⱼᴸ = sum(map(j -> vₖᴸ[j], filter(j -> i != j, 1:n)))
+                @constraint(model, ∑vₖⱼᴸ + vₖᵢᵁ ≤ 1)
+                ∑vₖⱼᵁ = sum(map(j -> vₖᵁ[j], filter(j -> i != j, 1:n)))
+                @constraint(model, ∑vₖⱼᵁ + vₖᵢᴸ ≥ 1)
 
                 wᵢᴸ = wᴸ[i]; wᵢᵁ = wᵁ[i] 
-                @constraint(model, ŵₖᵢᴸ ≥ wᵢᴸ)
-                @constraint(model, ŵₖᵢᵁ ≥ ŵₖᵢᴸ)
-                @constraint(model, wᵢᵁ ≥ ŵₖᵢᵁ)
+                @constraint(model, vₖᵢᴸ ≥ wᵢᴸ)
+                @constraint(model, vₖᵢᵁ ≥ vₖᵢᴸ)
+                @constraint(model, wᵢᵁ ≥ vₖᵢᵁ)
             end
         end
 
-        @constraint(model, sum(wᵁ) + sum(wᴸ) == 2)
+        @constraint(model, sum(vᵁ) + sum(vᴸ) == 2)
 
         # 目的関数 ∑(wᵢᵁ - wᵢᴸ)
         @objective(model, Min, sum(wᵁ) - sum(wᴸ))
@@ -97,9 +97,6 @@ function solvetPerfectIncorporationLP(matrices::Vector{Matrix{T}})::LPResult_t_P
         wᴸ_value = value.(wᴸ)
         wᵁ_value = value.(wᵁ)
 
-        wᴸ_value ./= value.(s)
-        wᵁ_value ./= value.(s)
-
         # precision error 対応
         for i = 1:n
             if wᴸ_value[i] > wᵁ_value[i]
@@ -108,28 +105,27 @@ function solvetPerfectIncorporationLP(matrices::Vector{Matrix{T}})::LPResult_t_P
         end
         W_value = map(i -> (wᴸ_value[i])..(wᵁ_value[i]), 1:n)
         
-        ŵᴸ_value = value.(ŵᴸ)
-        ŵᵁ_value = value.(ŵᵁ)
+        vᴸ_value = value.(vᴸ)
+        vᵁ_value = value.(vᵁ)
 
-        ŵᴸ_value ./= value.(s)
-        ŵᵁ_value ./= value.(s)
-        optimalValue /= value.(s)
+        vᴸ_value ./= value.(s)
+        vᵁ_value ./= value.(s)
 
         # precision error 対応
         for k = 1:l, i = 1:n
-            if ŵᴸ_value[k,i] > ŵᵁ_value[k,i]
-                ŵᴸ_value[k,i] = ŵᵁ_value[k,i]
+            if vᴸ_value[k,i] > vᵁ_value[k,i]
+                vᴸ_value[k,i] = vᵁ_value[k,i]
             end
         end
-        Ŵ_value = map(
-            k -> map(i -> (ŵᴸ_value[k,i])..(ŵᵁ_value[k,i]), 1:n),
+        v_value = map(
+            k -> map(i -> (vᴸ_value[k,i])..(vᵁ_value[k,i]), 1:n),
             1:l)
 
         return (
             wᴸ=wᴸ_value, wᵁ=wᵁ_value,
             W=W_value,
-            ŵᴸ=ŵᴸ_value, ŵᵁ=ŵᵁ_value,
-            Ŵ=Ŵ_value,
+            vᴸ=vᴸ_value, vᵁ=vᵁ_value,
+            v=v_value,
             optimalValue=optimalValue
         )
     finally
