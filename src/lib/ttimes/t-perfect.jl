@@ -4,7 +4,6 @@ import HiGHS
 
 include("../crisp-pcm.jl")
 include("../nearly-equal.jl")
-include("../interval-ahp.jl")
 include("./optimal-value.jl")
 
 LPResult_t_PerfectIncorporation = @NamedTuple{
@@ -13,7 +12,8 @@ LPResult_t_PerfectIncorporation = @NamedTuple{
     W::Vector{Interval{T}}, # ([wᵢᴸ, wᵢᵁ])
     vᴸ::Matrix{T}, vᵁ::Matrix{T},
     v::Vector{Vector{Interval{T}}}, # ([vᵢᴸ, vᵢᵁ])
-    optimalValue::T
+    optimalValue::T,
+    s :: Vector{T}
     } where {T <: Real}
 
 function solvetPerfectIncorporationLP(matrices::Vector{Matrix{T}})::LPResult_t_PerfectIncorporation{T} where {T <: Real}
@@ -47,7 +47,7 @@ function solvetPerfectIncorporationLP(matrices::Vector{Matrix{T}})::LPResult_t_P
         # ŵₖᵢᴸ ≥ ε, ŵₖᵢᵁ ≥ ε
         @variable(model, vᴸ[k=1:l,i=1:n] ≥ ε); @variable(model, vᵁ[k=1:l,i=1:n] ≥ ε)
         # s ≥ ε
-        @variable(model, s[k=1;l] ≥ ε)
+        @variable(model, s[k=1:l] ≥ ε)
 
         for k = 1:l
             vₖᴸ = vᴸ[k,:]; vₖᵁ = vᵁ[k,:]
@@ -55,7 +55,7 @@ function solvetPerfectIncorporationLP(matrices::Vector{Matrix{T}})::LPResult_t_P
             Aₖ = matrices[k]
 
             # ∑(ŵₖᵢᵁ - ŵₖᵢᴸ) ≤ ḋₖ
-            @constraint(model, sum(vₖᵁ) - sum(vₖᴸ) ≤ s[k]ḋ[k])
+            @constraint(model, sum(vₖᵁ) - sum(vₖᴸ) ≤ s[k] * ḋ[k])
 
             for i = 1:n-1
                 vₖᵢᴸ = vₖᴸ[i]; vₖᵢᵁ = vₖᵁ[i]
@@ -83,9 +83,8 @@ function solvetPerfectIncorporationLP(matrices::Vector{Matrix{T}})::LPResult_t_P
                 @constraint(model, vₖᵢᵁ ≥ vₖᵢᴸ)
                 @constraint(model, wᵢᵁ ≥ vₖᵢᵁ)
             end
+            
         end
-
-        @constraint(model, sum(vᵁ) + sum(vᴸ) == 2)
 
         # 目的関数 ∑(wᵢᵁ - wᵢᴸ)
         @objective(model, Min, sum(wᵁ) - sum(wᴸ))
@@ -111,6 +110,8 @@ function solvetPerfectIncorporationLP(matrices::Vector{Matrix{T}})::LPResult_t_P
         vᴸ_value ./= value.(s)
         vᵁ_value ./= value.(s)
 
+        s_value = value.(s)
+
         # precision error 対応
         for k = 1:l, i = 1:n
             if vᴸ_value[k,i] > vᵁ_value[k,i]
@@ -126,7 +127,8 @@ function solvetPerfectIncorporationLP(matrices::Vector{Matrix{T}})::LPResult_t_P
             W=W_value,
             vᴸ=vᴸ_value, vᵁ=vᵁ_value,
             v=v_value,
-            optimalValue=optimalValue
+            optimalValue=optimalValue,
+            s=s_value
         )
     finally
         # エラー終了時にも変数などを消去する
