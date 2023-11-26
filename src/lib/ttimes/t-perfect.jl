@@ -36,8 +36,6 @@ function solvetPerfectIncorporationLP(matrices::Vector{Matrix{T}})::LPResult_t_P
 
     ḋ = map(Aₖ -> solveCrispAHPLP(Aₖ).optimalValue, matrices)
 
-    print(ḋ)
-
     model = Model(HiGHS.Optimizer)
     set_silent(model)
 
@@ -84,6 +82,7 @@ function solvetPerfectIncorporationLP(matrices::Vector{Matrix{T}})::LPResult_t_P
                 @constraint(model, wᵢᵁ ≥ vₖᵢᵁ)
             end
             
+            @constraint(model, sum(vₖᴸ) + sum(vₖᵁ) == 2)
         end
 
         # 目的関数 ∑(wᵢᵁ - wᵢᴸ)

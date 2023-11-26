@@ -35,8 +35,6 @@ function solvePerfectIncorporationLP(matrices::Vector{Matrix{T}})::LPResult_Perf
 
     ḋ = map(Aₖ -> solveIntervalAHPLP(Aₖ).optimalValue, matrices)
 
-    print(ḋ)
-
     model = Model(HiGHS.Optimizer)
     set_silent(model)
 

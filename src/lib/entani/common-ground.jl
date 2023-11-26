@@ -35,8 +35,6 @@ function solveCommonGroundLP(matrices::Vector{Matrix{T}})::LPResult_CommonGround
 
     ḋ = map(Aₖ -> solveIntervalAHPLP(Aₖ).optimalValue, matrices)
 
-    print(ḋ)
-
     model = Model(HiGHS.Optimizer)
     set_silent(model)
 
