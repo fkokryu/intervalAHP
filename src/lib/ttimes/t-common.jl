@@ -53,7 +53,7 @@ function solvetCommonGroundLP(matrices::Vector{Matrix{T}})::LPResult_t_CommonGro
             Aₖ = matrices[k]
 
             # ∑(vₖᵢᵁ - vₖᵢᴸ) ≤ sₖḋₖ
-            @constraint(model, sum(vₖᵁ) - sum(vₖᴸ) ≤ s[k]ḋ[k])
+            @constraint(model, sum(vₖᵁ) - sum(vₖᴸ) == s[k]ḋ[k])
 
             for i = 1:n-1
                 vₖᵢᴸ = vₖᴸ[i]; vₖᵢᵁ = vₖᵁ[i]
@@ -81,9 +81,9 @@ function solvetCommonGroundLP(matrices::Vector{Matrix{T}})::LPResult_t_CommonGro
                 @constraint(model, wᵢᵁ ≥ wᵢᴸ)
                 @constraint(model, vₖᵢᵁ ≥ wᵢᵁ)
             end
-
-            @constraint(model, sum(vₖᴸ) + sum(vₖᵁ) == 2)
         end
+
+        @constraint(model, sum(wᵁ) + sum(wᴸ) == 2)
 
         for i = 1:n
             wᵢᴸ = wᴸ[i]; wᵢᵁ = wᵁ[i] 

@@ -61,7 +61,7 @@ function solvetPartialIncorporationLP(
             Aₖ = matrices[k]
 
             # ∑(vₖᵢᵁ - vₖᵢᴸ) ≤ sₖḋₖ
-            @constraint(model, sum(vₖᵁ) - sum(vₖᴸ) ≤ s[k]ḋ[k])
+            @constraint(model, sum(vₖᵁ) - sum(vₖᴸ) == s[k]ḋ[k])
 
             for i = 1:n-1
                 vₖᵢᴸ = vₖᴸ[i]; vₖᵢᵁ = vₖᵁ[i]
@@ -73,12 +73,12 @@ function solvetPartialIncorporationLP(
                     @constraint(model, vₖᵢᴸ ≤ aₖᵢⱼ * vₖⱼᵁ)
                     @constraint(model, aₖᵢⱼ * vₖⱼᴸ ≤ vₖᵢᵁ)
                 end
-
-                @constraint(model, sum(vₖᴸ) + sum(vₖᵁ) == 2)
             end
 
+            @constraint(model, sum(wᵁ) + sum(wᴸ) == 2)
+
             # 正規性条件
-            @constraint(model, sum(Vₖ) == s[k])
+            @constraint(model, sum(Vₖ) == 1)
 
             for i = 1:n
                 vₖᵢᴸ = vₖᴸ[i]; vₖᵢᵁ = vₖᵁ[i]
