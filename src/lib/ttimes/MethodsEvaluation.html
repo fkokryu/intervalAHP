@@ -7508,6 +7508,9 @@ a.anchor-link {
 <span class="n">include</span><span class="p">(</span><span class="s">"./t-perfect.jl"</span><span class="p">)</span>
 <span class="n">include</span><span class="p">(</span><span class="s">"./t-common.jl"</span><span class="p">)</span>
 <span class="n">include</span><span class="p">(</span><span class="s">"./t-partial.jl"</span><span class="p">)</span>
+<span class="n">include</span><span class="p">(</span><span class="s">"../ttimes-2/t-perfect-2.jl"</span><span class="p">)</span>
+<span class="n">include</span><span class="p">(</span><span class="s">"../ttimes-2/t-common-2.jl"</span><span class="p">)</span>
+<span class="n">include</span><span class="p">(</span><span class="s">"../ttimes-2/t-partial-2.jl"</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -7612,6 +7615,9 @@ a.anchor-link {
 <span class="n">tPerfectIncorporation</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">solvetPerfectIncorporationLP</span><span class="p">([</span><span class="n">A₁</span><span class="p">,</span><span class="w"> </span><span class="n">A₂</span><span class="p">,</span><span class="w"> </span><span class="n">A₃</span><span class="p">])</span>
 <span class="n">tCommonGround</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">solvetCommonGroundLP</span><span class="p">([</span><span class="n">A₄</span><span class="p">,</span><span class="w"> </span><span class="n">A₅</span><span class="p">,</span><span class="w"> </span><span class="n">A₆</span><span class="p">])</span>
 <span class="n">tPartialIncorporation</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">solvetPartialIncorporationLP</span><span class="p">([</span><span class="n">A₁</span><span class="p">,</span><span class="w"> </span><span class="n">A₂</span><span class="p">,</span><span class="w"> </span><span class="n">A₃</span><span class="p">])</span>
+<span class="n">tPerfectIncorporation2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">solvetPerfectIncorporationLP2</span><span class="p">([</span><span class="n">A₁</span><span class="p">,</span><span class="w"> </span><span class="n">A₂</span><span class="p">,</span><span class="w"> </span><span class="n">A₃</span><span class="p">])</span>
+<span class="n">tCommonGround2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">solvetCommonGroundLP2</span><span class="p">([</span><span class="n">A₄</span><span class="p">,</span><span class="w"> </span><span class="n">A₅</span><span class="p">,</span><span class="w"> </span><span class="n">A₆</span><span class="p">])</span>
+<span class="n">tPartialIncorporation2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">solvetPartialIncorporationLP2</span><span class="p">([</span><span class="n">A₁</span><span class="p">,</span><span class="w"> </span><span class="n">A₂</span><span class="p">,</span><span class="w"> </span><span class="n">A₃</span><span class="p">])</span>
 </pre></div>
 </div>
 </div>
@@ -7653,7 +7659,7 @@ $$
     
     \end{align}
 $$
-提案法
+提案法(変更前)
 $$
     \begin{align}
         \begin{split}
@@ -7668,6 +7674,37 @@ $$
     
     \end{align}
 $$</p>
+<p>提案法(変更前)
+$$
+    \begin{align}
+        \begin{split}
+            \text{minimize} ~~ &amp; ~~ \sum_{i\in N} (w_{i}^{R} - w_{i}^{L}) \\
+            \text{subject to} ~~ &amp; ~~ \sum_{i\in N} (t_{k}w_{ki}^{R} - t_{k}w_{ki}^{L}) = t_{k}\hat{d_{k}} , k\in M \\
+            ~~ &amp; ~~ t_{k}w_{ki}^{L}\leq a_{kij}t_{k}w_{kj}^{R},\, a_{kij}t_{k}w_{kj}^{L}\leq t_{k}w_{ki}^{R},\, i,j,\in N(i&lt;j) , k\in M\\
+            ~~ &amp; ~~ \sum_{j\in N\setminus i} t_{k}w_{kj}^{R} + t_{k}w_{ki}^{L}\geq 1, k\in M, i\in N, \\
+            ~~ &amp; ~~ \sum_{j\in N\setminus i} t_{k}w_{kj}^{L} + t_{k}w_{ki}^{R}\leq 1, k\in M, i\in N, \\
+            ~~ &amp; ~~ \sum_{i\in N} \frac{w_{i}^{R} + w_{i}^{L}}{2} = 1, \\
+            ~~ &amp; ~~ \epsilon \leq w_{i}^{L}\leq t_{k}w_{ki}^{L}\leq t_{k}w_{ki}^{R} \leq w_{i}^{R}, k\in M, i\in N.
+        \end{split}
+    
+    \end{align}
+$$</p>
+<p>提案法(変更後)
+$$
+    \begin{align}
+        \begin{split}
+            \text{minimize} ~~ &amp; ~~ \sum_{i\in N} (w_{i}^{R} - w_{i}^{L}) \\
+            \text{subject to} ~~ &amp; ~~ \sum_{i\in N} (w_{ki}^{R} - w_{ki}^{L}) = t_{k}\hat{d_{k}} , k\in M \\
+            ~~ &amp; ~~ w_{ki}^{L}\leq a_{kij}w_{kj}^{R},\, a_{kij}w_{kj}^{L}\leq w_{ki}^{R},\, i,j,\in N(i&lt;j) , k\in M\\
+            ~~ &amp; ~~ \sum_{j\in N\setminus i} w_{kj}^{R} + w_{ki}^{L}\geq 1, k\in M, i\in N, \\
+            ~~ &amp; ~~ \sum_{j\in N\setminus i} w_{kj}^{L} + w_{ki}^{R}\leq 1, k\in M, i\in N, \\
+            ~~ &amp; ~~ t_{k} = \sum_{i\in N} (w_{ki}^{R} + w_{ki}^{L}), k\in M, \\
+            ~~ &amp; ~~ \sum_{i\in N} \frac{w_{i}^{R} + w_{i}^{L}}{2} = 1, \\
+            ~~ &amp; ~~ \epsilon \leq w_{i}^{L}\leq w_{ki}^{L}\leq w_{ki}^{R} \leq w_{i}^{R}, k\in M, i\in N.
+        \end{split}
+    
+    \end{align}
+$$</p>
 </div>
 </div>
 </div>
@@ -7676,14 +7713,14 @@ $$</p>
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [5]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [11]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-julia"><pre><span></span><span class="n">display</span><span class="p">(</span><span class="sa">L</span><span class="s">"d_originalPerfectIncorporationriginalPerfectIncorporation :"</span><span class="p">)</span>
+<div class="highlight hl-julia"><pre><span></span><span class="n">display</span><span class="p">(</span><span class="sa">L</span><span class="s">"OriginalPerfectIncorporation :"</span><span class="p">)</span>
 <span class="n">W_originalPerfectIncorporation</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">originalPerfectIncorporation</span><span class="o">.</span><span class="n">W</span>
 <span class="n">display</span><span class="p">(</span><span class="sa">L</span><span class="s">"W = %</span><span class="si">$</span><span class="p">(</span><span class="n">intervalVectorLaTeXString</span><span class="p">(</span><span class="n">W_originalPerfectIncorporation</span><span class="p">))</span><span class="s">"</span><span class="p">)</span>
 <span class="n">d_originalPerfectIncorporation</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">originalPerfectIncorporation</span><span class="o">.</span><span class="n">optimalValue</span>
-<span class="n">display</span><span class="p">(</span><span class="sa">L</span><span class="s">"d = %</span><span class="si">$</span><span class="p">(</span><span class="n">d_oroginalPerfectIncorporation</span><span class="p">)</span><span class="s">"</span><span class="p">)</span>
+<span class="n">display</span><span class="p">(</span><span class="sa">L</span><span class="s">"d = %</span><span class="si">$</span><span class="p">(</span><span class="n">d_originalPerfectIncorporation</span><span class="p">)</span><span class="s">"</span><span class="p">)</span>
 
 <span class="n">display</span><span class="p">(</span><span class="sa">L</span><span class="s">"PerfectIncorporation :"</span><span class="p">)</span>
 <span class="n">W_PerfectIncorporation</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">PerfectIncorporation</span><span class="o">.</span><span class="n">W</span>
@@ -7691,13 +7728,21 @@ $$</p>
 <span class="n">d_PerfectIncorporation</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">PerfectIncorporation</span><span class="o">.</span><span class="n">optimalValue</span>
 <span class="n">display</span><span class="p">(</span><span class="sa">L</span><span class="s">"d = %</span><span class="si">$</span><span class="p">(</span><span class="n">d_PerfectIncorporation</span><span class="p">)</span><span class="s">"</span><span class="p">)</span>
 
-<span class="n">display</span><span class="p">(</span><span class="sa">L</span><span class="s">"tPerfectIncorporation :"</span><span class="p">)</span>
+<span class="n">display</span><span class="p">(</span><span class="sa">L</span><span class="s">"tPerfectIncorporation (変更前):"</span><span class="p">)</span>
 <span class="n">W_tPerfectIncorporation</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">tPerfectIncorporation</span><span class="o">.</span><span class="n">W</span>
 <span class="n">display</span><span class="p">(</span><span class="sa">L</span><span class="s">"W = %</span><span class="si">$</span><span class="p">(</span><span class="n">intervalVectorLaTeXString</span><span class="p">(</span><span class="n">W_tPerfectIncorporation</span><span class="p">))</span><span class="s">"</span><span class="p">)</span>
 <span class="n">d_tPerfectIncorporation</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">tPerfectIncorporation</span><span class="o">.</span><span class="n">optimalValue</span>
 <span class="n">display</span><span class="p">(</span><span class="sa">L</span><span class="s">"d = %</span><span class="si">$</span><span class="p">(</span><span class="n">d_tPerfectIncorporation</span><span class="p">)</span><span class="s">"</span><span class="p">)</span>
 <span class="n">s_tPerfectIncorporation</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">tPerfectIncorporation</span><span class="o">.</span><span class="n">s</span>
 <span class="n">display</span><span class="p">(</span><span class="sa">L</span><span class="s">"s = %</span><span class="si">$</span><span class="p">(</span><span class="n">s_tPerfectIncorporation</span><span class="p">)</span><span class="s">"</span><span class="p">)</span>
+
+<span class="n">display</span><span class="p">(</span><span class="sa">L</span><span class="s">"tPerfectIncorporation (変更後):"</span><span class="p">)</span>
+<span class="n">W_tPerfectIncorporation2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">tPerfectIncorporation2</span><span class="o">.</span><span class="n">W</span>
+<span class="n">display</span><span class="p">(</span><span class="sa">L</span><span class="s">"W = %</span><span class="si">$</span><span class="p">(</span><span class="n">intervalVectorLaTeXString</span><span class="p">(</span><span class="n">W_tPerfectIncorporation2</span><span class="p">))</span><span class="s">"</span><span class="p">)</span>
+<span class="n">d_tPerfectIncorporation2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">tPerfectIncorporation2</span><span class="o">.</span><span class="n">optimalValue</span>
+<span class="n">display</span><span class="p">(</span><span class="sa">L</span><span class="s">"d = %</span><span class="si">$</span><span class="p">(</span><span class="n">d_tPerfectIncorporation2</span><span class="p">)</span><span class="s">"</span><span class="p">)</span>
+<span class="n">s_tPerfectIncorporation2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">tPerfectIncorporation2</span><span class="o">.</span><span class="n">s</span>
+<span class="n">display</span><span class="p">(</span><span class="sa">L</span><span class="s">"s = %</span><span class="si">$</span><span class="p">(</span><span class="n">s_tPerfectIncorporation2</span><span class="p">)</span><span class="s">"</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -7707,6 +7752,24 @@ $$</p>
 <div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
 </div>
 <div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedLatex jp-OutputArea-output" data-mime-type="text/latex" tabindex="0">
+$OriginalPerfectIncorporation :$
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedLatex jp-OutputArea-output" data-mime-type="text/latex" tabindex="0">
+$W = \begin{pmatrix} \left[ 0.375, 0.571 \right] \\ \left[ 0.19, 0.375 \right] \\ \left[ 0.071, 0.19 \right] \\ \left[ 0.048, 0.219 \right] \end{pmatrix}$
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedLatex jp-OutputArea-output" data-mime-type="text/latex" tabindex="0">
+$d = 0.671130952380952$
+</div>
+</div>
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedLatex jp-OutputArea-output" data-mime-type="text/latex" tabindex="0">
@@ -7722,7 +7785,7 @@ $W = \begin{pmatrix} \left[ 0.304, 0.571 \right] \\ \left[ 0.19, 0.375 \right] \
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedLatex jp-OutputArea-output" data-mime-type="text/latex" tabindex="0">
-$d = 0.7738095238095243$
+$d = 0.7738095238095238$
 </div>
 </div>
 <div class="jp-OutputArea-child">
@@ -7777,7 +7840,7 @@ $$
     
     \end{align}
 $$
-提案法
+提案法(変更前)
 $$
     \begin{align}
         \begin{split}
@@ -7790,6 +7853,24 @@ $$
             ~~ &amp; ~~ \sum_{j\in N\setminus i} w_{j}^{L} + w_{i}^{R}\leq 1, i\in N, \\
             ~~ &amp; ~~ \sum_{i\in N} \frac{w_{i}^{R} + w_{i}^{L}}{2} = 1,  \\
             ~~ &amp; ~~ \epsilon \leq t_{k}w_{ki}^{L}\leq w_{i}^{L}\leq w_{i}^{R}\leq t_{k}w_{ki}^{R}, k\in M, i\in N.
+        \end{split}
+    
+    \end{align}
+$$</p>
+<p>提案法(変更後)
+$$
+    \begin{align}
+        \begin{split}
+            \text{maximize} ~~ &amp; ~~ \sum_{i\in N} (w_{i}^{R} - w_{i}^{L}) \\
+            \text{subject to} ~~ &amp; ~~ \sum_{i\in N} (w_{ki}^{R} - w_{ki}^{L}) = t_{k}\hat{d_{k}} , k\in M \\
+            ~~ &amp; ~~ w_{ki}^{L}\leq a_{kij}w_{kj}^{R},\, a_{kij}w_{kj}^{L}\leq w_{ki}^{R},\, i,j,\in N(i&lt;j) , k\in M\\
+            ~~ &amp; ~~ \sum_{j\in N\setminus i} w_{kj}^{R} + w_{ki}^{L}\geq 1, k\in M, i\in N, \\
+            ~~ &amp; ~~ \sum_{j\in N\setminus i} w_{kj}^{L} + w_{ki}^{R}\leq 1, k\in M, i\in N, \\
+            ~~ &amp; ~~ \sum_{j\in N\setminus i} w_{j}^{R} + w_{i}^{L}\geq 1, i\in N, \\
+            ~~ &amp; ~~ \sum_{j\in N\setminus i} w_{j}^{L} + w_{i}^{R}\leq 1, i\in N, \\
+            ~~ &amp; ~~ \sum_{i\in N} \frac{w_{i}^{R} + w_{i}^{L}}{2} = 1,  \\
+            ~~ &amp; ~~ t_{k} = \sum_{i\in N} (w_{ki}^{R} + w_{ki}^{L}), k\in M, \\
+            ~~ &amp; ~~ \epsilon \leq w_{ki}^{L}\leq w_{i}^{L}\leq w_{i}^{R}\leq w_{ki}^{R}, k\in M, i\in N.
         \end{split}
     
     \end{align}
@@ -7817,13 +7898,21 @@ $$</p>
 <span class="n">d_CommonGround</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">CommonGround</span><span class="o">.</span><span class="n">optimalValue</span>
 <span class="n">display</span><span class="p">(</span><span class="sa">L</span><span class="s">"d = %</span><span class="si">$</span><span class="p">(</span><span class="n">d_CommonGround</span><span class="p">)</span><span class="s">"</span><span class="p">)</span>
 
-<span class="n">display</span><span class="p">(</span><span class="sa">L</span><span class="s">"tCommonGround : "</span><span class="p">)</span>
+<span class="n">display</span><span class="p">(</span><span class="sa">L</span><span class="s">"tCommonGround (変更前): "</span><span class="p">)</span>
 <span class="n">W_tCommonGround</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">tCommonGround</span><span class="o">.</span><span class="n">W</span>
 <span class="n">display</span><span class="p">(</span><span class="sa">L</span><span class="s">"W = %</span><span class="si">$</span><span class="p">(</span><span class="n">intervalVectorLaTeXString</span><span class="p">(</span><span class="n">W_tCommonGround</span><span class="p">))</span><span class="s">"</span><span class="p">)</span>
 <span class="n">d_tCommonGround</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">tCommonGround</span><span class="o">.</span><span class="n">optimalValue</span>
 <span class="n">display</span><span class="p">(</span><span class="sa">L</span><span class="s">"d = %</span><span class="si">$</span><span class="p">(</span><span class="n">d_tCommonGround</span><span class="p">)</span><span class="s">"</span><span class="p">)</span>
 <span class="n">s_tCommonGround</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">tCommonGround</span><span class="o">.</span><span class="n">s</span>
 <span class="n">display</span><span class="p">(</span><span class="sa">L</span><span class="s">"s = %</span><span class="si">$</span><span class="p">(</span><span class="n">s_tCommonGround</span><span class="p">)</span><span class="s">"</span><span class="p">)</span>
+
+<span class="n">display</span><span class="p">(</span><span class="sa">L</span><span class="s">"tCommonGround (変更後): "</span><span class="p">)</span>
+<span class="n">W_tCommonGround2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">tCommonGround2</span><span class="o">.</span><span class="n">W</span>
+<span class="n">display</span><span class="p">(</span><span class="sa">L</span><span class="s">"W = %</span><span class="si">$</span><span class="p">(</span><span class="n">intervalVectorLaTeXString</span><span class="p">(</span><span class="n">W_tCommonGround2</span><span class="p">))</span><span class="s">"</span><span class="p">)</span>
+<span class="n">d_tCommonGround2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">tCommonGround2</span><span class="o">.</span><span class="n">optimalValue</span>
+<span class="n">display</span><span class="p">(</span><span class="sa">L</span><span class="s">"d = %</span><span class="si">$</span><span class="p">(</span><span class="n">d_tCommonGround2</span><span class="p">)</span><span class="s">"</span><span class="p">)</span>
+<span class="n">s_tCommonGround2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">tCommonGround2</span><span class="o">.</span><span class="n">s</span>
+<span class="n">display</span><span class="p">(</span><span class="sa">L</span><span class="s">"s = %</span><span class="si">$</span><span class="p">(</span><span class="n">s_tCommonGround2</span><span class="p">)</span><span class="s">"</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -7833,6 +7922,24 @@ $$</p>
 <div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
 </div>
 <div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedLatex jp-OutputArea-output" data-mime-type="text/latex" tabindex="0">
+$OriginalCommonGround : $
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedLatex jp-OutputArea-output" data-mime-type="text/latex" tabindex="0">
+$W = \begin{pmatrix} \left[ 0.375, 0.375 \right] \\ \left[ 0.367, 0.375 \right] \\ \left[ 0.125, 0.183 \right] \\ \left[ 0.075, 0.125 \right] \end{pmatrix}$
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedLatex jp-OutputArea-output" data-mime-type="text/latex" tabindex="0">
+$d = 0.11666666666666736$
+</div>
+</div>
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedLatex jp-OutputArea-output" data-mime-type="text/latex" tabindex="0">
@@ -7848,7 +7955,7 @@ $W = \begin{pmatrix} \left[ 0.375, 0.375 \right] \\ \left[ 0.367, 0.375 \right] 
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedLatex jp-OutputArea-output" data-mime-type="text/latex" tabindex="0">
-$d = 0.11666666666666736$
+$d = 0.11666666666666692$
 </div>
 </div>
 <div class="jp-OutputArea-child">
@@ -7901,7 +8008,7 @@ $$
         \end{split}
     \end{align}
 $$
-提案法
+提案法(変更前)
 $$
     \begin{align}
         \begin{split}
@@ -7913,6 +8020,22 @@ $$
             ~~ &amp; ~~ \sum_{i\in N} w_{ki} = 1, k\in M \\
             ~~ &amp; ~~ \sum_{i\in N} \frac{w_{i}^{R} + w_{i}^{L}}{2} = 1,   \\
             ~~ &amp; ~~ \epsilon \leq w_{i}^{L}\leq w_{ki}\leq t_{k}w_{ki}^{R}, \epsilon \leq t_{k}w_{ki}^{L}\leq w_{ki}\leq w_{i}^{R}, k\in M, i\in N.
+        \end{split}
+    \end{align}
+$$</p>
+<p>提案法(変更後)
+$$
+    \begin{align}
+        \begin{split}
+            \text{minimize} ~~ &amp; ~~ \sum_{i\in N} (w_{i}^{R} - w_{i}^{L}) \\
+            \text{subject to}  ~~ &amp; ~~ \sum_{i\in N} (w_{ki}^{R} - w_{ki}^{L}) = t_{k}\hat{d_{k}} , k\in M \\
+            ~~ &amp; ~~ w_{ki}^{L}\leq a_{kij}w_{kj}^{R},\, a_{kij}w_{kj}^{L}\leq w_{ki}^{R},\, i,j,\in N(i&lt;j) , k\in M\\
+            ~~ &amp; ~~ \sum_{j\in N\setminus i} w_{kj}^{R} + w_{ki}^{L}\geq 1, k\in M, i\in N, \\
+            ~~ &amp; ~~ \sum_{j\in N\setminus i} w_{kj}^{L} + w_{ki}^{R}\leq 1, k\in M, i\in N, \\
+            ~~ &amp; ~~ \sum_{i\in N} w_{ki} = 1, k\in M \\
+            ~~ &amp; ~~ \sum_{i\in N} \frac{w_{i}^{R} + w_{i}^{L}}{2} = 1,   \\
+             ~~ &amp; ~~ t_{k} = \sum_{i\in N} (w_{ki}^{R} + w_{ki}^{L}), k\in M, \\
+            ~~ &amp; ~~ \epsilon \leq w_{i}^{L}\leq w_{ki}\leq w_{ki}^{R}, \epsilon \leq w_{ki}^{L}\leq w_{ki}\leq w_{i}^{R}, k\in M, i\in N.
         \end{split}
     \end{align}
 $$</p>
@@ -7939,13 +8062,21 @@ $$</p>
 <span class="n">d_PartialIncorporation</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">PartialIncorporation</span><span class="o">.</span><span class="n">optimalValue</span>
 <span class="n">display</span><span class="p">(</span><span class="sa">L</span><span class="s">"d = %</span><span class="si">$</span><span class="p">(</span><span class="n">d_PartialIncorporation</span><span class="p">)</span><span class="s">"</span><span class="p">)</span>
 
-<span class="n">display</span><span class="p">(</span><span class="sa">L</span><span class="s">"tPartialIncorporation :"</span><span class="p">)</span>
+<span class="n">display</span><span class="p">(</span><span class="sa">L</span><span class="s">"tPartialIncorporation (変更前):"</span><span class="p">)</span>
 <span class="n">W_tPartialIncorporation</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">tPartialIncorporation</span><span class="o">.</span><span class="n">W</span>
 <span class="n">display</span><span class="p">(</span><span class="sa">L</span><span class="s">"W = %</span><span class="si">$</span><span class="p">(</span><span class="n">intervalVectorLaTeXString</span><span class="p">(</span><span class="n">W_tPartialIncorporation</span><span class="p">))</span><span class="s">"</span><span class="p">)</span>
 <span class="n">d_tPartialIncorporation</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">tPartialIncorporation</span><span class="o">.</span><span class="n">optimalValue</span>
 <span class="n">display</span><span class="p">(</span><span class="sa">L</span><span class="s">"d = %</span><span class="si">$</span><span class="p">(</span><span class="n">d_tPartialIncorporation</span><span class="p">)</span><span class="s">"</span><span class="p">)</span>
 <span class="n">s_tPartialIncorporation</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">tPartialIncorporation</span><span class="o">.</span><span class="n">s</span>
 <span class="n">display</span><span class="p">(</span><span class="sa">L</span><span class="s">"s = %</span><span class="si">$</span><span class="p">(</span><span class="n">s_tPartialIncorporation</span><span class="p">)</span><span class="s">"</span><span class="p">)</span>
+
+<span class="n">display</span><span class="p">(</span><span class="sa">L</span><span class="s">"tPartialIncorporation (変更後):"</span><span class="p">)</span>
+<span class="n">W_tPartialIncorporation2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">tPartialIncorporation2</span><span class="o">.</span><span class="n">W</span>
+<span class="n">display</span><span class="p">(</span><span class="sa">L</span><span class="s">"W = %</span><span class="si">$</span><span class="p">(</span><span class="n">intervalVectorLaTeXString</span><span class="p">(</span><span class="n">W_tPartialIncorporation2</span><span class="p">))</span><span class="s">"</span><span class="p">)</span>
+<span class="n">d_tPartialIncorporation2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">tPartialIncorporation2</span><span class="o">.</span><span class="n">optimalValue</span>
+<span class="n">display</span><span class="p">(</span><span class="sa">L</span><span class="s">"d = %</span><span class="si">$</span><span class="p">(</span><span class="n">d_tPartialIncorporation2</span><span class="p">)</span><span class="s">"</span><span class="p">)</span>
+<span class="n">s_tPartialIncorporation2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">tPartialIncorporation2</span><span class="o">.</span><span class="n">s</span>
+<span class="n">display</span><span class="p">(</span><span class="sa">L</span><span class="s">"s = %</span><span class="si">$</span><span class="p">(</span><span class="n">s_tPartialIncorporation2</span><span class="p">)</span><span class="s">"</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -7955,6 +8086,24 @@ $$</p>
 <div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
 </div>
 <div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedLatex jp-OutputArea-output" data-mime-type="text/latex" tabindex="0">
+$OriginalPartialIncorporation :$
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedLatex jp-OutputArea-output" data-mime-type="text/latex" tabindex="0">
+$W = \begin{pmatrix} \left[ 0.375, 0.571 \right] \\ \left[ 0.214, 0.25 \right] \\ \left[ 0.167, 0.167 \right] \\ \left[ 0.048, 0.208 \right] \end{pmatrix}$
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedLatex jp-OutputArea-output" data-mime-type="text/latex" tabindex="0">
+$d = 0.39285714285714335$
+</div>
+</div>
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedLatex jp-OutputArea-output" data-mime-type="text/latex" tabindex="0">
@@ -7970,7 +8119,7 @@ $W = \begin{pmatrix} \left[ 0.375, 0.571 \right] \\ \left[ 0.19, 0.25 \right] \\
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedLatex jp-OutputArea-output" data-mime-type="text/latex" tabindex="0">
-$d = 0.3928571428571439$
+$d = 0.3928571428571431$
 </div>
 </div>
 <div class="jp-OutputArea-child">
