@@ -6,17 +6,17 @@ include("../crisp-pcm.jl")
 include("../nearly-equal.jl")
 include("../ttimes/optimal-value.jl")
 
-LPResult_t_2_CommonGround = @NamedTuple{
+LPResult_t_3_PerfectIncorporation = @NamedTuple{
     # 区間重みベクトル
     wᴸ::Vector{T}, wᵁ::Vector{T},
     W::Vector{Interval{T}}, # ([wᵢᴸ, wᵢᵁ])
     ŵᴸ::Matrix{T}, ŵᵁ::Matrix{T},
     ŵ::Vector{Vector{Interval{T}}}, # ([ŵᵢᴸ, ŵᵢᵁ])
     optimalValue::T,
-    s::Vector{T}
+    s :: Vector{T}
     } where {T <: Real}
 
-function solvetCommonGroundLP2(matrices::Vector{Matrix{T}})::LPResult_t_2_CommonGround{T} where {T <: Real}
+function solvetPerfectIncorporationLP3(matrices::Vector{Matrix{T}})::LPResult_t_3_PerfectIncorporation{T} where {T <: Real}
     ε = 1e-8 # << 1
 
     if isempty(matrices)
@@ -53,7 +53,7 @@ function solvetCommonGroundLP2(matrices::Vector{Matrix{T}})::LPResult_t_2_Common
             Aₖ = matrices[k]
 
             # ∑(ŵₖᵢᵁ - ŵₖᵢᴸ) ≤ sₖḋₖ
-            @constraint(model, sum(ŵₖᵁ) - sum(ŵₖᴸ) == s[k]ḋ[k])
+            @constraint(model, sum(ŵₖᵁ) - sum(ŵₖᴸ) == s[k] * ḋ[k])
 
             for i = 1:n-1
                 ŵₖᵢᴸ = ŵₖᴸ[i]; ŵₖᵢᵁ = ŵₖᵁ[i]
@@ -76,10 +76,10 @@ function solvetCommonGroundLP2(matrices::Vector{Matrix{T}})::LPResult_t_2_Common
                 ∑ŵₖⱼᵁ = sum(map(j -> ŵₖᵁ[j], filter(j -> i != j, 1:n)))
                 @constraint(model, ∑ŵₖⱼᵁ + ŵₖᵢᴸ ≥ 1)
 
-                wᵢᴸ = wᴸ[i]; wᵢᵁ = wᵁ[i]
-                @constraint(model, wᵢᴸ ≥ ŵₖᵢᴸ)
-                @constraint(model, wᵢᵁ ≥ wᵢᴸ)
-                @constraint(model, ŵₖᵢᵁ ≥ wᵢᵁ)
+                wᵢᴸ = wᴸ[i]; wᵢᵁ = wᵁ[i] 
+                @constraint(model, ŵₖᵢᴸ ≥ wᵢᴸ)
+                @constraint(model, ŵₖᵢᵁ ≥ ŵₖᵢᴸ)
+                @constraint(model, wᵢᵁ ≥ ŵₖᵢᵁ)
             end
 
             @constraint(model, s[k] == sum(ŵₖᴸ) + sum(ŵₖᵁ))
@@ -87,17 +87,8 @@ function solvetCommonGroundLP2(matrices::Vector{Matrix{T}})::LPResult_t_2_Common
 
         @constraint(model, sum(wᵁ) + sum(wᴸ) == 2)
 
-        for i = 1:n
-            wᵢᴸ = wᴸ[i]; wᵢᵁ = wᵁ[i] 
-            # kなしの正規性条件
-            ∑wⱼᴸ = sum(map(j -> wᴸ[j], filter(j -> i != j, 1:n)))
-            @constraint(model, ∑wⱼᴸ + wᵢᵁ ≤ 1)
-            ∑wⱼᵁ = sum(map(j -> wᵁ[j], filter(j -> i != j, 1:n)))
-            @constraint(model, ∑wⱼᵁ + wᵢᴸ ≥ 1)
-        end
-
         # 目的関数 ∑(wᵢᵁ - wᵢᴸ)
-        @objective(model, Max, sum(wᵁ) - sum(wᴸ))
+        @objective(model, Min, sum(wᵁ) - sum(wᴸ))
 
         optimize!(model)
 
