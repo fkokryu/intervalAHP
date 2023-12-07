@@ -7647,14 +7647,14 @@ a.anchor-link {
 $$
     \begin{align}
         \begin{split}
-            \text{minimize} ~~ &amp; ~~ \sum_{i\in N} (w_{i}^{R} - w_{i}^{L}) \\
-            \text{subject to} ~~ &amp; ~~ \sum_{i\in N} (w_{ki}^{R} - w_{ki}^{L}) \leq \hat{d_{k}} , k\in M \\
-            ~~ &amp; ~~ w_{ki}^{L}\leq a_{kij}w_{kj}^{R},\, a_{kij}w_{kj}^{L}\leq w_{ki}^{R},\, i,j,\in N(i&lt;j) , k\in M\\
+            \text{minimize} ~~ &amp; ~~ \sum_{i\in N} (w_{i}^{U} - w_{i}^{L}) \\
+            \text{subject to} ~~ &amp; ~~ \sum_{i\in N} (w_{ki}^{U} - w_{ki}^{L}) \leq \hat{d_{k}} , k\in M \\
+            ~~ &amp; ~~ w_{ki}^{L}\leq a_{kij}w_{kj}^{R},\, a_{kij}w_{kj}^{L}\leq w_{ki}^{U},\, i,j,\in N(i&lt;j) , k\in M\\
             ~~ &amp; ~~ \sum_{j\in N\setminus i} w_{kj}^{R} + w_{ki}^{L}\geq 1, k\in M, i\in N, \\
-            ~~ &amp; ~~ \sum_{j\in N\setminus i} w_{kj}^{L} + w_{ki}^{R}\leq 1, k\in M, i\in N, \\
-            ~~ &amp; ~~ \sum_{i\in N} \frac{w_{ki}^{R} + w_{ki}^{L}}{2} = 1, k\in M,  \\
-            ~~ &amp; ~~ \sum_{i\in N} \frac{w_{i}^{R} + w_{i}^{L}}{2} = 1,  \\
-            ~~ &amp; ~~ \epsilon \leq w_{i}^{L}\leq w_{ki}^{L}\leq w_{ki}^{R} \leq w_{i}^{R}, k\in M, i\in N.
+            ~~ &amp; ~~ \sum_{j\in N\setminus i} w_{kj}^{L} + w_{ki}^{U}\leq 1, k\in M, i\in N, \\
+            ~~ &amp; ~~ \sum_{i\in N} \frac{w_{ki}^{U} + w_{ki}^{L}}{2} = 1, k\in M,  \\
+            ~~ &amp; ~~ \sum_{i\in N} \frac{w_{i}^{U} + w_{i}^{L}}{2} = 1,  \\
+            ~~ &amp; ~~ \epsilon \leq w_{i}^{L}\leq w_{ki}^{L}\leq w_{ki}^{U} \leq w_{i}^{U}, k\in M, i\in N.
         \end{split}
     
     \end{align}
@@ -7663,13 +7663,13 @@ $$
 $$
     \begin{align}
         \begin{split}
-            \text{minimize} ~~ &amp; ~~ \sum_{i\in N} (w_{i}^{R} - w_{i}^{L}) \\
-            \text{subject to} ~~ &amp; ~~ \sum_{i\in N} (t_{k}w_{ki}^{R} - t_{k}w_{ki}^{L}) = t_{k}\hat{d_{k}} , k\in M \\
-            ~~ &amp; ~~ t_{k}w_{ki}^{L}\leq a_{kij}t_{k}w_{kj}^{R},\, a_{kij}t_{k}w_{kj}^{L}\leq t_{k}w_{ki}^{R},\, i,j,\in N(i&lt;j) , k\in M\\
+            \text{minimize} ~~ &amp; ~~ \sum_{i\in N} (w_{i}^{U} - w_{i}^{L}) \\
+            \text{subject to} ~~ &amp; ~~ \sum_{i\in N} (t_{k}w_{ki}^{U} - t_{k}w_{ki}^{L}) = t_{k}\hat{d_{k}} , k\in M \\
+            ~~ &amp; ~~ t_{k}w_{ki}^{L}\leq a_{kij}t_{k}w_{kj}^{R},\, a_{kij}t_{k}w_{kj}^{L}\leq t_{k}w_{ki}^{U},\, i,j,\in N(i&lt;j) , k\in M\\
             ~~ &amp; ~~ \sum_{j\in N\setminus i} t_{k}w_{kj}^{R} + t_{k}w_{ki}^{L}\geq 1, k\in M, i\in N, \\
-            ~~ &amp; ~~ \sum_{j\in N\setminus i} t_{k}w_{kj}^{L} + t_{k}w_{ki}^{R}\leq 1, k\in M, i\in N, \\
-            ~~ &amp; ~~ \sum_{i\in N} \frac{w_{i}^{R} + w_{i}^{L}}{2} = 1, \\
-            ~~ &amp; ~~ \epsilon \leq w_{i}^{L}\leq t_{k}w_{ki}^{L}\leq t_{k}w_{ki}^{R} \leq w_{i}^{R}, k\in M, i\in N.
+            ~~ &amp; ~~ \sum_{j\in N\setminus i} t_{k}w_{kj}^{L} + t_{k}w_{ki}^{U}\leq 1, k\in M, i\in N, \\
+            ~~ &amp; ~~ \sum_{i\in N} \frac{w_{i}^{U} + w_{i}^{L}}{2} = 1, \\
+            ~~ &amp; ~~ \epsilon \leq w_{i}^{L}\leq t_{k}w_{ki}^{L}\leq t_{k}w_{ki}^{U} \leq w_{i}^{U}, k\in M, i\in N.
         \end{split}
     
     \end{align}
@@ -7678,14 +7678,14 @@ $$</p>
 $$
     \begin{align}
         \begin{split}
-            \text{minimize} ~~ &amp; ~~ \sum_{i\in N} (w_{i}^{R} - w_{i}^{L}) \\
-            \text{subject to} ~~ &amp; ~~ \sum_{i\in N} (w_{ki}^{R} - w_{ki}^{L}) = t_{k}\hat{d_{k}} , k\in M \\
-            ~~ &amp; ~~ w_{ki}^{L}\leq a_{kij}w_{kj}^{R},\, a_{kij}w_{kj}^{L}\leq w_{ki}^{R},\, i,j,\in N(i&lt;j) , k\in M\\
+            \text{minimize} ~~ &amp; ~~ \sum_{i\in N} (w_{i}^{U} - w_{i}^{L}) \\
+            \text{subject to} ~~ &amp; ~~ \sum_{i\in N} (w_{ki}^{U} - w_{ki}^{L}) = t_{k}\hat{d_{k}} , k\in M \\
+            ~~ &amp; ~~ w_{ki}^{L}\leq a_{kij}w_{kj}^{R},\, a_{kij}w_{kj}^{L}\leq w_{ki}^{U},\, i,j,\in N(i&lt;j) , k\in M\\
             ~~ &amp; ~~ \sum_{j\in N\setminus i} w_{kj}^{R} + w_{ki}^{L}\geq 1, k\in M, i\in N, \\
-            ~~ &amp; ~~ \sum_{j\in N\setminus i} w_{kj}^{L} + w_{ki}^{R}\leq 1, k\in M, i\in N, \\
-            ~~ &amp; ~~ \sum_{i\in N} \frac{w_{i}^{R} + w_{i}^{L}}{2} = 1, \\
-            ~~ &amp; ~~ t_{k} = \sum_{i\in N} \frac{w_{ki}^{R} + w_{ki}^{L}}{2}, k\in M, \\
-            ~~ &amp; ~~ \epsilon \leq w_{i}^{L}\leq w_{ki}^{L}\leq w_{ki}^{R} \leq w_{i}^{R}, k\in M, i\in N.
+            ~~ &amp; ~~ \sum_{j\in N\setminus i} w_{kj}^{L} + w_{ki}^{U}\leq 1, k\in M, i\in N, \\
+            ~~ &amp; ~~ \sum_{i\in N} \frac{w_{i}^{U} + w_{i}^{L}}{2} = 1, \\
+            ~~ &amp; ~~ t_{k} = \sum_{i\in N} \frac{w_{ki}^{U} + w_{ki}^{L}}{2}, k\in M, \\
+            ~~ &amp; ~~ \epsilon \leq w_{i}^{L}\leq w_{ki}^{L}\leq w_{ki}^{U} \leq w_{i}^{U}, k\in M, i\in N.
         \end{split}
     
     \end{align}
@@ -7835,16 +7835,16 @@ $s = [1.0, 0.9999999999999999, 1.0]$
 $$
     \begin{align}
         \begin{split}
-            \text{maximize} ~~ &amp; ~~ \sum_{i\in N} (w_{i}^{R} - w_{i}^{L}) \\
-            \text{subject to} ~~ &amp; ~~ \sum_{i\in N} (w_{ki}^{R} - w_{ki}^{L}) \leq \hat{d_{k}} , k\in M \\
-            ~~ &amp; ~~ w_{ki}^{L}\leq a_{kij}w_{kj}^{R},\, a_{kij}w_{kj}^{L}\leq w_{ki}^{R},\, i,j,\in N(i&lt;j) , k\in M\\
+            \text{maximize} ~~ &amp; ~~ \sum_{i\in N} (w_{i}^{U} - w_{i}^{L}) \\
+            \text{subject to} ~~ &amp; ~~ \sum_{i\in N} (w_{ki}^{U} - w_{ki}^{L}) \leq \hat{d_{k}} , k\in M \\
+            ~~ &amp; ~~ w_{ki}^{L}\leq a_{kij}w_{kj}^{R},\, a_{kij}w_{kj}^{L}\leq w_{ki}^{U},\, i,j,\in N(i&lt;j) , k\in M\\
             ~~ &amp; ~~ \sum_{j\in N\setminus i} w_{kj}^{R} + w_{ki}^{L}\geq 1, k\in M, i\in N, \\
-            ~~ &amp; ~~ \sum_{j\in N\setminus i} w_{kj}^{L} + w_{ki}^{R}\leq 1, k\in M, i\in N, \\
+            ~~ &amp; ~~ \sum_{j\in N\setminus i} w_{kj}^{L} + w_{ki}^{U}\leq 1, k\in M, i\in N, \\
             ~~ &amp; ~~ \sum_{j\in N\setminus i} w_{j}^{R} + w_{i}^{L}\geq 1, i\in N, \\
-            ~~ &amp; ~~ \sum_{j\in N\setminus i} w_{j}^{L} + w_{i}^{R}\leq 1, i\in N, \\
-            ~~ &amp; ~~ \sum_{i\in N} \frac{w_{ki}^{R} + w_{ki}^{L}}{2} = 1, k\in M,  \\
-            ~~ &amp; ~~ \sum_{i\in N} \frac{w_{i}^{R} + w_{i}^{L}}{2} = 1,  \\
-            ~~ &amp; ~~ \epsilon \leq w_{ki}^{L}\leq w_{i}^{L}\leq w_{i}^{R}\leq w_{ki}^{R}, k\in M, i\in N.
+            ~~ &amp; ~~ \sum_{j\in N\setminus i} w_{j}^{L} + w_{i}^{U}\leq 1, i\in N, \\
+            ~~ &amp; ~~ \sum_{i\in N} \frac{w_{ki}^{U} + w_{ki}^{L}}{2} = 1, k\in M,  \\
+            ~~ &amp; ~~ \sum_{i\in N} \frac{w_{i}^{U} + w_{i}^{L}}{2} = 1,  \\
+            ~~ &amp; ~~ \epsilon \leq w_{ki}^{L}\leq w_{i}^{L}\leq w_{i}^{U}\leq w_{ki}^{U}, k\in M, i\in N.
         \end{split}
     
     \end{align}
@@ -7853,15 +7853,15 @@ $$
 $$
     \begin{align}
         \begin{split}
-            \text{maximize} ~~ &amp; ~~ \sum_{i\in N} (w_{i}^{R} - w_{i}^{L}) \\
-            \text{subject to} ~~ &amp; ~~ \sum_{i\in N} (t_{k}w_{ki}^{R} - t_{k}w_{ki}^{L}) = t_{k}\hat{d_{k}} , k\in M \\
-            ~~ &amp; ~~ t_{k}w_{ki}^{L}\leq a_{kij}t_{k}w_{kj}^{R},\, a_{kij}t_{k}w_{kj}^{L}\leq t_{k}w_{ki}^{R},\, i,j,\in N(i&lt;j) , k\in M\\
+            \text{maximize} ~~ &amp; ~~ \sum_{i\in N} (w_{i}^{U} - w_{i}^{L}) \\
+            \text{subject to} ~~ &amp; ~~ \sum_{i\in N} (t_{k}w_{ki}^{U} - t_{k}w_{ki}^{L}) = t_{k}\hat{d_{k}} , k\in M \\
+            ~~ &amp; ~~ t_{k}w_{ki}^{L}\leq a_{kij}t_{k}w_{kj}^{R},\, a_{kij}t_{k}w_{kj}^{L}\leq t_{k}w_{ki}^{U},\, i,j,\in N(i&lt;j) , k\in M\\
             ~~ &amp; ~~ \sum_{j\in N\setminus i} t_{k}w_{kj}^{R} + t_{k}w_{ki}^{L}\geq 1, k\in M, i\in N, \\
-            ~~ &amp; ~~ \sum_{j\in N\setminus i} t_{k}w_{kj}^{L} + t_{k}w_{ki}^{R}\leq 1, k\in M, i\in N, \\
+            ~~ &amp; ~~ \sum_{j\in N\setminus i} t_{k}w_{kj}^{L} + t_{k}w_{ki}^{U}\leq 1, k\in M, i\in N, \\
             ~~ &amp; ~~ \sum_{j\in N\setminus i} w_{j}^{R} + w_{i}^{L}\geq 1, i\in N, \\
-            ~~ &amp; ~~ \sum_{j\in N\setminus i} w_{j}^{L} + w_{i}^{R}\leq 1, i\in N, \\
-            ~~ &amp; ~~ \sum_{i\in N} \frac{w_{i}^{R} + w_{i}^{L}}{2} = 1,  \\
-            ~~ &amp; ~~ \epsilon \leq t_{k}w_{ki}^{L}\leq w_{i}^{L}\leq w_{i}^{R}\leq t_{k}w_{ki}^{R}, k\in M, i\in N.
+            ~~ &amp; ~~ \sum_{j\in N\setminus i} w_{j}^{L} + w_{i}^{U}\leq 1, i\in N, \\
+            ~~ &amp; ~~ \sum_{i\in N} \frac{w_{i}^{U} + w_{i}^{L}}{2} = 1,  \\
+            ~~ &amp; ~~ \epsilon \leq t_{k}w_{ki}^{L}\leq w_{i}^{L}\leq w_{i}^{U}\leq t_{k}w_{ki}^{U}, k\in M, i\in N.
         \end{split}
     
     \end{align}
@@ -7870,16 +7870,16 @@ $$</p>
 $$
     \begin{align}
         \begin{split}
-            \text{maximize} ~~ &amp; ~~ \sum_{i\in N} (w_{i}^{R} - w_{i}^{L}) \\
-            \text{subject to} ~~ &amp; ~~ \sum_{i\in N} (w_{ki}^{R} - w_{ki}^{L}) = t_{k}\hat{d_{k}} , k\in M \\
-            ~~ &amp; ~~ w_{ki}^{L}\leq a_{kij}w_{kj}^{R},\, a_{kij}w_{kj}^{L}\leq w_{ki}^{R},\, i,j,\in N(i&lt;j) , k\in M\\
+            \text{maximize} ~~ &amp; ~~ \sum_{i\in N} (w_{i}^{U} - w_{i}^{L}) \\
+            \text{subject to} ~~ &amp; ~~ \sum_{i\in N} (w_{ki}^{U} - w_{ki}^{L}) = t_{k}\hat{d_{k}} , k\in M \\
+            ~~ &amp; ~~ w_{ki}^{L}\leq a_{kij}w_{kj}^{R},\, a_{kij}w_{kj}^{L}\leq w_{ki}^{U},\, i,j,\in N(i&lt;j) , k\in M\\
             ~~ &amp; ~~ \sum_{j\in N\setminus i} w_{kj}^{R} + w_{ki}^{L}\geq 1, k\in M, i\in N, \\
-            ~~ &amp; ~~ \sum_{j\in N\setminus i} w_{kj}^{L} + w_{ki}^{R}\leq 1, k\in M, i\in N, \\
+            ~~ &amp; ~~ \sum_{j\in N\setminus i} w_{kj}^{L} + w_{ki}^{U}\leq 1, k\in M, i\in N, \\
             ~~ &amp; ~~ \sum_{j\in N\setminus i} w_{j}^{R} + w_{i}^{L}\geq 1, i\in N, \\
-            ~~ &amp; ~~ \sum_{j\in N\setminus i} w_{j}^{L} + w_{i}^{R}\leq 1, i\in N, \\
-            ~~ &amp; ~~ \sum_{i\in N} \frac{w_{i}^{R} + w_{i}^{L}}{2} = 1,  \\
-            ~~ &amp; ~~ t_{k} = \sum_{i\in N} \frac{w_{ki}^{R} + w_{ki}^{L}}{2}, k\in M, \\
-            ~~ &amp; ~~ \epsilon \leq w_{ki}^{L}\leq w_{i}^{L}\leq w_{i}^{R}\leq w_{ki}^{R}, k\in M, i\in N.
+            ~~ &amp; ~~ \sum_{j\in N\setminus i} w_{j}^{L} + w_{i}^{U}\leq 1, i\in N, \\
+            ~~ &amp; ~~ \sum_{i\in N} \frac{w_{i}^{U} + w_{i}^{L}}{2} = 1,  \\
+            ~~ &amp; ~~ t_{k} = \sum_{i\in N} \frac{w_{ki}^{U} + w_{ki}^{L}}{2}, k\in M, \\
+            ~~ &amp; ~~ \epsilon \leq w_{ki}^{L}\leq w_{i}^{L}\leq w_{i}^{U}\leq w_{ki}^{U}, k\in M, i\in N.
         \end{split}
     
     \end{align}
@@ -8029,15 +8029,15 @@ $s = [1.0, 0.9999999999999998, 0.9999999999999991]$
 $$
     \begin{align}
         \begin{split}
-            \text{minimize} ~~ &amp; ~~ \sum_{i\in N} (w_{i}^{R} - w_{i}^{L}) \\
-            \text{subject to}  ~~ &amp; ~~ \sum_{i\in N} (w_{ki}^{R} - w_{ki}^{L}) \leq \hat{d_{k}} , k\in M \\
-            ~~ &amp; ~~ w_{ki}^{L}\leq a_{kij}w_{kj}^{R},\, a_{kij}w_{kj}^{L}\leq w_{ki}^{R},\, i,j,\in N(i&lt;j) , k\in M\\
+            \text{minimize} ~~ &amp; ~~ \sum_{i\in N} (w_{i}^{U} - w_{i}^{L}) \\
+            \text{subject to}  ~~ &amp; ~~ \sum_{i\in N} (w_{ki}^{U} - w_{ki}^{L}) \leq \hat{d_{k}} , k\in M \\
+            ~~ &amp; ~~ w_{ki}^{L}\leq a_{kij}w_{kj}^{R},\, a_{kij}w_{kj}^{L}\leq w_{ki}^{U},\, i,j,\in N(i&lt;j) , k\in M\\
             ~~ &amp; ~~ \sum_{j\in N\setminus i} w_{kj}^{R} + w_{ki}^{L}\geq 1, k\in M, i\in N, \\
-            ~~ &amp; ~~ \sum_{j\in N\setminus i} w_{kj}^{L} + w_{ki}^{R}\leq 1, k\in M, i\in N, \\
+            ~~ &amp; ~~ \sum_{j\in N\setminus i} w_{kj}^{L} + w_{ki}^{U}\leq 1, k\in M, i\in N, \\
             ~~ &amp; ~~ \sum_{i\in N} w_{ki} = 1, k\in M, \\
-            ~~ &amp; ~~ \sum_{i\in N} \frac{w_{ki}^{R} + w_{ki}^{L}}{2} = 1, k\in M,  \\
-            ~~ &amp; ~~ \sum_{i\in N} \frac{w_{i}^{R} + w_{i}^{L}}{2} = 1,  \\
-            ~~ &amp; ~~ \epsilon \leq w_{i}^{L}\leq w_{ki}\leq w_{ki}^{R}, \epsilon \leq w_{ki}^{L}\leq w_{ki}\leq w_{i}^{R}, k\in M, i\in N.
+            ~~ &amp; ~~ \sum_{i\in N} \frac{w_{ki}^{U} + w_{ki}^{L}}{2} = 1, k\in M,  \\
+            ~~ &amp; ~~ \sum_{i\in N} \frac{w_{i}^{U} + w_{i}^{L}}{2} = 1,  \\
+            ~~ &amp; ~~ \epsilon \leq w_{i}^{L}\leq w_{ki}\leq w_{ki}^{U}, \epsilon \leq w_{ki}^{L}\leq w_{ki}\leq w_{i}^{U}, k\in M, i\in N.
         \end{split}
     \end{align}
 $$
@@ -8045,14 +8045,14 @@ $$
 $$
     \begin{align}
         \begin{split}
-            \text{minimize} ~~ &amp; ~~ \sum_{i\in N} (w_{i}^{R} - w_{i}^{L}) \\
-            \text{subject to}  ~~ &amp; ~~ \sum_{i\in N} (t_{k}w_{ki}^{R} - t_{k}w_{ki}^{L}) = t_{k}\hat{d_{k}} , k\in M \\
-            ~~ &amp; ~~ t_{k}w_{ki}^{L}\leq a_{kij}t_{k}w_{kj}^{R},\, a_{kij}t_{k}w_{kj}^{L}\leq t_{k}w_{ki}^{R},\, i,j,\in N(i&lt;j) , k\in M\\
+            \text{minimize} ~~ &amp; ~~ \sum_{i\in N} (w_{i}^{U} - w_{i}^{L}) \\
+            \text{subject to}  ~~ &amp; ~~ \sum_{i\in N} (t_{k}w_{ki}^{U} - t_{k}w_{ki}^{L}) = t_{k}\hat{d_{k}} , k\in M \\
+            ~~ &amp; ~~ t_{k}w_{ki}^{L}\leq a_{kij}t_{k}w_{kj}^{R},\, a_{kij}t_{k}w_{kj}^{L}\leq t_{k}w_{ki}^{U},\, i,j,\in N(i&lt;j) , k\in M\\
             ~~ &amp; ~~ \sum_{j\in N\setminus i} t_{k}w_{kj}^{R} + t_{k}w_{ki}^{L}\geq 1, k\in M, i\in N, \\
-            ~~ &amp; ~~ \sum_{j\in N\setminus i} t_{k}w_{kj}^{L} + t_{k}w_{ki}^{R}\leq 1, k\in M, i\in N, \\
+            ~~ &amp; ~~ \sum_{j\in N\setminus i} t_{k}w_{kj}^{L} + t_{k}w_{ki}^{U}\leq 1, k\in M, i\in N, \\
             ~~ &amp; ~~ \sum_{i\in N} w_{ki} = 1, k\in M \\
-            ~~ &amp; ~~ \sum_{i\in N} \frac{w_{i}^{R} + w_{i}^{L}}{2} = 1,   \\
-            ~~ &amp; ~~ \epsilon \leq w_{i}^{L}\leq w_{ki}\leq t_{k}w_{ki}^{R}, \epsilon \leq t_{k}w_{ki}^{L}\leq w_{ki}\leq w_{i}^{R}, k\in M, i\in N.
+            ~~ &amp; ~~ \sum_{i\in N} \frac{w_{i}^{U} + w_{i}^{L}}{2} = 1,   \\
+            ~~ &amp; ~~ \epsilon \leq w_{i}^{L}\leq w_{ki}\leq t_{k}w_{ki}^{U}, \epsilon \leq t_{k}w_{ki}^{L}\leq w_{ki}\leq w_{i}^{U}, k\in M, i\in N.
         \end{split}
     \end{align}
 $$</p>
@@ -8060,15 +8060,15 @@ $$</p>
 $$
     \begin{align}
         \begin{split}
-            \text{minimize} ~~ &amp; ~~ \sum_{i\in N} (w_{i}^{R} - w_{i}^{L}) \\
-            \text{subject to}  ~~ &amp; ~~ \sum_{i\in N} (w_{ki}^{R} - w_{ki}^{L}) = t_{k}\hat{d_{k}} , k\in M \\
-            ~~ &amp; ~~ w_{ki}^{L}\leq a_{kij}w_{kj}^{R},\, a_{kij}w_{kj}^{L}\leq w_{ki}^{R},\, i,j,\in N(i&lt;j) , k\in M\\
+            \text{minimize} ~~ &amp; ~~ \sum_{i\in N} (w_{i}^{U} - w_{i}^{L}) \\
+            \text{subject to}  ~~ &amp; ~~ \sum_{i\in N} (w_{ki}^{U} - w_{ki}^{L}) = t_{k}\hat{d_{k}} , k\in M \\
+            ~~ &amp; ~~ w_{ki}^{L}\leq a_{kij}w_{kj}^{R},\, a_{kij}w_{kj}^{L}\leq w_{ki}^{U},\, i,j,\in N(i&lt;j) , k\in M\\
             ~~ &amp; ~~ \sum_{j\in N\setminus i} w_{kj}^{R} + w_{ki}^{L}\geq 1, k\in M, i\in N, \\
-            ~~ &amp; ~~ \sum_{j\in N\setminus i} w_{kj}^{L} + w_{ki}^{R}\leq 1, k\in M, i\in N, \\
+            ~~ &amp; ~~ \sum_{j\in N\setminus i} w_{kj}^{L} + w_{ki}^{U}\leq 1, k\in M, i\in N, \\
             ~~ &amp; ~~ \sum_{i\in N} w_{ki} = 1, k\in M \\
-            ~~ &amp; ~~ \sum_{i\in N} \frac{w_{i}^{R} + w_{i}^{L}}{2} = 1,   \\
-            ~~ &amp; ~~ t_{k} = \sum_{i\in N} \frac{w_{ki}^{R} + w_{ki}^{L}}{2}, k\in M, \\
-            ~~ &amp; ~~ \epsilon \leq w_{i}^{L}\leq w_{ki}\leq w_{ki}^{R}, \epsilon \leq w_{ki}^{L}\leq w_{ki}\leq w_{i}^{R}, k\in M, i\in N.
+            ~~ &amp; ~~ \sum_{i\in N} \frac{w_{i}^{U} + w_{i}^{L}}{2} = 1,   \\
+            ~~ &amp; ~~ t_{k} = \sum_{i\in N} \frac{w_{ki}^{U} + w_{ki}^{L}}{2}, k\in M, \\
+            ~~ &amp; ~~ \epsilon \leq w_{i}^{L}\leq w_{ki}\leq w_{ki}^{U}, \epsilon \leq w_{ki}^{L}\leq w_{ki}\leq w_{i}^{U}, k\in M, i\in N.
         \end{split}
     \end{align}
 $$</p>

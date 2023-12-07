@@ -3,7 +3,7 @@
 <html lang="en">
 <head><meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>11-21</title><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
+<title>MethodsEvaluation-copy</title><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
 <style type="text/css">
     pre { line-height: 125%; }
 td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
@@ -7475,18 +7475,7 @@ a.anchor-link {
 </style>
 <!-- End of mermaid configuration --></head>
 <body class="jp-Notebook" data-jp-theme-light="true" data-jp-theme-name="JupyterLab Light">
-<main>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
-<div class="jp-Cell-inputWrapper" tabindex="0">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h1 id="11%E6%9C%8821%E6%97%A5%E3%80%80%E3%82%BC%E3%83%9F">11月21日　ゼミ<a class="anchor-link" href="#11%E6%9C%8821%E6%97%A5%E3%80%80%E3%82%BC%E3%83%9F">¶</a></h1>
-</div>
-</div>
-</div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell">
+<main><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -7495,24 +7484,7 @@ a.anchor-link {
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-julia"><pre><span></span><span class="k">using</span><span class="w"> </span><span class="n">LaTeXStrings</span>
-<span class="n">include</span><span class="p">(</span><span class="s">"../display/display-crisp-matrix.jl"</span><span class="p">)</span>
-<span class="n">include</span><span class="p">(</span><span class="s">"../display/display-interval-vector.jl"</span><span class="p">)</span>
-<span class="n">include</span><span class="p">(</span><span class="s">"../entani/partial-incorporarion.jl"</span><span class="p">)</span>
-<span class="n">include</span><span class="p">(</span><span class="s">"../ttimes/optimal-value.jl"</span><span class="p">)</span>
-<span class="n">include</span><span class="p">(</span><span class="s">"../ttimes/t-perfect.jl"</span><span class="p">)</span>
 </pre></div>
-</div>
-</div>
-</div>
-</div>
-<div class="jp-Cell-outputWrapper">
-<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
-</div>
-<div class="jp-OutputArea jp-Cell-outputArea">
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>solvetPerfectIncorporationLP (generic function with 1 method)</pre>
 </div>
 </div>
 </div>
@@ -7525,25 +7497,100 @@ a.anchor-link {
 <div class="jp-InputPrompt jp-InputArea-prompt">In [2]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-julia"><pre><span></span><span class="n">include</span><span class="p">(</span><span class="s">"../display/display-crisp-matrix.jl"</span><span class="p">)</span>
+<span class="n">include</span><span class="p">(</span><span class="s">"../display/display-interval-vector.jl"</span><span class="p">)</span>
+<span class="n">include</span><span class="p">(</span><span class="s">"../entani/perfect-incorporation.jl"</span><span class="p">)</span>
+<span class="n">include</span><span class="p">(</span><span class="s">"../entani/common-ground.jl"</span><span class="p">)</span>
+<span class="n">include</span><span class="p">(</span><span class="s">"../entani/partial-incorporarion.jl"</span><span class="p">)</span>
+<span class="n">include</span><span class="p">(</span><span class="s">"../center-equal-one/one-perfect.jl"</span><span class="p">)</span>
+<span class="n">include</span><span class="p">(</span><span class="s">"../center-equal-one/one-common.jl"</span><span class="p">)</span>
+<span class="n">include</span><span class="p">(</span><span class="s">"../center-equal-one/one-partial.jl"</span><span class="p">)</span>
+<span class="n">include</span><span class="p">(</span><span class="s">"./t-perfect.jl"</span><span class="p">)</span>
+<span class="n">include</span><span class="p">(</span><span class="s">"./t-common.jl"</span><span class="p">)</span>
+<span class="n">include</span><span class="p">(</span><span class="s">"./t-partial.jl"</span><span class="p">)</span>
+<span class="n">include</span><span class="p">(</span><span class="s">"../ttimes-center/t-perfect-center.jl"</span><span class="p">)</span>
+<span class="n">include</span><span class="p">(</span><span class="s">"../ttimes-center/t-common-center.jl"</span><span class="p">)</span>
+<span class="n">include</span><span class="p">(</span><span class="s">"../ttimes-center/t-partial-center.jl"</span><span class="p">)</span>
+<span class="n">include</span><span class="p">(</span><span class="s">"../ttimes-range/t-perfect-range.jl"</span><span class="p">)</span>
+<span class="n">include</span><span class="p">(</span><span class="s">"../ttimes-range/t-common-range.jl"</span><span class="p">)</span>
+<span class="n">include</span><span class="p">(</span><span class="s">"../ttimes-range/t-partial-range.jl"</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>solvetPartialIncorporationLP3 (generic function with 1 method)</pre>
+</div>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [3]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-julia"><pre><span></span><span class="n">A₁</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span>
-<span class="w">    </span><span class="mi">1</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="mi">3</span><span class="w"> </span><span class="mi">4</span>
-<span class="w">    </span><span class="mi">1</span><span class="o">/</span><span class="mi">2</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="mi">3</span>
-<span class="w">    </span><span class="mi">1</span><span class="o">/</span><span class="mi">3</span><span class="w"> </span><span class="mi">1</span><span class="o">/</span><span class="mi">2</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="mi">2</span>
-<span class="w">    </span><span class="mi">1</span><span class="o">/</span><span class="mi">4</span><span class="w"> </span><span class="mi">1</span><span class="o">/</span><span class="mi">3</span><span class="w"> </span><span class="mi">1</span><span class="o">/</span><span class="mi">2</span><span class="w"> </span><span class="mi">1</span>
+<span class="w">    </span><span class="mf">1.000000</span><span class="w">	</span><span class="mf">1.000000</span><span class="w">	</span><span class="mf">1.000000</span><span class="w">	</span><span class="mf">1.000000</span><span class="w">	</span><span class="mf">3.000000</span><span class="w">	</span><span class="mf">3.000000</span>
+<span class="w">    </span><span class="mf">1.000000</span><span class="w">	</span><span class="mf">1.000000</span><span class="w">	</span><span class="mf">1.000000</span><span class="w">	</span><span class="mf">1.000000</span><span class="w">	</span><span class="mf">3.000000</span><span class="w">	</span><span class="mf">4.000000</span>
+<span class="w">    </span><span class="mf">1.000000</span><span class="w">	</span><span class="mf">1.000000</span><span class="w">	</span><span class="mf">1.000000</span><span class="w">	</span><span class="mf">2.000000</span><span class="w">	</span><span class="mf">1.000000</span><span class="w">	</span><span class="mf">4.000000</span>
+<span class="w">    </span><span class="mf">1.000000</span><span class="w">	</span><span class="mf">1.000000</span><span class="w">	</span><span class="mf">0.500000</span><span class="w">	</span><span class="mf">1.000000</span><span class="w">	</span><span class="mf">2.000000</span><span class="w">	</span><span class="mf">2.000000</span>
+<span class="w">    </span><span class="mi">1</span><span class="o">/</span><span class="mi">3</span><span class="w">	</span><span class="mi">1</span><span class="o">/</span><span class="mi">3</span><span class="w">	</span><span class="mf">1.000000</span><span class="w">	</span><span class="mf">0.500000</span><span class="w">	</span><span class="mf">1.000000</span><span class="w">	</span><span class="mf">1.000000</span>
+<span class="w">    </span><span class="mi">1</span><span class="o">/</span><span class="mi">3</span><span class="w">	</span><span class="mf">0.250000</span><span class="w">	</span><span class="mf">0.250000</span><span class="w">	</span><span class="mf">0.500000</span><span class="w">	</span><span class="mf">1.000000</span><span class="w">	</span><span class="mf">1.000000</span>
 <span class="p">]</span>
 
 <span class="n">A₂</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span>
-<span class="w">    </span><span class="mi">1</span><span class="w"> </span><span class="mi">3</span><span class="w"> </span><span class="mi">3</span><span class="w"> </span><span class="mi">4</span>
-<span class="w">    </span><span class="mi">1</span><span class="o">/</span><span class="mi">3</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="mi">3</span><span class="w"> </span><span class="mi">3</span>
-<span class="w">    </span><span class="mi">1</span><span class="o">/</span><span class="mi">3</span><span class="w"> </span><span class="mi">1</span><span class="o">/</span><span class="mi">3</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="mi">4</span>
-<span class="w">    </span><span class="mi">1</span><span class="o">/</span><span class="mi">4</span><span class="w"> </span><span class="mi">1</span><span class="o">/</span><span class="mi">3</span><span class="w"> </span><span class="mi">1</span><span class="o">/</span><span class="mi">4</span><span class="w"> </span><span class="mi">1</span>
+<span class="w">    </span><span class="mf">1.000000</span><span class="w">	</span><span class="mf">0.500000</span><span class="w">	</span><span class="mf">1.000000</span><span class="w">	</span><span class="mf">1.000000</span><span class="w">	</span><span class="mf">2.000000</span><span class="w">	</span><span class="mf">2.000000</span>
+<span class="w">    </span><span class="mf">2.000000</span><span class="w">	</span><span class="mf">1.000000</span><span class="w">	</span><span class="mf">1.000000</span><span class="w">	</span><span class="mf">1.000000</span><span class="w">	</span><span class="mf">2.000000</span><span class="w">	</span><span class="mf">2.000000</span>
+<span class="w">    </span><span class="mf">1.000000</span><span class="w">	</span><span class="mf">1.000000</span><span class="w">	</span><span class="mf">1.000000</span><span class="w">	</span><span class="mf">2.000000</span><span class="w">	</span><span class="mf">1.000000</span><span class="w">	</span><span class="mf">2.000000</span>
+<span class="w">    </span><span class="mf">1.000000</span><span class="w">	</span><span class="mf">1.000000</span><span class="w">	</span><span class="mf">0.500000</span><span class="w">	</span><span class="mf">1.000000</span><span class="w">	</span><span class="mf">2.000000</span><span class="w">	</span><span class="mf">1.000000</span>
+<span class="w">    </span><span class="mf">0.500000</span><span class="w">	</span><span class="mf">0.500000</span><span class="w">	</span><span class="mf">1.000000</span><span class="w">	</span><span class="mf">0.500000</span><span class="w">	</span><span class="mf">1.000000</span><span class="w">	</span><span class="mf">1.000000</span>
+<span class="w">    </span><span class="mf">0.500000</span><span class="w">	</span><span class="mf">0.500000</span><span class="w">	</span><span class="mf">0.500000</span><span class="w">	</span><span class="mf">1.000000</span><span class="w">	</span><span class="mf">1.000000</span><span class="w">	</span><span class="mf">1.000000</span>
 <span class="p">]</span>
 
 <span class="n">A₃</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span>
-<span class="w">    </span><span class="mi">1</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="mi">2</span>
-<span class="w">    </span><span class="mi">1</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="mi">3</span><span class="w"> </span><span class="mi">1</span>
-<span class="w">    </span><span class="mi">1</span><span class="o">/</span><span class="mi">2</span><span class="w"> </span><span class="mi">1</span><span class="o">/</span><span class="mi">3</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="mi">3</span>
-<span class="w">    </span><span class="mi">1</span><span class="o">/</span><span class="mi">2</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="mi">1</span><span class="o">/</span><span class="mi">3</span><span class="w"> </span><span class="mi">1</span>
+<span class="w">    </span><span class="mf">1.000000</span><span class="w">	</span><span class="mf">0.500000</span><span class="w">	</span><span class="mf">1.000000</span><span class="w">	</span><span class="mf">1.000000</span><span class="w">	</span><span class="mf">3.000000</span><span class="w">	</span><span class="mf">3.000000</span>
+<span class="w">    </span><span class="mf">2.000000</span><span class="w">	</span><span class="mf">1.000000</span><span class="w">	</span><span class="mf">1.000000</span><span class="w">	</span><span class="mf">1.000000</span><span class="w">	</span><span class="mf">3.000000</span><span class="w">	</span><span class="mf">4.000000</span>
+<span class="w">    </span><span class="mf">1.000000</span><span class="w">	</span><span class="mf">1.000000</span><span class="w">	</span><span class="mf">1.000000</span><span class="w">	</span><span class="mf">2.000000</span><span class="w">	</span><span class="mf">1.000000</span><span class="w">	</span><span class="mf">4.000000</span>
+<span class="w">    </span><span class="mf">1.000000</span><span class="w">	</span><span class="mf">1.000000</span><span class="w">	</span><span class="mf">0.500000</span><span class="w">	</span><span class="mf">1.000000</span><span class="w">	</span><span class="mf">2.000000</span><span class="w">	</span><span class="mf">2.000000</span>
+<span class="w">    </span><span class="mi">1</span><span class="o">/</span><span class="mi">3</span><span class="w">	</span><span class="mi">1</span><span class="o">/</span><span class="mi">3</span><span class="w">	</span><span class="mf">1.000000</span><span class="w">	</span><span class="mf">0.500000</span><span class="w">	</span><span class="mf">1.000000</span><span class="w">	</span><span class="mf">1.000000</span>
+<span class="w">    </span><span class="mi">1</span><span class="o">/</span><span class="mi">3</span><span class="w">	</span><span class="mf">0.250000</span><span class="w">	</span><span class="mf">0.250000</span><span class="w">	</span><span class="mf">0.500000</span><span class="w">	</span><span class="mf">1.000000</span><span class="w">	</span><span class="mf">1.000000</span>
+<span class="p">]</span>
+
+<span class="n">A₄</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="mf">1.000000</span><span class="w">	</span><span class="mf">1.000000</span><span class="w">	</span><span class="mf">1.000000</span><span class="w">	</span><span class="mf">1.000000</span><span class="w">	</span><span class="mf">3.000000</span><span class="w">	</span><span class="mf">3.000000</span>
+<span class="w">    </span><span class="mf">1.000000</span><span class="w">	</span><span class="mf">1.000000</span><span class="w">	</span><span class="mf">1.000000</span><span class="w">	</span><span class="mf">1.000000</span><span class="w">	</span><span class="mf">3.000000</span><span class="w">	</span><span class="mf">4.000000</span>
+<span class="w">    </span><span class="mf">1.000000</span><span class="w">	</span><span class="mf">1.000000</span><span class="w">	</span><span class="mf">1.000000</span><span class="w">	</span><span class="mf">2.000000</span><span class="w">	</span><span class="mf">1.000000</span><span class="w">	</span><span class="mf">4.000000</span>
+<span class="w">    </span><span class="mf">1.000000</span><span class="w">	</span><span class="mf">1.000000</span><span class="w">	</span><span class="mf">0.500000</span><span class="w">	</span><span class="mf">1.000000</span><span class="w">	</span><span class="mf">2.000000</span><span class="w">	</span><span class="mf">2.000000</span>
+<span class="w">    </span><span class="mi">1</span><span class="o">/</span><span class="mi">3</span><span class="w">	</span><span class="mi">1</span><span class="o">/</span><span class="mi">3</span><span class="w">	</span><span class="mf">1.000000</span><span class="w">	</span><span class="mf">0.500000</span><span class="w">	</span><span class="mf">1.000000</span><span class="w">	</span><span class="mf">1.000000</span>
+<span class="w">    </span><span class="mi">1</span><span class="o">/</span><span class="mi">3</span><span class="w">	</span><span class="mf">0.250000</span><span class="w">	</span><span class="mf">0.250000</span><span class="w">	</span><span class="mf">0.500000</span><span class="w">	</span><span class="mf">1.000000</span><span class="w">	</span><span class="mf">1.000000</span>
+<span class="p">]</span>
+
+<span class="n">A₅</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="mf">1.000000</span><span class="w">	</span><span class="mf">0.500000</span><span class="w">	</span><span class="mf">1.000000</span><span class="w">	</span><span class="mf">1.000000</span><span class="w">	</span><span class="mf">2.000000</span><span class="w">	</span><span class="mf">2.000000</span>
+<span class="w">    </span><span class="mf">2.000000</span><span class="w">	</span><span class="mf">1.000000</span><span class="w">	</span><span class="mf">1.000000</span><span class="w">	</span><span class="mf">1.000000</span><span class="w">	</span><span class="mf">2.000000</span><span class="w">	</span><span class="mf">2.000000</span>
+<span class="w">    </span><span class="mf">1.000000</span><span class="w">	</span><span class="mf">1.000000</span><span class="w">	</span><span class="mf">1.000000</span><span class="w">	</span><span class="mf">2.000000</span><span class="w">	</span><span class="mf">1.000000</span><span class="w">	</span><span class="mf">2.000000</span>
+<span class="w">    </span><span class="mf">1.000000</span><span class="w">	</span><span class="mf">1.000000</span><span class="w">	</span><span class="mf">0.500000</span><span class="w">	</span><span class="mf">1.000000</span><span class="w">	</span><span class="mf">2.000000</span><span class="w">	</span><span class="mf">1.000000</span>
+<span class="w">    </span><span class="mf">0.500000</span><span class="w">	</span><span class="mf">0.500000</span><span class="w">	</span><span class="mf">1.000000</span><span class="w">	</span><span class="mf">0.500000</span><span class="w">	</span><span class="mf">1.000000</span><span class="w">	</span><span class="mf">1.000000</span>
+<span class="w">    </span><span class="mf">0.500000</span><span class="w">	</span><span class="mf">0.500000</span><span class="w">	</span><span class="mf">0.500000</span><span class="w">	</span><span class="mf">1.000000</span><span class="w">	</span><span class="mf">1.000000</span><span class="w">	</span><span class="mf">1.000000</span>
+<span class="p">]</span>
+
+<span class="n">A₆</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="mf">1.000000</span><span class="w">	</span><span class="mf">0.500000</span><span class="w">	</span><span class="mf">1.000000</span><span class="w">	</span><span class="mf">1.000000</span><span class="w">	</span><span class="mf">3.000000</span><span class="w">	</span><span class="mf">3.000000</span>
+<span class="w">    </span><span class="mf">2.000000</span><span class="w">	</span><span class="mf">1.000000</span><span class="w">	</span><span class="mf">1.000000</span><span class="w">	</span><span class="mf">1.000000</span><span class="w">	</span><span class="mf">3.000000</span><span class="w">	</span><span class="mf">4.000000</span>
+<span class="w">    </span><span class="mf">1.000000</span><span class="w">	</span><span class="mf">1.000000</span><span class="w">	</span><span class="mf">1.000000</span><span class="w">	</span><span class="mf">2.000000</span><span class="w">	</span><span class="mf">1.000000</span><span class="w">	</span><span class="mf">4.000000</span>
+<span class="w">    </span><span class="mf">1.000000</span><span class="w">	</span><span class="mf">1.000000</span><span class="w">	</span><span class="mf">0.500000</span><span class="w">	</span><span class="mf">1.000000</span><span class="w">	</span><span class="mf">2.000000</span><span class="w">	</span><span class="mf">2.000000</span>
+<span class="w">    </span><span class="mi">1</span><span class="o">/</span><span class="mi">3</span><span class="w">	</span><span class="mi">1</span><span class="o">/</span><span class="mi">3</span><span class="w">	</span><span class="mf">1.000000</span><span class="w">	</span><span class="mf">0.500000</span><span class="w">	</span><span class="mf">1.000000</span><span class="w">	</span><span class="mf">1.000000</span>
+<span class="w">    </span><span class="mi">1</span><span class="o">/</span><span class="mi">3</span><span class="w">	</span><span class="mf">0.250000</span><span class="w">	</span><span class="mf">0.250000</span><span class="w">	</span><span class="mf">0.500000</span><span class="w">	</span><span class="mf">1.000000</span><span class="w">	</span><span class="mf">1.000000</span>
 <span class="p">]</span>
 </pre></div>
 </div>
@@ -7557,11 +7604,134 @@ a.anchor-link {
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>4×4 Matrix{Float64}:
- 1.0  1.0       2.0       2.0
- 1.0  1.0       3.0       1.0
- 0.5  0.333333  1.0       3.0
- 0.5  1.0       0.333333  1.0</pre>
+<pre>6×6 Matrix{Float64}:
+ 1.0       0.5       1.0   1.0  3.0  3.0
+ 2.0       1.0       1.0   1.0  3.0  4.0
+ 1.0       1.0       1.0   2.0  1.0  4.0
+ 1.0       1.0       0.5   1.0  2.0  2.0
+ 0.333333  0.333333  1.0   0.5  1.0  1.0
+ 0.333333  0.25      0.25  0.5  1.0  1.0</pre>
+</div>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [4]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-julia"><pre><span></span><span class="n">originalPerfectIncorporation</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">solvePerfectIncorporationLP</span><span class="p">([</span><span class="n">A₁</span><span class="p">,</span><span class="w"> </span><span class="n">A₂</span><span class="p">,</span><span class="w"> </span><span class="n">A₃</span><span class="p">])</span>
+<span class="c">#originalCommonGround = solveCommonGroundLP([A₄, A₅, A₆])</span>
+<span class="n">originalPartialIncorporation</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">solvePartialIncorporationLP</span><span class="p">([</span><span class="n">A₁</span><span class="p">,</span><span class="w"> </span><span class="n">A₂</span><span class="p">,</span><span class="w"> </span><span class="n">A₃</span><span class="p">])</span>
+<span class="n">PerfectIncorporation</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">solveonePerfectIncorporationLP</span><span class="p">([</span><span class="n">A₁</span><span class="p">,</span><span class="w"> </span><span class="n">A₂</span><span class="p">,</span><span class="w"> </span><span class="n">A₃</span><span class="p">])</span>
+<span class="c">#CommonGround = solveoneCommonGroundLP([A₄, A₅, A₆])</span>
+<span class="n">PartialIncorporation</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">solveonePartialIncorporationLP</span><span class="p">([</span><span class="n">A₁</span><span class="p">,</span><span class="w"> </span><span class="n">A₂</span><span class="p">,</span><span class="w"> </span><span class="n">A₃</span><span class="p">])</span>
+<span class="c">#tPerfectIncorporation = solvetPerfectIncorporationLP([A₁, A₂, A₃])</span>
+<span class="c">#tCommonGround = solvetCommonGroundLP([A₄, A₅, A₆])</span>
+<span class="c">#tPartialIncorporation = solvetPartialIncorporationLP([A₁, A₂, A₃])</span>
+<span class="n">tPerfectIncorporation2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">solvetPerfectIncorporationLP2</span><span class="p">([</span><span class="n">A₁</span><span class="p">,</span><span class="w"> </span><span class="n">A₂</span><span class="p">,</span><span class="w"> </span><span class="n">A₃</span><span class="p">])</span>
+<span class="c">#tCommonGround2 = solvetCommonGroundLP2([A₄, A₅, A₆])</span>
+<span class="n">tPartialIncorporation2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">solvetPartialIncorporationLP2</span><span class="p">([</span><span class="n">A₁</span><span class="p">,</span><span class="w"> </span><span class="n">A₂</span><span class="p">,</span><span class="w"> </span><span class="n">A₃</span><span class="p">])</span>
+<span class="c">#tPerfectIncorporation3 = solvetPerfectIncorporationLP3([A₁, A₂, A₃])</span>
+<span class="c">#tCommonGround3 = solvetCommonGroundLP3([A₄, A₅, A₆])</span>
+<span class="c">#tPartialIncorporation3 = solvetPartialIncorporationLP3([A₁, A₂, A₃])</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
+<pre>
+Result index of attribute MathOptInterface.VariablePrimal(1) out of bounds. There are currently 0 solution(s) in the model.
+
+
+
+Stacktrace:
+
+  [1] check_result_index_bounds
+
+    @ /opt/julia/packages/MathOptInterface/am39L/src/attributes.jl:207 [inlined]
+
+  [2] get
+
+    @ /opt/julia/packages/HiGHS/zTMN2/src/MOI_wrapper.jl:2023 [inlined]
+
+  [3] get(b::MathOptInterface.Bridges.LazyBridgeOptimizer{HiGHS.Optimizer}, attr::MathOptInterface.VariablePrimal, index::MathOptInterface.VariableIndex)
+
+    @ MathOptInterface.Bridges /opt/julia/packages/MathOptInterface/am39L/src/Bridges/bridge_optimizer.jl:1227
+
+  [4] get(model::MathOptInterface.Utilities.CachingOptimizer{MathOptInterface.Bridges.LazyBridgeOptimizer{HiGHS.Optimizer}, MathOptInterface.Utilities.UniversalFallback{MathOptInterface.Utilities.Model{Float64}}}, attr::MathOptInterface.VariablePrimal, index::MathOptInterface.VariableIndex)
+
+    @ MathOptInterface.Utilities /opt/julia/packages/MathOptInterface/am39L/src/Utilities/cachingoptimizer.jl:911
+
+  [5] _moi_get_result(::MathOptInterface.Utilities.CachingOptimizer{MathOptInterface.Bridges.LazyBridgeOptimizer{HiGHS.Optimizer}, MathOptInterface.Utilities.UniversalFallback{MathOptInterface.Utilities.Model{Float64}}}, ::MathOptInterface.VariablePrimal, ::Vararg{Any})
+
+    @ JuMP /opt/julia/packages/JuMP/D44Aq/src/optimizer_interface.jl:663
+
+  [6] get(model::Model, attr::MathOptInterface.VariablePrimal, v::VariableRef)
+
+    @ JuMP /opt/julia/packages/JuMP/D44Aq/src/optimizer_interface.jl:703
+
+  [7] value(v::VariableRef; result::Int64)
+
+    @ JuMP /opt/julia/packages/JuMP/D44Aq/src/variables.jl:1693
+
+  [8] value
+
+    @ /opt/julia/packages/JuMP/D44Aq/src/variables.jl:1692 [inlined]
+
+  [9] _broadcast_getindex_evalf
+
+    @ ./broadcast.jl:683 [inlined]
+
+ [10] _broadcast_getindex
+
+    @ ./broadcast.jl:656 [inlined]
+
+ [11] getindex
+
+    @ ./broadcast.jl:610 [inlined]
+
+ [12] macro expansion
+
+    @ ./broadcast.jl:974 [inlined]
+
+ [13] macro expansion
+
+    @ ./simdloop.jl:77 [inlined]
+
+ [14] copyto!
+
+    @ ./broadcast.jl:973 [inlined]
+
+ [15] copyto!
+
+    @ ./broadcast.jl:926 [inlined]
+
+ [16] copy
+
+    @ ./broadcast.jl:898 [inlined]
+
+ [17] materialize
+
+    @ ./broadcast.jl:873 [inlined]
+
+ [18] solvetCommonGroundLP2(matrices::Vector{Matrix{Float64}})
+
+    @ Main /workspaces/intervalAHP/src/lib/ttimes-center/t-common-center.jl:104
+
+ [19] top-level scope
+
+    @ /workspaces/intervalAHP/src/lib/ttimes/MethodsEvaluation copy.ipynb:11</pre>
 </div>
 </div>
 </div>
@@ -7573,110 +7743,37 @@ a.anchor-link {
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h1 id="partial-incorporation-approach%E3%81%AE%E5%AE%9F%E8%A3%85">partial incorporation approachの実装<a class="anchor-link" href="#partial-incorporation-approach%E3%81%AE%E5%AE%9F%E8%A3%85">¶</a></h1><p>$$
+<p>perfect incorporation approach</p>
+<p>従来法
+$$
     \begin{align}
         \begin{split}
-            \text{minimize} ~~ &amp; ~~ \sum_{i\in N} (w_{i}^{U} - w_{i}^{L}) \\
-            ~~ &amp; ~~ \sum_{i\in N} (w_{ki}^{U} - w_{ki}^{L}) \leq \hat{d_{k}} , k\in M \\
-            \text{subject to} ~~ &amp; ~~ w_{ki}^{L}\leq a_{kij}w_{kj}^{R},\, a_{kij}w_{kj}^{L}\leq w_{ki}^{U},\, i,j,\in N(i&lt;j) , k\in M\\
+            \text{minimize} ~~ &amp; ~~ \sum_{i\in N} (w_{i}^{R} - w_{i}^{L}) \\
+            \text{subject to} ~~ &amp; ~~ \sum_{i\in N} (w_{ki}^{R} - w_{ki}^{L}) \leq \hat{d_{k}} , k\in M \\
+            ~~ &amp; ~~ w_{ki}^{L}\leq a_{kij}w_{kj}^{R},\, a_{kij}w_{kj}^{L}\leq w_{ki}^{R},\, i,j,\in N(i&lt;j) , k\in M\\
             ~~ &amp; ~~ \sum_{j\in N\setminus i} w_{kj}^{R} + w_{ki}^{L}\geq 1, k\in M, i\in N, \\
-            ~~ &amp; ~~ \sum_{j\in N\setminus i} w_{kj}^{L} + w_{ki}^{U}\leq 1, k\in M, i\in N, \\
-            ~~ &amp; ~~ \sum_{i\in N} w_{ki} = 1, k\in M, \\
-            ~~ &amp; ~~ \epsilon \geq w_{i}^{L}\geq w_{ki}\geq w_{ki}^{U}, \epsilon \geq w_{ki}^{L}\geq w_{ki}\geq w_{ki}^{U}, k\in M, i\in N.
+            ~~ &amp; ~~ \sum_{j\in N\setminus i} w_{kj}^{L} + w_{ki}^{R}\leq 1, k\in M, i\in N, \\
+            ~~ &amp; ~~ \sum_{i\in N} \frac{w_{ki}^{R} + w_{ki}^{L}}{2} = 1, k\in M,  \\
+            ~~ &amp; ~~ \sum_{i\in N} \frac{w_{i}^{R} + w_{i}^{L}}{2} = 1,  \\
+            ~~ &amp; ~~ \epsilon \leq w_{i}^{L}\leq w_{ki}^{L}\leq w_{ki}^{R} \leq w_{i}^{R}, k\in M, i\in N.
         \end{split}
+    
     \end{align}
 $$</p>
-</div>
-</div>
-</div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell">
-<div class="jp-Cell-inputWrapper" tabindex="0">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [10]:</div>
-<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-<div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-julia"><pre><span></span><span class="n">solution</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">solvePartialIncorporationLP</span><span class="p">([</span><span class="n">A₁</span><span class="p">,</span><span class="w"> </span><span class="n">A₂</span><span class="p">,</span><span class="w"> </span><span class="n">A₃</span><span class="p">])</span>
-<span class="n">W</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">solution</span><span class="o">.</span><span class="n">W</span>
-<span class="n">display</span><span class="p">(</span><span class="sa">L</span><span class="s">"W = %</span><span class="si">$</span><span class="p">(</span><span class="n">intervalVectorLaTeXString</span><span class="p">(</span><span class="n">W</span><span class="p">))</span><span class="s">"</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-</div>
-</div>
-<div class="jp-Cell-outputWrapper">
-<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
-</div>
-<div class="jp-OutputArea jp-Cell-outputArea">
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedLatex jp-OutputArea-output" data-mime-type="text/latex" tabindex="0">
-$W = \begin{pmatrix} \left[ 0.375, 0.571 \right] \\ \left[ 0.214, 0.25 \right] \\ \left[ 0.167, 0.167 \right] \\ \left[ 0.048, 0.208 \right] \end{pmatrix}$
-</div>
-</div>
-</div>
-</div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell">
-<div class="jp-Cell-inputWrapper" tabindex="0">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [11]:</div>
-<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-<div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-julia"><pre><span></span><span class="n">d</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">solution</span><span class="o">.</span><span class="n">optimalValue</span>
-</pre></div>
-</div>
-</div>
-</div>
-</div>
-<div class="jp-Cell-outputWrapper">
-<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
-</div>
-<div class="jp-OutputArea jp-Cell-outputArea">
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>0.39285714285714335</pre>
-</div>
-</div>
-</div>
-</div>
-</div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
-<div class="jp-Cell-inputWrapper" tabindex="0">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h1 id="%E4%B8%80%E8%88%AC%E7%9A%84%E3%81%AA%E5%8C%BA%E9%96%93AHP%E5%95%8F%E9%A1%8C%E3%81%AB%E5%AF%BE%E3%81%97%E3%81%A6%E9%87%8D%E3%81%BF%E3%82%92t%E5%80%8D%E3%81%99%E3%82%8B">一般的な区間AHP問題に対して重みをt倍する<a class="anchor-link" href="#%E4%B8%80%E8%88%AC%E7%9A%84%E3%81%AA%E5%8C%BA%E9%96%93AHP%E5%95%8F%E9%A1%8C%E3%81%AB%E5%AF%BE%E3%81%97%E3%81%A6%E9%87%8D%E3%81%BF%E3%82%92t%E5%80%8D%E3%81%99%E3%82%8B">¶</a></h1><h3 id="%E4%B8%80%E8%88%AC%E7%9A%84%E3%81%AA%E5%8C%BA%E9%96%93AHP%E5%95%8F%E9%A1%8C%E3%81%AF%E4%BB%A5%E4%B8%8B%E3%81%AE%E9%80%9A%E3%82%8A">一般的な区間AHP問題は以下の通り<a class="anchor-link" href="#%E4%B8%80%E8%88%AC%E7%9A%84%E3%81%AA%E5%8C%BA%E9%96%93AHP%E5%95%8F%E9%A1%8C%E3%81%AF%E4%BB%A5%E4%B8%8B%E3%81%AE%E9%80%9A%E3%82%8A">¶</a></h3><p>$$
+<p>提案法
+$$
     \begin{align}
         \begin{split}
-            \text{minimize} ~~ &amp; ~~ \sum_{i\in N} (w_{ki}^{U} - w_{ki}^{L}) \\
-            \text{subject to} ~~ &amp; ~~ w_{ki}^{L}\leq a_{kij}w_{kj}^{R},\, a_{kij}w_{kj}^{L}\leq w_{ki}^{U},\, i,j,\in N(i&lt;j) \\
-            ~~ &amp; ~~ \sum_{j\in N\setminus i} w_{kj}^{R} + w_{ki}^{L}\geq 1, i\in N, \\
-            ~~ &amp; ~~ \sum_{j\in N\setminus i} w_{kj}^{L} + w_{ki}^{U}\leq 1, i\in N, \\
-            ~~ &amp; ~~ w_{ki}^{U}\geq w_{ki}^{L}\geq \epsilon, i\in N. \notag
+            \text{minimize} ~~ &amp; ~~ \sum_{i\in N} (w_{i}^{R} - w_{i}^{L}) \\
+            \text{subject to} ~~ &amp; ~~ \sum_{i\in N} (w_{ki}^{R} - w_{ki}^{L}) = t_{k}\hat{d_{k}} , k\in M \\
+            ~~ &amp; ~~ w_{ki}^{L}\leq a_{kij}w_{kj}^{R},\, a_{kij}w_{kj}^{L}\leq w_{ki}^{R},\, i,j,\in N(i&lt;j) , k\in M\\
+            ~~ &amp; ~~ \sum_{j\in N\setminus i} w_{kj}^{R} + w_{ki}^{L}\geq 1, k\in M, i\in N, \\
+            ~~ &amp; ~~ \sum_{j\in N\setminus i} w_{kj}^{L} + w_{ki}^{R}\leq 1, k\in M, i\in N, \\
+            ~~ &amp; ~~ \sum_{i\in N} \frac{w_{i}^{R} + w_{i}^{L}}{2} = 1, \\
+            ~~ &amp; ~~ t_{k} = \sum_{i\in N} \frac{w_{ki}^{R} + w_{ki}^{L}}{2}, k\in M, \\
+            ~~ &amp; ~~ \epsilon \leq w_{i}^{L}\leq w_{ki}^{L}\leq w_{ki}^{R} \leq w_{i}^{R}, k\in M, i\in N.
         \end{split}
-    \end{align}
-$$</p>
-<h3 id="%E9%87%8D%E3%81%BF%E3%82%92t%E5%80%8D%E3%81%99%E3%82%8B%E3%80%80%E2%86%92-%E4%BB%A5%E4%B8%8B%E3%81%AE%E3%82%88%E3%81%86%E3%81%AB%E5%AE%9A%E7%BE%A9%E3%81%99%E3%82%8B">重みをt倍する　→ 以下のように定義する<a class="anchor-link" href="#%E9%87%8D%E3%81%BF%E3%82%92t%E5%80%8D%E3%81%99%E3%82%8B%E3%80%80%E2%86%92-%E4%BB%A5%E4%B8%8B%E3%81%AE%E3%82%88%E3%81%86%E3%81%AB%E5%AE%9A%E7%BE%A9%E3%81%99%E3%82%8B">¶</a></h3><p>$$
-    \begin{align}
-        ~~ &amp; ~~ t \coloneqq \frac{1}{\sum_{i\in N} (w_{ki}^{U} + w_{ki}^{L})}  \\
-        ~~ &amp; ~~ v_{ki}^{R} \coloneqq t w_{ki}^{U},\, v_{ki}^{L} \coloneqq t w_{ki}^{L} \\
-        ~~ &amp; ~~ \sum_{i\in N} (v_{ki}^{R} + v_{ki}^{L}) = 2
-    \end{align}
-$$</p>
-<h3 id="%E4%B8%8A%E3%81%AE%E5%8C%BA%E9%96%93AHP%E5%95%8F%E9%A1%8C%E3%81%AF%E4%BB%A5%E4%B8%8B%E3%81%AE%E3%82%88%E3%81%86%E3%81%AB%E3%81%AA%E3%82%8B">上の区間AHP問題は以下のようになる<a class="anchor-link" href="#%E4%B8%8A%E3%81%AE%E5%8C%BA%E9%96%93AHP%E5%95%8F%E9%A1%8C%E3%81%AF%E4%BB%A5%E4%B8%8B%E3%81%AE%E3%82%88%E3%81%86%E3%81%AB%E3%81%AA%E3%82%8B">¶</a></h3><p>$$
-    \begin{align}
-        \begin{split}
-            \text{minimize} ~~ &amp; ~~ \sum_{i\in N} (v_{ki}^{R} - v_{ki}^{L}) \\
-            \text{subject to} ~~ &amp; ~~ v_{ki}^{L}\leq a_{kij}v_{kj}^{R},\, a_{kij}v_{kj}^{L}\leq v_{ki}^{R},\, i,j,\in N(i&lt;j) \\
-            ~~ &amp; ~~ \sum_{j\in N\setminus i} v_{kj}^{R} + v_{ki}^{L}\geq t, i\in N, \\
-            ~~ &amp; ~~ \sum_{j\in N\setminus i} v_{kj}^{L} + v_{ki}^{R}\leq t, i\in N, \\
-            ~~ &amp; ~~ v_{ki}^{R}\geq v_{ki}^{L}\geq \epsilon, t\geq \epsilon, i\in N. \notag
-        \end{split}
+    
     \end{align}
 $$</p>
 </div>
@@ -7690,9 +7787,25 @@ $$</p>
 <div class="jp-InputPrompt jp-InputArea-prompt">In [5]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-julia"><pre><span></span><span class="n">solution</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">solveCrispAHPLP</span><span class="p">(</span><span class="n">A₁</span><span class="p">)</span>
-<span class="n">V</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">solution</span><span class="o">.</span><span class="n">V</span>
-<span class="n">display</span><span class="p">(</span><span class="sa">L</span><span class="s">"V = %</span><span class="si">$</span><span class="p">(</span><span class="n">intervalVectorLaTeXString</span><span class="p">(</span><span class="n">V</span><span class="p">))</span><span class="s">"</span><span class="p">)</span>
+<div class="highlight hl-julia"><pre><span></span><span class="n">display</span><span class="p">(</span><span class="sa">L</span><span class="s">"OriginalPerfectIncorporation :"</span><span class="p">)</span>
+<span class="n">W_originalPerfectIncorporation</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">originalPerfectIncorporation</span><span class="o">.</span><span class="n">W</span>
+<span class="n">display</span><span class="p">(</span><span class="sa">L</span><span class="s">"W = %</span><span class="si">$</span><span class="p">(</span><span class="n">intervalVectorLaTeXString</span><span class="p">(</span><span class="n">W_originalPerfectIncorporation</span><span class="p">))</span><span class="s">"</span><span class="p">)</span>
+<span class="n">d_originalPerfectIncorporation</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">originalPerfectIncorporation</span><span class="o">.</span><span class="n">optimalValue</span>
+<span class="n">display</span><span class="p">(</span><span class="sa">L</span><span class="s">"d = %</span><span class="si">$</span><span class="p">(</span><span class="n">d_originalPerfectIncorporation</span><span class="p">)</span><span class="s">"</span><span class="p">)</span>
+
+<span class="n">display</span><span class="p">(</span><span class="sa">L</span><span class="s">"PerfectIncorporation :"</span><span class="p">)</span>
+<span class="n">W_PerfectIncorporation</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">PerfectIncorporation</span><span class="o">.</span><span class="n">W</span>
+<span class="n">display</span><span class="p">(</span><span class="sa">L</span><span class="s">"W = %</span><span class="si">$</span><span class="p">(</span><span class="n">intervalVectorLaTeXString</span><span class="p">(</span><span class="n">W_PerfectIncorporation</span><span class="p">))</span><span class="s">"</span><span class="p">)</span>
+<span class="n">d_PerfectIncorporation</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">PerfectIncorporation</span><span class="o">.</span><span class="n">optimalValue</span>
+<span class="n">display</span><span class="p">(</span><span class="sa">L</span><span class="s">"d = %</span><span class="si">$</span><span class="p">(</span><span class="n">d_PerfectIncorporation</span><span class="p">)</span><span class="s">"</span><span class="p">)</span>
+
+<span class="n">display</span><span class="p">(</span><span class="sa">L</span><span class="s">"tPerfectIncorporation :"</span><span class="p">)</span>
+<span class="n">W_tPerfectIncorporation2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">tPerfectIncorporation2</span><span class="o">.</span><span class="n">W</span>
+<span class="n">display</span><span class="p">(</span><span class="sa">L</span><span class="s">"W = %</span><span class="si">$</span><span class="p">(</span><span class="n">intervalVectorLaTeXString</span><span class="p">(</span><span class="n">W_tPerfectIncorporation2</span><span class="p">))</span><span class="s">"</span><span class="p">)</span>
+<span class="n">d_tPerfectIncorporation2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">tPerfectIncorporation2</span><span class="o">.</span><span class="n">optimalValue</span>
+<span class="n">display</span><span class="p">(</span><span class="sa">L</span><span class="s">"d = %</span><span class="si">$</span><span class="p">(</span><span class="n">d_tPerfectIncorporation2</span><span class="p">)</span><span class="s">"</span><span class="p">)</span>
+<span class="n">s_tPerfectIncorporation2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">tPerfectIncorporation2</span><span class="o">.</span><span class="n">s</span>
+<span class="n">display</span><span class="p">(</span><span class="sa">L</span><span class="s">"s = %</span><span class="si">$</span><span class="p">(</span><span class="n">s_tPerfectIncorporation2</span><span class="p">)</span><span class="s">"</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -7705,8 +7818,107 @@ $$</p>
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedLatex jp-OutputArea-output" data-mime-type="text/latex" tabindex="0">
-$V = \begin{pmatrix} \left[ 0.5, 0.5 \right] \\ \left[ 0.25, 0.25 \right] \\ \left[ 0.125, 0.167 \right] \\ \left[ 0.083, 0.125 \right] \end{pmatrix}$
+$OriginalPerfectIncorporation :$
 </div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedLatex jp-OutputArea-output" data-mime-type="text/latex" tabindex="0">
+$W = \begin{pmatrix} \left[ 0.1, 0.214 \right] \\ \left[ 0.2, 0.235 \right] \\ \left[ 0.176, 0.235 \right] \\ \left[ 0.1, 0.235 \right] \\ \left[ 0.059, 0.2 \right] \\ \left[ 0.054, 0.1 \right] \end{pmatrix}$
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedLatex jp-OutputArea-output" data-mime-type="text/latex" tabindex="0">
+$d = 0.531302521008395$
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedLatex jp-OutputArea-output" data-mime-type="text/latex" tabindex="0">
+$PerfectIncorporation :$
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedLatex jp-OutputArea-output" data-mime-type="text/latex" tabindex="0">
+$W = \begin{pmatrix} \left[ 0.105, 0.214 \right] \\ \left[ 0.211, 0.25 \right] \\ \left[ 0.183, 0.25 \right] \\ \left[ 0.105, 0.25 \right] \\ \left[ 0.062, 0.211 \right] \\ \left[ 0.054, 0.105 \right] \end{pmatrix}$
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedLatex jp-OutputArea-output" data-mime-type="text/latex" tabindex="0">
+$d = 0.5601503759398645$
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedLatex jp-OutputArea-output" data-mime-type="text/latex" tabindex="0">
+$tPerfectIncorporation :$
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedLatex jp-OutputArea-output" data-mime-type="text/latex" tabindex="0">
+$W = \begin{pmatrix} \left[ 0.107, 0.214 \right] \\ \left[ 0.214, 0.246 \right] \\ \left[ 0.184, 0.246 \right] \\ \left[ 0.107, 0.246 \right] \\ \left[ 0.061, 0.214 \right] \\ \left[ 0.054, 0.107 \right] \end{pmatrix}$
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedLatex jp-OutputArea-output" data-mime-type="text/latex" tabindex="0">
+$d = 0.5446428571428639$
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedLatex jp-OutputArea-output" data-mime-type="text/latex" tabindex="0">
+$s = [1.0000000000000029, 1.0178571428571488, 0.9821428571428491]$
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<p>common ground apploach</p>
+<p>従来法
+$$
+    \begin{align}
+        \begin{split}
+            \text{maximize} ~~ &amp; ~~ \sum_{i\in N} (w_{i}^{R} - w_{i}^{L}) \\
+            \text{subject to} ~~ &amp; ~~ \sum_{i\in N} (w_{ki}^{R} - w_{ki}^{L}) \leq \hat{d_{k}} , k\in M \\
+            ~~ &amp; ~~ w_{ki}^{L}\leq a_{kij}w_{kj}^{R},\, a_{kij}w_{kj}^{L}\leq w_{ki}^{R},\, i,j,\in N(i&lt;j) , k\in M\\
+            ~~ &amp; ~~ \sum_{j\in N\setminus i} w_{kj}^{R} + w_{ki}^{L}\geq 1, k\in M, i\in N, \\
+            ~~ &amp; ~~ \sum_{j\in N\setminus i} w_{kj}^{L} + w_{ki}^{R}\leq 1, k\in M, i\in N, \\
+            ~~ &amp; ~~ \sum_{j\in N\setminus i} w_{j}^{R} + w_{i}^{L}\geq 1, i\in N, \\
+            ~~ &amp; ~~ \sum_{j\in N\setminus i} w_{j}^{L} + w_{i}^{R}\leq 1, i\in N, \\
+            ~~ &amp; ~~ \sum_{i\in N} \frac{w_{ki}^{R} + w_{ki}^{L}}{2} = 1, k\in M,  \\
+            ~~ &amp; ~~ \sum_{i\in N} \frac{w_{i}^{R} + w_{i}^{L}}{2} = 1,  \\
+            ~~ &amp; ~~ \epsilon \leq w_{ki}^{L}\leq w_{i}^{L}\leq w_{i}^{R}\leq w_{ki}^{R}, k\in M, i\in N.
+        \end{split}
+    \end{align}
+$$</p>
+<p>提案法
+$$
+    \begin{align}
+        \begin{split}
+            \text{maximize} ~~ &amp; ~~ \sum_{i\in N} (w_{i}^{R} - w_{i}^{L}) \\
+            \text{subject to} ~~ &amp; ~~ \sum_{i\in N} (w_{ki}^{R} - w_{ki}^{L}) = t_{k}\hat{d_{k}} , k\in M \\
+            ~~ &amp; ~~ w_{ki}^{L}\leq a_{kij}w_{kj}^{R},\, a_{kij}w_{kj}^{L}\leq w_{ki}^{R},\, i,j,\in N(i&lt;j) , k\in M\\
+            ~~ &amp; ~~ \sum_{j\in N\setminus i} w_{kj}^{R} + w_{ki}^{L}\geq 1, k\in M, i\in N, \\
+            ~~ &amp; ~~ \sum_{j\in N\setminus i} w_{kj}^{L} + w_{ki}^{R}\leq 1, k\in M, i\in N, \\
+            ~~ &amp; ~~ \sum_{j\in N\setminus i} w_{j}^{R} + w_{i}^{L}\geq 1, i\in N, \\
+            ~~ &amp; ~~ \sum_{j\in N\setminus i} w_{j}^{L} + w_{i}^{R}\leq 1, i\in N, \\
+            ~~ &amp; ~~ \sum_{i\in N} \frac{w_{i}^{R} + w_{i}^{L}}{2} = 1,  \\
+            ~~ &amp; ~~ t_{k} = \sum_{i\in N} \frac{w_{ki}^{R} + w_{ki}^{L}}{2}, k\in M, \\
+            ~~ &amp; ~~ \epsilon \leq w_{ki}^{L}\leq w_{i}^{L}\leq w_{i}^{R}\leq w_{ki}^{R}, k\in M, i\in N.
+        \end{split}
+    \end{align}
+$$</p>
 </div>
 </div>
 </div>
@@ -7718,7 +7930,25 @@ $V = \begin{pmatrix} \left[ 0.5, 0.5 \right] \\ \left[ 0.25, 0.25 \right] \\ \le
 <div class="jp-InputPrompt jp-InputArea-prompt">In [6]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-julia"><pre><span></span><span class="n">d</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">solution</span><span class="o">.</span><span class="n">optimalValue</span>
+<div class="highlight hl-julia"><pre><span></span><span class="n">display</span><span class="p">(</span><span class="sa">L</span><span class="s">"OriginalCommonGround : "</span><span class="p">)</span>
+<span class="n">W_originalCommonGround</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">originalCommonGround</span><span class="o">.</span><span class="n">W</span>
+<span class="n">display</span><span class="p">(</span><span class="sa">L</span><span class="s">"W = %</span><span class="si">$</span><span class="p">(</span><span class="n">intervalVectorLaTeXString</span><span class="p">(</span><span class="n">W_originalCommonGround</span><span class="p">))</span><span class="s">"</span><span class="p">)</span>
+<span class="n">d_originalCommonGround</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">originalCommonGround</span><span class="o">.</span><span class="n">optimalValue</span>
+<span class="n">display</span><span class="p">(</span><span class="sa">L</span><span class="s">"d = %</span><span class="si">$</span><span class="p">(</span><span class="n">d_originalCommonGround</span><span class="p">)</span><span class="s">"</span><span class="p">)</span>
+
+<span class="n">display</span><span class="p">(</span><span class="sa">L</span><span class="s">"CommonGround : "</span><span class="p">)</span>
+<span class="n">W_CommonGround</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">CommonGround</span><span class="o">.</span><span class="n">W</span>
+<span class="n">display</span><span class="p">(</span><span class="sa">L</span><span class="s">"W = %</span><span class="si">$</span><span class="p">(</span><span class="n">intervalVectorLaTeXString</span><span class="p">(</span><span class="n">W_CommonGround</span><span class="p">))</span><span class="s">"</span><span class="p">)</span>
+<span class="n">d_CommonGround</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">CommonGround</span><span class="o">.</span><span class="n">optimalValue</span>
+<span class="n">display</span><span class="p">(</span><span class="sa">L</span><span class="s">"d = %</span><span class="si">$</span><span class="p">(</span><span class="n">d_CommonGround</span><span class="p">)</span><span class="s">"</span><span class="p">)</span>
+
+<span class="n">display</span><span class="p">(</span><span class="sa">L</span><span class="s">"tCommonGround : "</span><span class="p">)</span>
+<span class="n">W_tCommonGround2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">tCommonGround2</span><span class="o">.</span><span class="n">W</span>
+<span class="n">display</span><span class="p">(</span><span class="sa">L</span><span class="s">"W = %</span><span class="si">$</span><span class="p">(</span><span class="n">intervalVectorLaTeXString</span><span class="p">(</span><span class="n">W_tCommonGround2</span><span class="p">))</span><span class="s">"</span><span class="p">)</span>
+<span class="n">d_tCommonGround2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">tCommonGround2</span><span class="o">.</span><span class="n">optimalValue</span>
+<span class="n">display</span><span class="p">(</span><span class="sa">L</span><span class="s">"d = %</span><span class="si">$</span><span class="p">(</span><span class="n">d_tCommonGround2</span><span class="p">)</span><span class="s">"</span><span class="p">)</span>
+<span class="n">s_tCommonGround2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">tCommonGround2</span><span class="o">.</span><span class="n">s</span>
+<span class="n">display</span><span class="p">(</span><span class="sa">L</span><span class="s">"s = %</span><span class="si">$</span><span class="p">(</span><span class="n">s_tCommonGround2</span><span class="p">)</span><span class="s">"</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -7730,8 +7960,23 @@ $V = \begin{pmatrix} \left[ 0.5, 0.5 \right] \\ \left[ 0.25, 0.25 \right] \\ \le
 <div class="jp-OutputArea jp-Cell-outputArea">
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>0.08333333333333326</pre>
+<div class="jp-RenderedLatex jp-OutputArea-output" data-mime-type="text/latex" tabindex="0">
+$OriginalCommonGround : $
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
+<pre>
+UndefVarError: `originalCommonGround` not defined
+
+
+
+Stacktrace:
+
+ [1] top-level scope
+
+   @ /workspaces/intervalAHP/src/lib/ttimes/MethodsEvaluation copy.ipynb:2</pre>
 </div>
 </div>
 </div>
@@ -7743,30 +7988,148 @@ $V = \begin{pmatrix} \left[ 0.5, 0.5 \right] \\ \left[ 0.25, 0.25 \right] \\ \le
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h3 id="%E8%B3%AA%E5%95%8F">質問<a class="anchor-link" href="#%E8%B3%AA%E5%95%8F">¶</a></h3><p>perfect incorporation approach</p>
-<p>$$
+<p>partial incorporation apploach</p>
+<p>従来法
+$$
     \begin{align}
         \begin{split}
-            \text{minimize} ~~ &amp; ~~ \sum_{i\in N} (w_{i}^{U} - w_{i}^{L}) \\
-            ~~ &amp; ~~ \sum_{i\in N} (w_{ki}^{U} - w_{ki}^{L}) \leq \hat{d_{k}} , k\in M \\
-            \text{subject to} ~~ &amp; ~~ w_{ki}^{L}\leq a_{kij}w_{kj}^{R},\, a_{kij}w_{kj}^{L}\leq w_{ki}^{U},\, i,j,\in N(i&lt;j) , k\in M\\
+            \text{minimize} ~~ &amp; ~~ \sum_{i\in N} (w_{i}^{R} - w_{i}^{L}) \\
+            \text{subject to}  ~~ &amp; ~~ \sum_{i\in N} (w_{ki}^{R} - w_{ki}^{L}) \leq \hat{d_{k}} , k\in M \\
+            ~~ &amp; ~~ w_{ki}^{L}\leq a_{kij}w_{kj}^{R},\, a_{kij}w_{kj}^{L}\leq w_{ki}^{R},\, i,j,\in N(i&lt;j) , k\in M\\
             ~~ &amp; ~~ \sum_{j\in N\setminus i} w_{kj}^{R} + w_{ki}^{L}\geq 1, k\in M, i\in N, \\
-            ~~ &amp; ~~ \sum_{j\in N\setminus i} w_{kj}^{L} + w_{ki}^{U}\leq 1, k\in M, i\in N, \\
-            ~~ &amp; ~~ \epsilon \geq w_{i}^{L}\geq w_{ki}^{L}\geq w_{ki}\geq w_{ki}^{U} \geq w_{i}^{U}, k\in M, i\in N.
+            ~~ &amp; ~~ \sum_{j\in N\setminus i} w_{kj}^{L} + w_{ki}^{R}\leq 1, k\in M, i\in N, \\
+            ~~ &amp; ~~ \sum_{i\in N} w_{ki} = 1, k\in M, \\
+            ~~ &amp; ~~ \sum_{i\in N} \frac{w_{ki}^{R} + w_{ki}^{L}}{2} = 1, k\in M,  \\
+            ~~ &amp; ~~ \sum_{i\in N} \frac{w_{i}^{R} + w_{i}^{L}}{2} = 1,  \\
+            ~~ &amp; ~~ \epsilon \leq w_{i}^{L}\leq w_{ki}\leq w_{ki}^{R}, \epsilon \leq w_{ki}^{L}\leq w_{ki}\leq w_{i}^{R}, k\in M, i\in N.
         \end{split}
     \end{align}
 $$</p>
-<p>重みをt倍するときに、kごとに$t_{k}$みたいな感じにするのか？</p>
+<p>提案法
+$$
+    \begin{align}
+        \begin{split}
+            \text{minimize} ~~ &amp; ~~ \sum_{i\in N} (w_{i}^{R} - w_{i}^{L}) \\
+            \text{subject to}  ~~ &amp; ~~ \sum_{i\in N} (w_{ki}^{R} - w_{ki}^{L}) = t_{k}\hat{d_{k}} , k\in M \\
+            ~~ &amp; ~~ w_{ki}^{L}\leq a_{kij}w_{kj}^{R},\, a_{kij}w_{kj}^{L}\leq w_{ki}^{R},\, i,j,\in N(i&lt;j) , k\in M\\
+            ~~ &amp; ~~ \sum_{j\in N\setminus i} w_{kj}^{R} + w_{ki}^{L}\geq 1, k\in M, i\in N, \\
+            ~~ &amp; ~~ \sum_{j\in N\setminus i} w_{kj}^{L} + w_{ki}^{R}\leq 1, k\in M, i\in N, \\
+            ~~ &amp; ~~ \sum_{i\in N} w_{ki} = 1, k\in M \\
+            ~~ &amp; ~~ \sum_{i\in N} \frac{w_{i}^{R} + w_{i}^{L}}{2} = 1,   \\
+            ~~ &amp; ~~ t_{k} = \sum_{i\in N} \frac{w_{ki}^{R} + w_{ki}^{L}}{2}, k\in M, \\
+            ~~ &amp; ~~ \epsilon \leq w_{i}^{L}\leq w_{ki}\leq w_{ki}^{R}, \epsilon \leq w_{ki}^{L}\leq w_{ki}\leq w_{i}^{R}, k\in M, i\in N.
+        \end{split}
+    \end{align}
+$$</p>
 </div>
 </div>
 </div>
-</div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
-<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [7]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-julia"><pre><span></span><span class="n">display</span><span class="p">(</span><span class="sa">L</span><span class="s">"OriginalPartialIncorporation :"</span><span class="p">)</span>
+<span class="n">W_originalPartialIncorporation</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">originalPartialIncorporation</span><span class="o">.</span><span class="n">W</span>
+<span class="n">display</span><span class="p">(</span><span class="sa">L</span><span class="s">"W = %</span><span class="si">$</span><span class="p">(</span><span class="n">intervalVectorLaTeXString</span><span class="p">(</span><span class="n">W_originalPartialIncorporation</span><span class="p">))</span><span class="s">"</span><span class="p">)</span>
+<span class="n">d_originalPartialIncorporation</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">originalPartialIncorporation</span><span class="o">.</span><span class="n">optimalValue</span>
+<span class="n">display</span><span class="p">(</span><span class="sa">L</span><span class="s">"d = %</span><span class="si">$</span><span class="p">(</span><span class="n">d_originalPartialIncorporation</span><span class="p">)</span><span class="s">"</span><span class="p">)</span>
+
+<span class="n">display</span><span class="p">(</span><span class="sa">L</span><span class="s">"PartialIncorporation :"</span><span class="p">)</span>
+<span class="n">W_PartialIncorporation</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">PartialIncorporation</span><span class="o">.</span><span class="n">W</span>
+<span class="n">display</span><span class="p">(</span><span class="sa">L</span><span class="s">"W = %</span><span class="si">$</span><span class="p">(</span><span class="n">intervalVectorLaTeXString</span><span class="p">(</span><span class="n">W_PartialIncorporation</span><span class="p">))</span><span class="s">"</span><span class="p">)</span>
+<span class="n">d_PartialIncorporation</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">PartialIncorporation</span><span class="o">.</span><span class="n">optimalValue</span>
+<span class="n">display</span><span class="p">(</span><span class="sa">L</span><span class="s">"d = %</span><span class="si">$</span><span class="p">(</span><span class="n">d_PartialIncorporation</span><span class="p">)</span><span class="s">"</span><span class="p">)</span>
+
+<span class="n">display</span><span class="p">(</span><span class="sa">L</span><span class="s">"tPartialIncorporation :"</span><span class="p">)</span>
+<span class="n">W_tPartialIncorporation2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">tPartialIncorporation2</span><span class="o">.</span><span class="n">W</span>
+<span class="n">display</span><span class="p">(</span><span class="sa">L</span><span class="s">"W = %</span><span class="si">$</span><span class="p">(</span><span class="n">intervalVectorLaTeXString</span><span class="p">(</span><span class="n">W_tPartialIncorporation2</span><span class="p">))</span><span class="s">"</span><span class="p">)</span>
+<span class="n">d_tPartialIncorporation2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">tPartialIncorporation2</span><span class="o">.</span><span class="n">optimalValue</span>
+<span class="n">display</span><span class="p">(</span><span class="sa">L</span><span class="s">"d = %</span><span class="si">$</span><span class="p">(</span><span class="n">d_tPartialIncorporation2</span><span class="p">)</span><span class="s">"</span><span class="p">)</span>
+<span class="n">s_tPartialIncorporation2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">tPartialIncorporation2</span><span class="o">.</span><span class="n">s</span>
+<span class="n">display</span><span class="p">(</span><span class="sa">L</span><span class="s">"s = %</span><span class="si">$</span><span class="p">(</span><span class="n">s_tPartialIncorporation2</span><span class="p">)</span><span class="s">"</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedLatex jp-OutputArea-output" data-mime-type="text/latex" tabindex="0">
+$OriginalPartialIncorporation :$
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedLatex jp-OutputArea-output" data-mime-type="text/latex" tabindex="0">
+$W = \begin{pmatrix} \left[ 0.176, 0.214 \right] \\ \left[ 0.2, 0.235 \right] \\ \left[ 0.2, 0.217 \right] \\ \left[ 0.2, 0.2 \right] \\ \left[ 0.113, 0.113 \right] \\ \left[ 0.059, 0.1 \right] \end{pmatrix}$
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedLatex jp-OutputArea-output" data-mime-type="text/latex" tabindex="0">
+$d = 0.13109243697479078$
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedLatex jp-OutputArea-output" data-mime-type="text/latex" tabindex="0">
+$PartialIncorporation :$
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedLatex jp-OutputArea-output" data-mime-type="text/latex" tabindex="0">
+$W = \begin{pmatrix} \left[ 0.157, 0.214 \right] \\ \left[ 0.211, 0.25 \right] \\ \left[ 0.211, 0.211 \right] \\ \left[ 0.184, 0.184 \right] \\ \left[ 0.105, 0.105 \right] \\ \left[ 0.062, 0.105 \right] \end{pmatrix}$
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedLatex jp-OutputArea-output" data-mime-type="text/latex" tabindex="0">
+$d = 0.13909774436090616$
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedLatex jp-OutputArea-output" data-mime-type="text/latex" tabindex="0">
+$tPartialIncorporation :$
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
+<pre>
+UndefVarError: `tPartialIncorporation2` not defined
+
+
+
+Stacktrace:
+
+ [1] top-level scope
+
+   @ /workspaces/intervalAHP/src/lib/ttimes/MethodsEvaluation copy.ipynb:14</pre>
+</div>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [8]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-julia"><pre><span></span>
+</pre></div>
+</div>
 </div>
 </div>
 </div>
