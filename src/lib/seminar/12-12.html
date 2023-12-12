@@ -3,7 +3,7 @@
 <html lang="en">
 <head><meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>proof</title><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
+<title>12-12</title><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
 <style type="text/css">
     pre { line-height: 125%; }
 td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
@@ -7482,92 +7482,7 @@ a.anchor-link {
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h1 id="%E5%8C%BA%E9%96%93AHP%E5%95%8F%E9%A1%8C%E3%81%AE%E8%A7%A3%E3%81%AF%E5%94%AF%E4%B8%80%E3%81%A8%E3%81%AF%E9%99%90%E3%82%89%E3%81%AA%E3%81%84">区間AHP問題の解は唯一とは限らない<a class="anchor-link" href="#%E5%8C%BA%E9%96%93AHP%E5%95%8F%E9%A1%8C%E3%81%AE%E8%A7%A3%E3%81%AF%E5%94%AF%E4%B8%80%E3%81%A8%E3%81%AF%E9%99%90%E3%82%89%E3%81%AA%E3%81%84">¶</a></h1><p>従来の各個人の区間重みを求める問題
-$$
-    \begin{align}
-        \begin{split}
-            \text{minimize} ~~ &amp; ~~ \sum_{i\in N} (w_{ki}^{U} - w_{ki}^{L}) \\
-            \text{subject to} ~~ &amp; ~~ w_{ki}^{L}\leq a_{kij}w_{kj}^{U},\, a_{kij}w_{kj}^{L}\leq w_{ki}^{U},\, i,j,\in N(i&lt;j) \\
-            ~~ &amp; ~~ \sum_{j\in N\setminus i} w_{kj}^{U} + w_{ki}^{L}\geq 1, i\in N, \\
-            ~~ &amp; ~~ \sum_{j\in N\setminus i} w_{kj}^{L} + w_{ki}^{U}\leq 1, i\in N, \\
-            ~~ &amp; ~~ w_{ki}^{U}\geq w_{ki}^{L}\geq \epsilon, i\in N. 
-        \end{split}
-    \end{align}
-$$</p>
-<p>この問題によって、各個人の区間重みが求められてきた。</p>
-<p>しかし、区間重要度ベクトル$W_{k}$が問題(1)の解であるとき、これをスカラー$t$倍した$tW_{k}$が正規性条件を満たせば、与えられたPCM $A$と区間重要度の比との乖離度は、$W_{k}$の場合も$tW_{k}$の場合も等しくなり、$tW_{k}$も区間重要度推定問題の解と考えることができる。すなわち、区間重要度推定問題の解は唯一でなく、問題(1)の解が唯一になる場合は、線分で表される解集合になる。</p>
-<p>この解集合の中には、区間重要度の中心値の総和が１となるものが存在することが示せるので、本研究では、問題(1)に中心の総和が1であるという条件、$\sum_{i \in N} (w_{ki}^{L} +w_{ki}^{U})=1$ を加えて考える。すなわち、問題(2)を考える。</p>
-<p>$$
-    \begin{align}
-        \begin{split}
-            \text{minimize} ~~ &amp; ~~ \sum_{i\in N} (w_{ki}^{U} - w_{ki}^{L}) \\
-            \text{subject to} ~~ &amp; ~~ w_{ki}^{L}\leq a_{kij}w_{kj}^{U},\, a_{kij}w_{kj}^{L}\leq w_{ki}^{U},\, i,j,\in N(i&lt;j) \\
-            ~~ &amp; ~~ \sum_{j\in N\setminus i} w_{kj}^{U} + w_{ki}^{L}\geq 1, i\in N, \\
-            ~~ &amp; ~~ \sum_{j\in N\setminus i} w_{kj}^{L} + w_{ki}^{U}\leq 1, i\in N, \\
-            ~~ &amp; ~~ \sum_{i\in N} (w_{ki}^{U} + w_{ki}^{L}) = 2 \\
-            ~~ &amp; ~~ w_{ki}^{U}\geq w_{ki}^{L}\geq \epsilon, i\in N. 
-        \end{split}
-    \end{align}
-$$</p>
-<p>このとき、tW_kが正規性条件を満たすtの範囲は、次の$t^{L}$から$t^{U}$であることが分かる。(林さんの修論)</p>
-<p>$$
-    \begin{align}
-        t^{L} = \frac{1}{\min _{j} (\sum _{i\neq j} w_{i}^{U} + w_{j}^{L})}, \\
-        t^{U} = \frac{1}{\max _{j} (\sum _{i\neq j} w_{i}^{L} + w_{j}^{U})}
-    \end{align}
-$$</p>
-<p>ここで、次の線形分数計画問題(4)を考える。</p>
-<p>$$
-    \begin{align}
-        \begin{split}
-            \text{minimize} ~~ &amp; ~~ \frac{\sum_{i\in N} (w_{ki}^{U} - w_{ki}^{L})}{\sum_{i\in N} \frac{(w_{ki}^{U} + w_{ki}^{L})}{2}} \\
-            \text{subject to} ~~ &amp; ~~ ...
-        \end{split}
-    \end{align}
-$$</p>
-<p>この問題は次の問題(5)と等価になり、問題(4)の最適解集合は、問題(5)の最適解集合と一致する。</p>
-<p>$$
-    \begin{align}
-        \begin{split}
-            \text{minimize} ~~ &amp; ~~ \sum_{i\in N} (v_{ki}^{U} - v_{ki}^{L}) \\
-            \text{subject to} ~~ &amp; ~~ v_{ki}^{L}\leq a_{kij}v_{kj}^{U},\, a_{kij}v_{kj}^{L}\leq v_{ki}^{U},\, i,j,\in N(i&lt;j) \\
-            ~~ &amp; ~~ \sum_{j\in N\setminus i} v_{kj}^{U} + v_{ki}^{L}\geq p, i\in N, \\
-            ~~ &amp; ~~ \sum_{j\in N\setminus i} v_{kj}^{L} + v_{ki}^{U}\leq p, i\in N, \\
-            ~~ &amp; ~~ \sum_{i\in N} (v_{ki}^{U} + v_{ki}^{L}) = 2 \\
-            ~~ &amp; ~~ v_{ki}^{U}\geq v_{ki}^{L}\geq \epsilon, i\in N. 
-        \end{split}
-    \end{align}
-$$</p>
-<p>証明では、以下の部分</p>
-<p>pは以下のように定義する
-$$
-    \begin{align}
-        \begin{split}
-            
-            ~~ &amp; ~~ p = \frac{1}{\sum_{i\in N} \frac{(w_{ki}^{U} + w_{ki}^{L})}{2}} \\
-            ~~ &amp; ~~ v_{ki}^{U} = pw_{ki}^{U} , v_{ki}^{L} = pw_{ki}^{L} \\
-        \end{split}
-    \end{align}
-$$</p>
-<p>各個人に関しては中心＝１を入れた問題を解く 問題(5)
-統合の際には、問題(3)の目的関数の形
-$$
-    \begin{align}
-        \begin{split}
-            ~~ &amp; ~~ \frac{\sum_{i\in N} (w_{ki}^{U} - w_{ki}^{L})}{\sum_{i\in N} \frac{(w_{ki}^{U} + w_{ki}^{L})}{2}} = \hat{d_{k}} \\
-        \end{split}
-    \end{align}
-$$</p>
-<p>に注目し、式変形して
-$$
-    \begin{align}
-        \begin{split}
-            ~~ &amp; ~~ \sum_{i\in N} (w_{ki}^{U} - w_{ki}^{L}) = {\sum_{i\in N} \frac{(w_{ki}^{U} + w_{ki}^{L})}{2}}\hat{d_{k}} \\
-        \end{split}
-    \end{align}
-$$</p>
-<p>この制約条件を入れることで、解の非唯一性を考慮した重要度推定問題の統合ができる</p>
-<p>様々に考えられる複数の重みの組み合わせの中から適切に統合できる重みを見つけてくる形になる</p>
+<h1 id="12%E6%9C%8812%E6%97%A5%E3%80%80%E3%82%BC%E3%83%9F">12月12日　ゼミ<a class="anchor-link" href="#12%E6%9C%8812%E6%97%A5%E3%80%80%E3%82%BC%E3%83%9F">¶</a></h1>
 </div>
 </div>
 </div>
@@ -7578,58 +7493,95 @@ $$</p>
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<p>entani</p>
-<p>Perfect incorporation apploach
+<h3 id="%E3%81%93%E3%82%8C%E3%81%8B%E3%82%89%E3%82%84%E3%82%8A%E3%81%9F%E3%81%84%E3%81%93%E3%81%A8">これからやりたいこと<a class="anchor-link" href="#%E3%81%93%E3%82%8C%E3%81%8B%E3%82%89%E3%82%84%E3%82%8A%E3%81%9F%E3%81%84%E3%81%93%E3%81%A8">¶</a></h3><p>・数値計算例を増やす</p>
+<p>　　→perfect corporationとpartail corporationは今あるランダムなPCMを使えばいい？</p>
+<p>　　→共通部分を持つクリスプなPCMをどのように作るか</p>
+<p>・クリスプ入力から区間入力にする</p>
+<p>・統合の際の最適性を少し緩和する</p>
+<p>　　→$\hat{d_{k}}$ から $\hat{d_{k}} + \epsilon$ にすることで共通部分のないようなものもcommon groundで統合できる？</p>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h3 id="%E3%81%9D%E3%82%8C%E3%81%9E%E3%82%8C%E3%81%AE%E6%89%8B%E6%B3%95%E3%81%AE%E7%89%B9%E6%80%A7%E3%83%BB%E6%84%8F%E5%91%B3%E5%90%88%E3%81%84">それぞれの手法の特性・意味合い<a class="anchor-link" href="#%E3%81%9D%E3%82%8C%E3%81%9E%E3%82%8C%E3%81%AE%E6%89%8B%E6%B3%95%E3%81%AE%E7%89%B9%E6%80%A7%E3%83%BB%E6%84%8F%E5%91%B3%E5%90%88%E3%81%84">¶</a></h3><p>・perfect incoprporation</p>
+<p>どんな時でも合意の区間を持つ</p>
+<p>全員の区間重要度を含む広い区間重要度→誰も同意しない部分を含んでいる可能性もある</p>
+<p>・common ground</p>
+<p>DM全員が共通部分を持つ時だけ合意の区間を持つ</p>
+<p>合意の区間内のどの重要度の組み合わせでも全員が同意する</p>
+<p>・partial incorporation</p>
+<p>どんな時でも合意の区間を持つ</p>
+<p>区間内のある重要度に対して少なくとも1人は同意する</p>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h3 id="%E5%8C%BA%E9%96%93%E5%85%A5%E5%8A%9B%E3%81%B8%E3%81%AE%E5%A4%89%E6%9B%B4">区間入力への変更<a class="anchor-link" href="#%E5%8C%BA%E9%96%93%E5%85%A5%E5%8A%9B%E3%81%B8%E3%81%AE%E5%A4%89%E6%9B%B4">¶</a></h3><p>個人の区間重要度推定問題</p>
+<p>クリスプ入力
 $$
     \begin{align}
         \begin{split}
-            \text{minimize} ~~ &amp; ~~ \sum_{i\in N} (w_{i}^{U} - w_{i}^{L}) \\
-            \text{subject to} ~~ &amp; ~~ \sum_{i\in N} (w_{ki}^{U} - w_{ki}^{L}) \leq \hat{d_{k}} , k\in M \\
-            ~~ &amp; ~~ w_{ki}^{L}\leq a_{kij}w_{kj}^{R},\, a_{kij}w_{kj}^{L}\leq w_{ki}^{U},\, i,j,\in N(i&lt;j) , k\in M\\
-            ~~ &amp; ~~ \sum_{j\in N\setminus i} w_{kj}^{R} + w_{ki}^{L}\geq 1, k\in M, i\in N, \\
-            ~~ &amp; ~~ \sum_{j\in N\setminus i} w_{kj}^{L} + w_{ki}^{U}\leq 1, k\in M, i\in N, \\
-            ~~ &amp; ~~ \sum_{i\in N} \frac{w_{ki}^{U} + w_{ki}^{L}}{2} = 1, k\in M,  \\
-            ~~ &amp; ~~ \sum_{i\in N} \frac{w_{i}^{U} + w_{i}^{L}}{2} = 1,  \\
-            ~~ &amp; ~~ \epsilon \leq w_{i}^{L}\leq w_{ki}^{L}\leq w_{ki}^{U} \leq w_{i}^{U}, k\in M, i\in N.
+            \text{minimize} ~~ &amp; ~~ \sum_{i\in N} (w_{ki}^{U} - w_{ki}^{L}) \\
+            \text{subject to} ~~ &amp; ~~ w_{ki}^{L}\leq a_{kij}w_{kj}^{R},\, a_{kij}w_{kj}^{L}\leq w_{ki}^{U},\, i,j,\in N(i&lt;j) \\
+            ~~ &amp; ~~ \sum_{j\in N\setminus i} w_{kj}^{R} + w_{ki}^{L}\geq 1, i\in N, \\
+            ~~ &amp; ~~ \sum_{j\in N\setminus i} w_{kj}^{L} + w_{ki}^{U}\leq 1, i\in N, \\
+            ~~ &amp; ~~ \sum_{i\in N} (w_{ki}^{U} + w_{ki}^{L}) = 2 \\
+            ~~ &amp; ~~ w_{ki}^{U}\geq w_{ki}^{L}\geq \epsilon, i\in N. 
         \end{split}
-    
     \end{align}
 $$</p>
-<p>Common ground apploach
+<p>区間入力
 $$
     \begin{align}
         \begin{split}
-            \text{maximize} ~~ &amp; ~~ \sum_{i\in N} (w_{i}^{U} - w_{i}^{L}) \\
-            \text{subject to} ~~ &amp; ~~ \sum_{i\in N} (w_{ki}^{U} - w_{ki}^{L}) \leq \hat{d_{k}} , k\in M \\
-            ~~ &amp; ~~ w_{ki}^{L}\leq a_{kij}w_{kj}^{U},\, a_{kij}w_{kj}^{L}\leq w_{ki}^{U},\, i,j,\in N(i&lt;j) , k\in M\\
-            ~~ &amp; ~~ \sum_{j\in N\setminus i} w_{kj}^{U} + w_{ki}^{L}\geq 1, k\in M, i\in N, \\
-            ~~ &amp; ~~ \sum_{j\in N\setminus i} w_{kj}^{L} + w_{ki}^{U}\leq 1, k\in M, i\in N, \\
-            ~~ &amp; ~~ \sum_{j\in N\setminus i} w_{j}^{U} + w_{i}^{L}\geq 1, i\in N, \\
-            ~~ &amp; ~~ \sum_{j\in N\setminus i} w_{j}^{L} + w_{i}^{U}\leq 1, i\in N, \\
-            ~~ &amp; ~~ \sum_{i\in N} \frac{w_{ki}^{U} + w_{ki}^{L}}{2} = 1, k\in M,  \\
-            ~~ &amp; ~~ \sum_{i\in N} \frac{w_{i}^{U} + w_{i}^{L}}{2} = 1,  \\
-            ~~ &amp; ~~ \epsilon \leq w_{ki}^{L}\leq w_{i}^{L}\leq w_{i}^{U}\leq w_{ki}^{U}, k\in M, i\in N.
+            \text{minimize} ~~ &amp; ~~ \sum_{i\in N} (w_{ki}^{U} - w_{ki}^{L}) \\
+            \text{subject to} ~~ &amp; ~~ w_{ki}^{L}\leq a_{kij}^{L}w_{kj}^{U},\, a_{kij}^{U}w_{kj}^{L}\leq w_{ki}^{U},\, i,j,\in N(i&lt;j) \\
+            ~~ &amp; ~~ a_{kij}^{L}w_{kj}^{U}\leq w_{ki}^{L},\, w_{ki}^{U}\leq a_{kij}^{U}w_{kj}^{L},\, i,j,\in N(i&lt;j) \\
+            ~~ &amp; ~~ \sum_{j\in N\setminus i} w_{kj}^{R} + w_{ki}^{L}\geq 1, i\in N, \\
+            ~~ &amp; ~~ \sum_{j\in N\setminus i} w_{kj}^{L} + w_{ki}^{U}\leq 1, i\in N, \\
+            ~~ &amp; ~~ \sum_{i\in N} (w_{ki}^{U} + w_{ki}^{L}) = 2 \\
+            ~~ &amp; ~~ w_{ki}^{U}\geq w_{ki}^{L}\geq \epsilon, i\in N. 
         \end{split}
     \end{align}
 $$</p>
-<p>Partial incorporation apploach
-$$
-    \begin{align}
-        \begin{split}
-            \text{minimize} ~~ &amp; ~~ \sum_{i\in N} (w_{i}^{U} - w_{i}^{L}) \\
-            \text{subject to}  ~~ &amp; ~~ \sum_{i\in N} (w_{ki}^{U} - w_{ki}^{L}) \leq \hat{d_{k}} , k\in M \\
-            ~~ &amp; ~~ w_{ki}^{L}\leq a_{kij}w_{kj}^{U},\, a_{kij}w_{kj}^{L}\leq w_{ki}^{U},\, i,j,\in N(i&lt;j) , k\in M\\
-            ~~ &amp; ~~ \sum_{j\in N\setminus i} w_{kj}^{U} + w_{ki}^{L}\geq 1, k\in M, i\in N, \\
-            ~~ &amp; ~~ \sum_{j\in N\setminus i} w_{kj}^{L} + w_{ki}^{U}\leq 1, k\in M, i\in N, \\
-            ~~ &amp; ~~ \sum_{i\in N} w_{ki} = 1, k\in M, \\
-            ~~ &amp; ~~ \sum_{i\in N} \frac{w_{ki}^{U} + w_{ki}^{L}}{2} = 1, k\in M,  \\
-            ~~ &amp; ~~ \sum_{i\in N} \frac{w_{i}^{U} + w_{i}^{L}}{2} = 1,  \\
-            ~~ &amp; ~~ \epsilon \leq w_{i}^{L}\leq w_{ki}\leq w_{ki}^{U}, \epsilon \leq w_{ki}^{L}\leq w_{ki}\leq w_{i}^{U}, k\in M, i\in N.
-        \end{split}
-    \end{align}
-$$</p>
-<p>提案手法</p>
-<p>Perfect incorporation apploach
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<p>それぞれの統合手法を区間入力にするときの変更点は？</p>
+<p>・一対比較値と重要度の制約</p>
+<p>　　→$a_{kij}^{L}$と$a_{kij}^{U}$に囲まれる区間に含まれる幅最大</p>
+<p>　　→$a_{kij}^{L}$と$a_{kij}^{U}$に囲まれる区間を含む幅最小</p>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<p>Perfect incorporation approach</p>
+<p>クリスプ入力
 $$
     \begin{align}
         \begin{split}
@@ -7644,7 +7596,34 @@ $$
     
     \end{align}
 $$</p>
-<p>Common ground apploach
+<p>区間入力は？</p>
+<p>$$
+    \begin{align}
+        \begin{split}
+            \text{minimize} ~~ &amp; ~~ \sum_{i\in N} (w_{i}^{U} - w_{i}^{L}) \\
+            \text{subject to} ~~ &amp; ~~ w_{ki}^{L}\leq a_{kij}^{L}w_{kj}^{U},\, a_{kij}^{U}w_{kj}^{L}\leq w_{ki}^{U},\, i,j,\in N(i&lt;j) \\
+            ~~ &amp; ~~ a_{kij}^{L}w_{kj}^{U}\leq w_{ki}^{L},\, w_{ki}^{U}\leq a_{kij}^{U}w_{kj}^{L},\, i,j,\in N(i&lt;j) \\
+            ~~ &amp; ~~ w_{ki}^{L}\leq a_{kij}w_{kj}^{U},\, a_{kij}w_{kj}^{L}\leq w_{ki}^{U},\, i,j,\in N(i&lt;j) , k\in M\\
+            ~~ &amp; ~~ \sum_{j\in N\setminus i} w_{kj}^{U} + w_{ki}^{L}\geq 1, k\in M, i\in N, \\
+            ~~ &amp; ~~ \sum_{j\in N\setminus i} w_{kj}^{L} + w_{ki}^{U}\leq 1, k\in M, i\in N, \\
+            ~~ &amp; ~~ \sum_{i\in N} \frac{w_{i}^{U} + w_{i}^{L}}{2} = 1, \\
+            ~~ &amp; ~~ \epsilon \leq w_{i}^{L}\leq w_{ki}^{L}\leq w_{ki}^{U} \leq w_{i}^{U}, k\in M, i\in N.
+        \end{split}
+    
+    \end{align}
+$$</p>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<p>Common ground approach</p>
+<p>クリスプ入力
 $$
     \begin{align}
         \begin{split}
@@ -7660,12 +7639,56 @@ $$
         \end{split}
     \end{align}
 $$</p>
-<p>Partial incorporation apploach
+<p>区間入力は？</p>
+<p>$$
+    \begin{align}
+        \begin{split}
+            \text{maximize} ~~ &amp; ~~ \sum_{i\in N} (w_{i}^{U} - w_{i}^{L}) \\
+            \text{subject to} ~~ &amp; ~~ w_{ki}^{L}\leq a_{kij}^{L}w_{kj}^{U},\, a_{kij}^{U}w_{kj}^{L}\leq w_{ki}^{U},\, i,j,\in N(i&lt;j) \\
+            ~~ &amp; ~~ a_{kij}^{L}w_{kj}^{U}\leq w_{ki}^{L},\, w_{ki}^{U}\leq a_{kij}^{U}w_{kj}^{L},\, i,j,\in N(i&lt;j) \\
+            ~~ &amp; ~~ w_{ki}^{L}\leq a_{kij}w_{kj}^{U},\, a_{kij}w_{kj}^{L}\leq w_{ki}^{U},\, i,j,\in N(i&lt;j) , k\in M\\
+            ~~ &amp; ~~ \sum_{j\in N\setminus i} w_{kj}^{U} + w_{ki}^{L}\geq 1, k\in M, i\in N, \\
+            ~~ &amp; ~~ \sum_{j\in N\setminus i} w_{kj}^{L} + w_{ki}^{U}\leq 1, k\in M, i\in N, \\
+            ~~ &amp; ~~ \sum_{j\in N\setminus i} w_{j}^{U} + w_{i}^{L}\geq 1, i\in N, \\
+            ~~ &amp; ~~ \sum_{j\in N\setminus i} w_{j}^{L} + w_{i}^{U}\leq 1, i\in N, \\
+            ~~ &amp; ~~ \sum_{i\in N} \frac{w_{i}^{U} + w_{i}^{L}}{2} = 1,  \\
+            ~~ &amp; ~~ \epsilon \leq w_{ki}^{L}\leq w_{i}^{L}\leq w_{i}^{U}\leq w_{ki}^{U}, k\in M, i\in N.
+        \end{split}
+    \end{align}
+$$</p>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<p>Partial incorporation approach</p>
+<p>クリスプ入力
 $$
     \begin{align}
         \begin{split}
             \text{minimize} ~~ &amp; ~~ \sum_{i\in N} (w_{i}^{U} - w_{i}^{L}) \\
             \text{subject to}  ~~ &amp; ~~ \sum_{i\in N} (w_{ki}^{U} - w_{ki}^{L}) = \sum_{i\in N} \frac{w_{ki}^{U} + w_{ki}^{L}}{2}\hat{d_{k}} , k\in M \\
+            ~~ &amp; ~~ w_{ki}^{L}\leq a_{kij}w_{kj}^{U},\, a_{kij}w_{kj}^{L}\leq w_{ki}^{U},\, i,j,\in N(i&lt;j) , k\in M\\
+            ~~ &amp; ~~ \sum_{j\in N\setminus i} w_{kj}^{U} + w_{ki}^{L}\geq 1, k\in M, i\in N, \\
+            ~~ &amp; ~~ \sum_{j\in N\setminus i} w_{kj}^{L} + w_{ki}^{U}\leq 1, k\in M, i\in N, \\
+            ~~ &amp; ~~ \sum_{i\in N} w_{ki} = 1, k\in M \\
+            ~~ &amp; ~~ \sum_{i\in N} \frac{w_{i}^{U} + w_{i}^{L}}{2} = 1,   \\
+            ~~ &amp; ~~ \epsilon \leq w_{i}^{L}\leq w_{ki}\leq w_{ki}^{U}, \epsilon \leq w_{ki}^{L}\leq w_{ki}\leq w_{i}^{U}, k\in M, i\in N.
+        \end{split}
+    \end{align}
+$$</p>
+<p>区間入力は？</p>
+<p>$$
+    \begin{align}
+        \begin{split}
+            \text{minimize} ~~ &amp; ~~ \sum_{i\in N} (w_{i}^{U} - w_{i}^{L}) \\
+            \text{subject to} ~~ &amp; ~~ w_{ki}^{L}\leq a_{kij}^{L}w_{kj}^{U},\, a_{kij}^{U}w_{kj}^{L}\leq w_{ki}^{U},\, i,j,\in N(i&lt;j) \\
+            ~~ &amp; ~~ a_{kij}^{L}w_{kj}^{U}\leq w_{ki}^{L},\, w_{ki}^{U}\leq a_{kij}^{U}w_{kj}^{L},\, i,j,\in N(i&lt;j) \\
             ~~ &amp; ~~ w_{ki}^{L}\leq a_{kij}w_{kj}^{U},\, a_{kij}w_{kj}^{L}\leq w_{ki}^{U},\, i,j,\in N(i&lt;j) , k\in M\\
             ~~ &amp; ~~ \sum_{j\in N\setminus i} w_{kj}^{U} + w_{ki}^{L}\geq 1, k\in M, i\in N, \\
             ~~ &amp; ~~ \sum_{j\in N\setminus i} w_{kj}^{L} + w_{ki}^{U}\leq 1, k\in M, i\in N, \\
