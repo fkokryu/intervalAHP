@@ -15,7 +15,7 @@ LPResult_one_PerfectIncorporation = @NamedTuple{
     optimalValue::T
     } where {T <: Real}
 
-function solveonePerfectIncorporationLP(matrices::Vector{Matrix{T}})::LPResult_one_PerfectIncorporation{T} where {T <: Real}
+function solveonePerfectIncorporationLP(matrices::Vector{Matrix{T}})::Union{LPResult_one_PerfectIncorporation{T}, Nothing} where {T <: Real}
     ε = 1e-8 # << 1
 
     if isempty(matrices)
@@ -88,39 +88,48 @@ function solveonePerfectIncorporationLP(matrices::Vector{Matrix{T}})::LPResult_o
 
         optimize!(model)
 
-        optimalValue = sum(value.(wᵁ)) - sum(value.(wᴸ))
+        if termination_status(model) == MOI.OPTIMAL
+            # 解が見つかった場合の処理
+            optimalValue = sum(value.(wᵁ)) - sum(value.(wᴸ))
 
-        wᴸ_value = value.(wᴸ)
-        wᵁ_value = value.(wᵁ)
-        # precision error 対応
-        for i = 1:n
-            if wᴸ_value[i] > wᵁ_value[i]
-                wᴸ_value[i] = wᵁ_value[i]
+            wᴸ_value = value.(wᴸ)
+            wᵁ_value = value.(wᵁ)
+            # precision error 対応
+            for i = 1:n
+                if wᴸ_value[i] > wᵁ_value[i]
+                    wᴸ_value[i] = wᵁ_value[i]
+                end
             end
-        end
-        W_value = map(i -> (wᴸ_value[i])..(wᵁ_value[i]), 1:n)
-        
-        ŵᴸ_value = value.(ŵᴸ)
-        ŵᵁ_value = value.(ŵᵁ)
-        # precision error 対応
-        for k = 1:l, i = 1:n
-            if ŵᴸ_value[k,i] > ŵᵁ_value[k,i]
-                ŵᴸ_value[k,i] = ŵᵁ_value[k,i]
+            W_value = map(i -> (wᴸ_value[i])..(wᵁ_value[i]), 1:n)
+            
+            ŵᴸ_value = value.(ŵᴸ)
+            ŵᵁ_value = value.(ŵᵁ)
+            # precision error 対応
+            for k = 1:l, i = 1:n
+                if ŵᴸ_value[k,i] > ŵᵁ_value[k,i]
+                    ŵᴸ_value[k,i] = ŵᵁ_value[k,i]
+                end
             end
-        end
-        Ŵ_value = map(
-            k -> map(i -> (ŵᴸ_value[k,i])..(ŵᵁ_value[k,i]), 1:n),
-            1:l)
+            Ŵ_value = map(
+                k -> map(i -> (ŵᴸ_value[k,i])..(ŵᵁ_value[k,i]), 1:n),
+                1:l)
 
-        return (
-            wᴸ=wᴸ_value, wᵁ=wᵁ_value,
-            W=W_value,
-            ŵᴸ=ŵᴸ_value, ŵᵁ=ŵᵁ_value,
-            Ŵ=Ŵ_value,
-            optimalValue=optimalValue
-        )
-    finally
-        # エラー終了時にも変数などを消去する
-        empty!(model)
+            return (
+                wᴸ=wᴸ_value, wᵁ=wᵁ_value,
+                W=W_value,
+                ŵᴸ=ŵᴸ_value, ŵᵁ=ŵᵁ_value,
+                Ŵ=Ŵ_value,
+                optimalValue=optimalValue
+            )
+        else
+            # 解が見つからなかった場合の処理
+            println("The PerfectIncorporation optimization problem had no optimal solution.")
+            return nothing  # 解が見つからなかったことを示すためにnothingを返す
+        end
+
+    catch e
+        # エラーが発生した場合の処理
+        println("An error occurred during optimization: ", e)
+        return nothing  # エラーが発生したことを示すためにnothingを返す
     end
 end
