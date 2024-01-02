@@ -1,10 +1,12 @@
 using Random
 using LinearAlgebra
 using Base.Threads
+using Statistics
+using Distributions
 
-# 正規化された重要度ベクトルの生成関数
-function generate_normalized_weight_vector(n)
-    weights = rand(n)
+# 正規化された重要度ベクトルの生成関数（調整された対数正規分布使用）
+function generate_normalized_weight_vector(n, std_dev=0.5)  # 標準偏差を引数で調整可能に
+    weights = rand(LogNormal(0, std_dev), n)
     return weights / sum(weights)
 end
 
@@ -20,25 +22,48 @@ function generate_pcm(weights)
     return pcm
 end
 
-# 対数変換と摂動の適用関数
+# 対数変換と摂動の適用関数（各要素に独立した摂動を加える）
 function perturbate_pcm(pcm, perturbation_strength)
-    log_pcm = log.(pcm)
-    perturbed_log_pcm = log_pcm + randn(size(log_pcm)) * perturbation_strength
-    perturbed_pcm = exp.(perturbed_log_pcm)
+    n = size(pcm, 1)
+    perturbed_pcm = copy(pcm)
+
+    for i in 1:n
+        for j in i+1:n  # 上三角行列の要素にのみ摂動を加える
+            perturbed_value = log(pcm[i, j]) + randn() * perturbation_strength
+            perturbed_pcm[i, j] = exp(perturbed_value)
+            perturbed_pcm[j, i] = 1 / perturbed_pcm[i, j]  # 対称性を維持
+
+            perturbed_value = 0
+        end
+    end
+
     return enforce_pcm_constraints(perturbed_pcm)
 end
 
 # PCMの制約を適用する関数
 function enforce_pcm_constraints(pcm)
     n = size(pcm, 1)
+    max_val = maximum(pcm)
+    min_val = minimum(pcm)
+
+    # スケーリング係数を計算
+    scale_factor = 1.0
+    if max_val > 9
+        scale_factor = min(scale_factor, 9 / max_val)
+    end
+    if min_val < 1/9
+        scale_factor = min(scale_factor, min_val / (1/9))
+    end
+
+    # 全要素にスケーリング係数を適用
     for i in 1:n
-        pcm[i, i] = 1.0  # 対角成分を1に設定
         for j in 1:n
             if i != j
-                pcm[i, j] = clamp(pcm[i, j], 1/9, 9)  # 値を1/9から9の範囲に制限
-                pcm[j, i] = 1 / pcm[i, j]  # 対称性を保持
+                pcm[i, j] = max(min(pcm[i, j] * scale_factor, 9), 1/9)
+                pcm[j, i] = 1 / pcm[i, j]
             end
         end
+        pcm[i, i] = 1.0  # 対角成分を1に設定
     end
     return pcm
 end

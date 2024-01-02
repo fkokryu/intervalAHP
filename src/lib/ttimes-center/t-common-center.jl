@@ -16,7 +16,7 @@ LPResult_t_2_CommonGround = @NamedTuple{
     s::Vector{T}
     } where {T <: Real}
 
-function solvetCommonGroundLP2(matrices::Vector{Matrix{T}})::Union{LPResult_one_CommonGround{T}, Nothing} where {T <: Real}
+function solvetCommonGroundLP2(matrices::Vector{Matrix{T}})::Union{LPResult_t_2_CommonGround, Nothing} where {T <: Real}
     ε = 1e-8 # << 1
 
     if isempty(matrices)
