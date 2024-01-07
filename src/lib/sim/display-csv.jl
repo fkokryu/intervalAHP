@@ -3,26 +3,20 @@ using CSV
 using DataFrames
 using Base.Threads
 
-# Mutexの初期化
-mutex = Threads.Mutex()
+# ReentrantLockの初期化
+lock = ReentrantLock()
 
 # ランダムにPCMを選択する関数
 function random_select_pcms(pcms, count)
     return pcms[shuffle(1:length(pcms))[1:count]]
 end
 
-# 結果を保存するためのデータフレームを初期化
-results = DataFrame(
-    d_PerfectIncorporation = Float64[],
-    d_tPerfectIncorporation2 = Float64[],
-    d_CommonGround = Float64[],
-    d_tCommonGround2 = Float64[],
-    d_PartialIncorporation = Float64[],
-    d_tPartialIncorporation2 = Float64[]
-)
+# 結果を保存するための一時的な配列を初期化
+temp_results = Array{Any}(undef, 1000)
+
 
 # 1000回の実験を実行
-Threads.@threads for _ in 1:1000
+Threads.@threads for i in 1:1000
     selected_pcms = random_select_pcms(pcms, 3)
 
     # 各手法の計算とエラーチェック
@@ -67,11 +61,12 @@ Threads.@threads for _ in 1:1000
         d_tPartialIncorporation2 = tPartialIncorporation2.optimalValue
     )
 
-    # Mutexを使用してスレッドセーフに結果を追加
-    lock(mutex) do
-        push!(results, local_results)
-    end
+    # 結果を一時配列に保存
+    temp_results[i] = local_results
 end
+
+# 結果をDataFrameに変換
+results = DataFrame(vcat(temp_results...))
 
 # 結果をCSVファイルに保存
 CSV.write("results.csv", results)
