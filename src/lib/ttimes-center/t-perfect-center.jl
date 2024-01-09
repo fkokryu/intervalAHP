@@ -16,7 +16,7 @@ LPResult_t_2_PerfectIncorporation = @NamedTuple{
     s :: Vector{T}
     } where {T <: Real}
 
-function solvetPerfectIncorporationLP2(matrices::Vector{Matrix{T}})::LPResult_t_2_PerfectIncorporation{T} where {T <: Real}
+function solvetPerfectIncorporationLP2(matrices::Vector{Matrix{T}})::Union{LPResult_t_2_PerfectIncorporation{T}, Nothing} where {T <: Real}
     ε = 1e-8 # << 1
 
     if isempty(matrices)

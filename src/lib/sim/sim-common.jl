@@ -1,74 +1,74 @@
-using Random
 using LinearAlgebra
 using Base.Threads
 using Statistics
 using Distributions
-
+using CSV
+using DataFrames
 using Random
 
-using Random
-
-# 区間重要度ベクトルの生成関数
-function generate_interval_weight_vector(n)
-    # 初期化
-    L = rand(n)  # 左端はランダムな正の値
-    U = rand(n)  # 右端もランダムな正の値
-
-    # 制約を満たすように調整
-    for i in 1:n
-        # 制約1: 各代替案の重要度の区間の右端と他の代替案の左端の和 >= 1
-        while sum(U[1:n .!= i]) + L[i] < 1
-            L[i] = rand()  # L[i] をランダムに再設定
-        end
-
-        # 制約2: 各代替案の重要度の区間の左端と他の代替案の右端の和 <= 1
-        while sum(L[1:n .!= i]) + U[i] > 1
-            U[i] = rand()  # U[i] をランダムに再設定
-        end
+# CSVファイルから区間重要度のデータを読み込む関数
+function load_interval_weights_from_csv(file_path)
+    df = CSV.read(file_path, DataFrame)
+    interval_weights = []
+    for i in 4:1000
+        # 各区間重要度の左端と右端をペアにして追加（文字列から数値への変換を行う）
+        row_weights = [(parse(Float64, df[i, 2*j]), parse(Float64, df[i, 2*j+1])) for j in 1:5]
+        push!(interval_weights, row_weights)
     end
-
-    return L, U
+    return interval_weights
 end
 
+# ランダムに選ばれた行の区間重要度ベクトルを取得
+function random_interval_weight_vector(interval_weights)
+    return interval_weights[rand(1:length(interval_weights))]
+end
 
+# CSVファイルから区間重要度ベクトルを読み込む
+file_path = "Simp.csv"  # CSVファイルのパス
+interval_weights = load_interval_weights_from_csv(file_path)
 
-# PCMの生成関数
-function generate_pcm(weights)
-    n = length(weights)
+# ランダムに選ばれた行の区間重要度ベクトルを取得
+selected_interval_weight = random_interval_weight_vector(interval_weights)
+
+# 特定の区間重要度からPCMを生成する関数
+function generate_pcm_from_interval(selected_interval_weight)
+    n = length(selected_interval_weight)
     pcm = ones(n, n)
+
+    # 選ばれた区間重要度からランダムな値を選ぶ
+    selected_values = [rand(Uniform(interval[1], interval[2])) for interval in selected_interval_weight]
+
+    # 選ばれた値を使用してPCMを生成
     for i in 1:n
         for j in 1:n
-            pcm[i, j] = weights[i] / weights[j]
+            pcm[i, j] = selected_values[i] / selected_values[j]
         end
     end
     return pcm
 end
 
-# 対数変換と摂動の適用関数（各要素に独立した摂動を加える）
-function perturbate_pcm(pcm, perturbation_strength)
+# PCMに対数変換と摂動を適用する関数
+function perturbate_pcm_from_interval(pcm, perturbation_strength)
     n = size(pcm, 1)
     perturbed_pcm = copy(pcm)
 
     for i in 1:n
-        for j in i+1:n  # 上三角行列の要素にのみ摂動を加える
+        for j in i+1:n
             perturbed_value = log(pcm[i, j]) + randn() * perturbation_strength
             perturbed_pcm[i, j] = exp(perturbed_value)
-            perturbed_pcm[j, i] = 1 / perturbed_pcm[i, j]  # 対称性を維持
-
-            perturbed_value = 0
+            perturbed_pcm[j, i] = 1 / perturbed_pcm[i, j]
         end
     end
 
-    return enforce_pcm_constraints(perturbed_pcm)
+    return enforce_pcm_constraints_from_interval(perturbed_pcm)
 end
 
 # PCMの制約を適用する関数
-function enforce_pcm_constraints(pcm)
+function enforce_pcm_constraints_from_interval(pcm)
     n = size(pcm, 1)
     max_val = maximum(pcm)
     min_val = minimum(pcm)
 
-    # スケーリング係数を計算
     scale_factor = 1.0
     if max_val > 9
         scale_factor = min(scale_factor, 9 / max_val)
@@ -77,7 +77,6 @@ function enforce_pcm_constraints(pcm)
         scale_factor = min(scale_factor, min_val / (1/9))
     end
 
-    # 全要素にスケーリング係数を適用
     for i in 1:n
         for j in 1:n
             if i != j
@@ -85,21 +84,20 @@ function enforce_pcm_constraints(pcm)
                 pcm[j, i] = 1 / pcm[i, j]
             end
         end
-        pcm[i, i] = 1.0  # 対角成分を1に設定
     end
     return pcm
 end
 
-# 整合性のチェック関数
-function check_consistency(pcm)
+# PCMの整合性をチェックする関数
+function check_consistency_from_interval(pcm)
     return maximum(abs.(pcm * inv(pcm) - I)) < 0.1
 end
 
-# 指定された数の類似したPCMを生成する関数（マルチスレッド版）
-function generate_similar_pcms(n, perturbation_strength, desired_count)
+# 類似したPCMを生成する関数（マルチスレッド版）
+function generate_similar_pcms_from_interval(perturbation_strength, desired_count)
     local_pcms = [Vector{Matrix{Float64}}() for _ in 1:nthreads()]
-    weights = generate_normalized_weight_vector(n)
-    original_pcm = generate_pcm(weights)
+    selected_interval_weight = random_interval_weight_vector(interval_weights)
+    original_pcm = generate_pcm_from_interval(selected_interval_weight)
     generated_count = Threads.Atomic{Int}(0)
 
     Threads.@threads for i in 1:desired_count * nthreads()
@@ -107,8 +105,8 @@ function generate_similar_pcms(n, perturbation_strength, desired_count)
             break
         end
 
-        perturbed_pcm = perturbate_pcm(original_pcm, perturbation_strength)
-        if check_consistency(perturbed_pcm)
+        perturbed_pcm = perturbate_pcm_from_interval(original_pcm, perturbation_strength)
+        if check_consistency_from_interval(perturbed_pcm)
             if atomic_add!(generated_count, 1) <= desired_count
                 push!(local_pcms[threadid()], perturbed_pcm)
             else
