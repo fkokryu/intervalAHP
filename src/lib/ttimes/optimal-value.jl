@@ -7,9 +7,9 @@ include("../nearly-equal.jl")
 
 LPResult_Crisp = @NamedTuple{
     # 区間重みベクトル
-    vᴸ::Vector{T}, vᵁ::Vector{T},
-    V::Vector{Interval{T}}, # ([Vᵢᴸ, Vᵢᵁ])
-    optimalValue::T
+    wᴸ_center_1::Vector{T}, wᵁ_center_1::Vector{T},
+    W_center_1::Vector{Interval{T}}, # ([Wᵢ_center_1ᴸ, Wᵢ_center_1ᵁ])
+    optimalValue_center_1::T
     } where {T <: Real}
 
 function solveCrispAHPLP(A::Matrix{T})::LPResult_Crisp{T} where {T <: Real}
@@ -24,58 +24,58 @@ function solveCrispAHPLP(A::Matrix{T})::LPResult_Crisp{T} where {T <: Real}
     set_silent(model)
 
     try
-        # vᵢᴸ ≥ ε, vᵢᵁ ≥ ε
-        @variable(model, vᴸ[i=1:n] ≥ ε); @variable(model, vᵁ[i=1:n] ≥ ε)
+        # wᵢ_center_1ᴸ ≥ ε, wᵢ_center_1ᵁ ≥ ε
+        @variable(model, wᴸ_center_1[i=1:n] ≥ ε); @variable(model, wᵁ_center_1[i=1:n] ≥ ε)
 
         # 上三角成分に対応する i, j
         for i = 1:n-1
-            vᵢᴸ = vᴸ[i]; vᵢᵁ = vᵁ[i]
+            wᵢ_center_1ᴸ = wᴸ_center_1[i]; wᵢ_center_1ᵁ = wᵁ_center_1[i]
 
             for j = i+1:n
                 aᵢⱼ = A[i,j]
-                vⱼᴸ = vᴸ[j]; vⱼᵁ = vᵁ[j]
+                wⱼ_center_1ᴸ = wᴸ_center_1[j]; wⱼ_center_1ᵁ = wᵁ_center_1[j]
 
-                @constraint(model, vᵢᴸ ≤ aᵢⱼ * vⱼᵁ)
-                @constraint(model, aᵢⱼ * vⱼᴸ ≤ vᵢᵁ)
+                @constraint(model, wᵢ_center_1ᴸ ≤ aᵢⱼ * wⱼ_center_1ᵁ)
+                @constraint(model, aᵢⱼ * wⱼ_center_1ᴸ ≤ wᵢ_center_1ᵁ)
             end
         end
 
         for i = 1:n
-            vᵢᴸ = vᴸ[i]; vᵢᵁ = vᵁ[i]
+            wᵢ_center_1ᴸ = wᴸ_center_1[i]; wᵢ_center_1ᵁ = wᵁ_center_1[i]
             
             # 正規性条件
-            ∑vⱼᴸ = sum(map(j -> vᴸ[j], filter(j -> i != j, 1:n)))
-            @constraint(model, ∑vⱼᴸ + vᵢᵁ ≤ 1)
-            ∑vⱼᵁ = sum(map(j -> vᵁ[j], filter(j -> i != j, 1:n)))
-            @constraint(model, ∑vⱼᵁ + vᵢᴸ ≥ 1)
+            ∑wⱼ_center_1ᴸ = sum(map(j -> wᴸ_center_1[j], filter(j -> i != j, 1:n)))
+            @constraint(model, ∑wⱼ_center_1ᴸ + wᵢ_center_1ᵁ ≤ 1)
+            ∑wⱼ_center_1ᵁ = sum(map(j -> wᵁ_center_1[j], filter(j -> i != j, 1:n)))
+            @constraint(model, ∑wⱼ_center_1ᵁ + wᵢ_center_1ᴸ ≥ 1)
 
-            @constraint(model, vᵢᵁ ≥ vᵢᴸ)
+            @constraint(model, wᵢ_center_1ᵁ ≥ wᵢ_center_1ᴸ)
         end
 
-        @constraint(model, sum(vᵁ) + sum(vᴸ) == 2)
+        @constraint(model, sum(wᵁ_center_1) + sum(wᴸ_center_1) == 2)
 
-        # 目的関数 ∑(vᵢᵁ - vᵢᴸ)
-        @objective(model, Min, sum(vᵁ) - sum(vᴸ))
+        # 目的関数 ∑(wᵢ_center_1ᵁ - wᵢ_center_1ᴸ)
+        @objective(model, Min, sum(wᵁ_center_1) - sum(wᴸ_center_1))
 
         optimize!(model)
 
-        optimalValue = sum(value.(vᵁ)) - sum(value.(vᴸ))
+        optimalValue_center_1 = sum(value.(wᵁ_center_1)) - sum(value.(wᴸ_center_1))
 
-        vᴸ_value = value.(vᴸ)
-        vᵁ_value = value.(vᵁ)
+        wᴸ_center_1_value = value.(wᴸ_center_1)
+        wᵁ_center_1_value = value.(wᵁ_center_1)
 
         # precision error 対応
         for i = 1:n
-            if vᴸ_value[i] > vᵁ_value[i]
-                vᴸ_value[i] = vᵁ_value[i]
+            if wᴸ_center_1_value[i] > wᵁ_center_1_value[i]
+                wᴸ_center_1_value[i] = wᵁ_center_1_value[i]
             end
         end
-        V_value = map(i -> (vᴸ_value[i])..(vᵁ_value[i]), 1:n)
+        W_center_1_value = map(i -> (wᴸ_center_1_value[i])..(wᵁ_center_1_value[i]), 1:n)
 
         return (
-            vᴸ=vᴸ_value, vᵁ=vᵁ_value,
-            V=V_value,
-            optimalValue=optimalValue
+            wᴸ_center_1=wᴸ_center_1_value, wᵁ_center_1=wᵁ_center_1_value,
+            W_center_1=W_center_1_value,
+            optimalValue_center_1=optimalValue_center_1
         )
     finally
         # エラー終了時にも変数などを消去する

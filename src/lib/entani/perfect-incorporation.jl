@@ -8,14 +8,14 @@ include("../interval-ahp.jl")
 
 LPResult_PerfectIncorporation = @NamedTuple{
     # 区間重みベクトル
-    wᴸ::Vector{T}, wᵁ::Vector{T},
-    W::Vector{Interval{T}}, # ([wᵢᴸ, wᵢᵁ])
-    ŵᴸ::Matrix{T}, ŵᵁ::Matrix{T},
-    Ŵ::Vector{Vector{Interval{T}}}, # ([ŵᵢᴸ, ŵᵢᵁ])
-    optimalValue::T
+    wᴸ_perfect_entani::Vector{T}, wᵁ_perfect_entani::Vector{T},
+    W_perfect_entani::Vector{Interval{T}}, # ([wᵢᴸ_perfect_entani, wᵢᵁ_perfect_entani])
+    ŵᴸ_perfect_entani::Matrix{T}, ŵᵁ_perfect_entani::Matrix{T},
+    Ŵ_perfect_entani::Vector{Vector{Interval{T}}}, # ([ŵᵢᴸ, ŵᵢᵁ])
+    optimalValue_perfect_entani::T
     } where {T <: Real}
 
-function solvePerfectIncorporationLP(matrices::Vector{Matrix{T}})::LPResult_PerfectIncorporation{T} where {T <: Real}
+function solvePerfectIncorporationLP(matrices::Vector{Matrix{T}})::Union{LPResult_PerfectIncorporation{T}, Nothing} where {T <: Real}
     ε = 1e-8 # << 1
 
     if isempty(matrices)
@@ -39,85 +39,94 @@ function solvePerfectIncorporationLP(matrices::Vector{Matrix{T}})::LPResult_Perf
     set_silent(model)
 
     try
-        # wᵢᴸ ≥ ε, wᵢᵁ ≥ ε
-        @variable(model, wᴸ[i=1:n] ≥ ε); @variable(model, wᵁ[i=1:n] ≥ ε)
-        # ŵₖᵢᴸ ≥ ε, ŵₖᵢᵁ ≥ ε
-        @variable(model, ŵᴸ[k=1:l,i=1:n] ≥ ε); @variable(model, ŵᵁ[k=1:l,i=1:n] ≥ ε)
+        # wᵢᴸ_perfect_entani ≥ ε, wᵢᵁ_perfect_entani ≥ ε
+        @variable(model, wᴸ_perfect_entani[i=1:n] ≥ ε); @variable(model, wᵁ_perfect_entani[i=1:n] ≥ ε)
+        # ŵₖᵢᴸ_perfect_entani ≥ ε, ŵₖᵢᵁ_perfect_entani ≥ ε
+        @variable(model, ŵᴸ_perfect_entani[k=1:l,i=1:n] ≥ ε); @variable(model, ŵᵁ_perfect_entani[k=1:l,i=1:n] ≥ ε)
 
         for k = 1:l
-            ŵₖᴸ = ŵᴸ[k,:]; ŵₖᵁ = ŵᵁ[k,:]
+            ŵₖᴸ_perfect_entani = ŵᴸ_perfect_entani[k,:]; ŵₖᵁ_perfect_entani = ŵᵁ_perfect_entani[k,:]
 
             Aₖ = matrices[k]
 
-            # ∑(ŵₖᵢᵁ - ŵₖᵢᴸ) ≤ ḋₖ
-            @constraint(model, sum(ŵₖᵁ) - sum(ŵₖᴸ) ≤ ḋ[k])
+            # ∑(ŵₖᵢᵁ_perfect_entani - ŵₖᵢᴸ_perfect_entani) ≤ ḋₖ
+            @constraint(model, sum(ŵₖᵁ_perfect_entani) - sum(ŵₖᴸ_perfect_entani) ≤ ḋ[k])
 
             for i = 1:n-1
-                ŵₖᵢᴸ = ŵₖᴸ[i]; ŵₖᵢᵁ = ŵₖᵁ[i]
+                ŵₖᵢᴸ_perfect_entani = ŵₖᴸ_perfect_entani[i]; ŵₖᵢᵁ_perfect_entani = ŵₖᵁ_perfect_entani[i]
     
                 for j = i+1:n
                     aₖᵢⱼ = Aₖ[i,j]
-                    ŵₖⱼᴸ = ŵₖᴸ[j]; ŵₖⱼᵁ = ŵₖᵁ[j]
+                    ŵₖⱼᴸ_perfect_entani = ŵₖᴸ_perfect_entani[j]; ŵₖⱼᵁ_perfect_entani = ŵₖᵁ_perfect_entani[j]
                     
-                    @constraint(model, ŵₖᵢᴸ ≤ aₖᵢⱼ * ŵₖⱼᵁ)
-                    @constraint(model, aₖᵢⱼ * ŵₖⱼᴸ ≤ ŵₖᵢᵁ)
+                    @constraint(model, ŵₖᵢᴸ_perfect_entani ≤ aₖᵢⱼ * ŵₖⱼᵁ_perfect_entani)
+                    @constraint(model, aₖᵢⱼ * ŵₖⱼᴸ_perfect_entani ≤ ŵₖᵢᵁ_perfect_entani)
                 end
             end
 
             for i = 1:n
-                ŵₖᵢᴸ = ŵₖᴸ[i]; ŵₖᵢᵁ = ŵₖᵁ[i]
+                ŵₖᵢᴸ_perfect_entani = ŵₖᴸ_perfect_entani[i]; ŵₖᵢᵁ_perfect_entani = ŵₖᵁ_perfect_entani[i]
 
                 # 正規性条件
-                ∑ŵₖⱼᴸ = sum(map(j -> ŵₖᴸ[j], filter(j -> i != j, 1:n)))
-                @constraint(model, ∑ŵₖⱼᴸ + ŵₖᵢᵁ ≤ 1)
-                ∑ŵₖⱼᵁ = sum(map(j -> ŵₖᵁ[j], filter(j -> i != j, 1:n)))
-                @constraint(model, ∑ŵₖⱼᵁ + ŵₖᵢᴸ ≥ 1)
+                ∑ŵₖⱼᴸ_perfect_entani = sum(map(j -> ŵₖᴸ_perfect_entani[j], filter(j -> i != j, 1:n)))
+                @constraint(model, ∑ŵₖⱼᴸ_perfect_entani + ŵₖᵢᵁ_perfect_entani ≤ 1)
+                ∑ŵₖⱼᵁ_perfect_entani = sum(map(j -> ŵₖᵁ_perfect_entani[j], filter(j -> i != j, 1:n)))
+                @constraint(model, ∑ŵₖⱼᵁ_perfect_entani + ŵₖᵢᴸ_perfect_entani ≥ 1)
 
-                wᵢᴸ = wᴸ[i]; wᵢᵁ = wᵁ[i] 
-                @constraint(model, ŵₖᵢᴸ ≥ wᵢᴸ)
-                @constraint(model, ŵₖᵢᵁ ≥ ŵₖᵢᴸ)
-                @constraint(model, wᵢᵁ ≥ ŵₖᵢᵁ)
+                wᵢᴸ_perfect_entani = wᴸ_perfect_entani[i]; wᵢᵁ_perfect_entani = wᵁ_perfect_entani[i] 
+                @constraint(model, ŵₖᵢᴸ_perfect_entani ≥ wᵢᴸ_perfect_entani)
+                @constraint(model, ŵₖᵢᵁ_perfect_entani ≥ ŵₖᵢᴸ_perfect_entani)
+                @constraint(model, wᵢᵁ_perfect_entani ≥ ŵₖᵢᵁ_perfect_entani)
             end
         end
 
-        # 目的関数 ∑(wᵢᵁ - wᵢᴸ)
-        @objective(model, Min, sum(wᵁ) - sum(wᴸ))
+        # 目的関数 ∑(wᵢᵁ_perfect_entani - wᵢᴸ_perfect_entani)
+        @objective(model, Min, sum(wᵁ_perfect_entani) - sum(wᴸ_perfect_entani))
 
         optimize!(model)
 
-        optimalValue = sum(value.(wᵁ)) - sum(value.(wᴸ))
+        if termination_status(model) == MOI.OPTIMAL
+            # 解が見つかった場合の処理
+            optimalValue_perfect_entani = sum(value.(wᵁ_perfect_entani)) - sum(value.(wᴸ_perfect_entani))
 
-        wᴸ_value = value.(wᴸ)
-        wᵁ_value = value.(wᵁ)
-        # precision error 対応
-        for i = 1:n
-            if wᴸ_value[i] > wᵁ_value[i]
-                wᴸ_value[i] = wᵁ_value[i]
+            wᴸ_perfect_entani_value = value.(wᴸ_perfect_entani)
+            wᵁ_perfect_entani_value = value.(wᵁ_perfect_entani)
+            # precision error 対応
+            for i = 1:n
+                if wᴸ_perfect_entani_value[i] > wᵁ_perfect_entani_value[i]
+                    wᴸ_perfect_entani_value[i] = wᵁ_perfect_entani_value[i]
+                end
             end
-        end
-        W_value = map(i -> (wᴸ_value[i])..(wᵁ_value[i]), 1:n)
-        
-        ŵᴸ_value = value.(ŵᴸ)
-        ŵᵁ_value = value.(ŵᵁ)
-        # precision error 対応
-        for k = 1:l, i = 1:n
-            if ŵᴸ_value[k,i] > ŵᵁ_value[k,i]
-                ŵᴸ_value[k,i] = ŵᵁ_value[k,i]
+            W_perfect_entani_value = map(i -> (wᴸ_perfect_entani_value[i])..(wᵁ_perfect_entani_value[i]), 1:n)
+            
+            ŵᴸ_perfect_entani_value = value.(ŵᴸ_perfect_entani)
+            ŵᵁ_perfect_entani_value = value.(ŵᵁ_perfect_entani)
+            # precision error 対応
+            for k = 1:l, i = 1:n
+                if ŵᴸ_perfect_entani_value[k,i] > ŵᵁ_perfect_entani_value[k,i]
+                    ŵᴸ_perfect_entani_value[k,i] = ŵᵁ_perfect_entani_value[k,i]
+                end
             end
-        end
-        Ŵ_value = map(
-            k -> map(i -> (ŵᴸ_value[k,i])..(ŵᵁ_value[k,i]), 1:n),
-            1:l)
+            Ŵ_perfect_entani_value = map(
+                k -> map(i -> (ŵᴸ_perfect_entani_value[k,i])..(ŵᵁ_perfect_entani_value[k,i]), 1:n),
+                1:l)
 
-        return (
-            wᴸ=wᴸ_value, wᵁ=wᵁ_value,
-            W=W_value,
-            ŵᴸ=ŵᴸ_value, ŵᵁ=ŵᵁ_value,
-            Ŵ=Ŵ_value,
-            optimalValue=optimalValue
-        )
-    finally
-        # エラー終了時にも変数などを消去する
-        empty!(model)
+            return (
+                wᴸ_perfect_entani=wᴸ_perfect_entani_value, wᵁ_perfect_entani=wᵁ_perfect_entani_value,
+                W_perfect_entani=W_perfect_entani_value,
+                ŵᴸ_perfect_entani=ŵᴸ_perfect_entani_value, ŵᵁ_perfect_entani=ŵᵁ_perfect_entani_value,
+                Ŵ_perfect_entani=Ŵ_perfect_entani_value,
+                optimalValue_perfect_entani=optimalValue_perfect_entani
+            )
+        else
+            # 解が見つからなかった場合の処理
+            println("The PerfectIncorporation_entani optimization problem had no optimal solution.")
+            return nothing  # 解が見つからなかったことを示すためにnothingを返す
+        end
+
+    catch e
+        # エラーが発生した場合の処理
+        println("An error occurred during optimization: ", e)
+        return nothing  # エラーが発生したことを示すためにnothingを返す
     end
 end

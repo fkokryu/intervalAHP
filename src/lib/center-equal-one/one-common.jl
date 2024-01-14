@@ -8,11 +8,11 @@ include("../ttimes/optimal-value.jl")
 
 LPResult_one_CommonGround = @NamedTuple{
     # 区間重みベクトル
-    wᴸ::Vector{T}, wᵁ::Vector{T},
-    W::Vector{Interval{T}}, # ([wᵢᴸ, wᵢᵁ])
-    ŵᴸ::Matrix{T}, ŵᵁ::Matrix{T},
-    Ŵ::Vector{Vector{Interval{T}}}, # ([ŵᵢᴸ, ŵᵢᵁ])
-    optimalValue::T
+    wᴸ_common_center_1::Vector{T}, wᵁ_common_center_1::Vector{T},
+    W_common_center_1::Vector{Interval{T}}, # ([wᵢᴸ_common_center_1, wᵢᵁ_common_center_1])
+    ŵᴸ_common_center_1::Matrix{T}, ŵᵁ_common_center_1::Matrix{T},
+    Ŵ_common_center_1::Vector{Vector{Interval{T}}}, # ([ŵᵢᴸ, ŵᵢᵁ])
+    optimalValue_common_center_1::T
     } where {T <: Real}
 
 function solveoneCommonGroundLP(matrices::Vector{Matrix{T}})::Union{LPResult_one_CommonGround{T}, Nothing} where {T <: Real}
@@ -33,103 +33,103 @@ function solveoneCommonGroundLP(matrices::Vector{Matrix{T}})::Union{LPResult_one
         throw(ArgumentError("Some matrices have different size"))
     end
 
-    ḋ = map(Aₖ -> solveCrispAHPLP(Aₖ).optimalValue, matrices)
+    ḋ = map(Aₖ -> solveCrispAHPLP(Aₖ).optimalValue_center_1, matrices)
 
     model = Model(HiGHS.Optimizer)
     set_silent(model)
 
     try
-        # wᵢᴸ ≥ ε, wᵢᵁ ≥ ε
-        @variable(model, wᴸ[i=1:n] ≥ ε); @variable(model, wᵁ[i=1:n] ≥ ε)
-        # ŵₖᵢᴸ ≥ ε, ŵₖᵢᵁ ≥ ε
-        @variable(model, ŵᴸ[k=1:l,i=1:n] ≥ ε); @variable(model, ŵᵁ[k=1:l,i=1:n] ≥ ε)
+        # wᵢᴸ_common_center_1 ≥ ε, wᵢᵁ_common_center_1 ≥ ε
+        @variable(model, wᴸ_common_center_1[i=1:n] ≥ ε); @variable(model, wᵁ_common_center_1[i=1:n] ≥ ε)
+        # ŵₖᵢᴸ_common_center_1 ≥ ε, ŵₖᵢᵁ_common_center_1 ≥ ε
+        @variable(model, ŵᴸ_common_center_1[k=1:l,i=1:n] ≥ ε); @variable(model, ŵᵁ_common_center_1[k=1:l,i=1:n] ≥ ε)
 
         for k = 1:l
-            ŵₖᴸ = ŵᴸ[k,:]; ŵₖᵁ = ŵᵁ[k,:]
+            ŵₖᴸ_common_center_1 = ŵᴸ_common_center_1[k,:]; ŵₖᵁ_common_center_1 = ŵᵁ_common_center_1[k,:]
 
             Aₖ = matrices[k]
 
-            # ∑(ŵₖᵢᵁ - ŵₖᵢᴸ) ≤ ḋₖ
-            @constraint(model, sum(ŵₖᵁ) - sum(ŵₖᴸ) ≤ ḋ[k])
+            # ∑(ŵₖᵢᵁ_common_center_1 - ŵₖᵢᴸ_common_center_1) ≤ ḋₖ
+            @constraint(model, sum(ŵₖᵁ_common_center_1) - sum(ŵₖᴸ_common_center_1) ≤ ḋ[k])
 
             for i = 1:n-1
-                ŵₖᵢᴸ = ŵₖᴸ[i]; ŵₖᵢᵁ = ŵₖᵁ[i]
+                ŵₖᵢᴸ_common_center_1 = ŵₖᴸ_common_center_1[i]; ŵₖᵢᵁ_common_center_1 = ŵₖᵁ_common_center_1[i]
     
                 for j = i+1:n
                     aₖᵢⱼ = Aₖ[i,j]
-                    ŵₖⱼᴸ = ŵₖᴸ[j]; ŵₖⱼᵁ = ŵₖᵁ[j]
+                    ŵₖⱼᴸ_common_center_1 = ŵₖᴸ_common_center_1[j]; ŵₖⱼᵁ_common_center_1 = ŵₖᵁ_common_center_1[j]
                     
-                    @constraint(model, ŵₖᵢᴸ ≤ aₖᵢⱼ * ŵₖⱼᵁ)
-                    @constraint(model, aₖᵢⱼ * ŵₖⱼᴸ ≤ ŵₖᵢᵁ)
+                    @constraint(model, ŵₖᵢᴸ_common_center_1 ≤ aₖᵢⱼ * ŵₖⱼᵁ_common_center_1)
+                    @constraint(model, aₖᵢⱼ * ŵₖⱼᴸ_common_center_1 ≤ ŵₖᵢᵁ_common_center_1)
                 end
             end
 
             for i = 1:n
-                ŵₖᵢᴸ = ŵₖᴸ[i]; ŵₖᵢᵁ = ŵₖᵁ[i]
+                ŵₖᵢᴸ_common_center_1 = ŵₖᴸ_common_center_1[i]; ŵₖᵢᵁ_common_center_1 = ŵₖᵁ_common_center_1[i]
 
                 # 正規性条件
-                ∑ŵₖⱼᴸ = sum(map(j -> ŵₖᴸ[j], filter(j -> i != j, 1:n)))
-                @constraint(model, ∑ŵₖⱼᴸ + ŵₖᵢᵁ ≤ 1)
-                ∑ŵₖⱼᵁ = sum(map(j -> ŵₖᵁ[j], filter(j -> i != j, 1:n)))
-                @constraint(model, ∑ŵₖⱼᵁ + ŵₖᵢᴸ ≥ 1)
+                ∑ŵₖⱼᴸ_common_center_1 = sum(map(j -> ŵₖᴸ_common_center_1[j], filter(j -> i != j, 1:n)))
+                @constraint(model, ∑ŵₖⱼᴸ_common_center_1 + ŵₖᵢᵁ_common_center_1 ≤ 1)
+                ∑ŵₖⱼᵁ_common_center_1 = sum(map(j -> ŵₖᵁ_common_center_1[j], filter(j -> i != j, 1:n)))
+                @constraint(model, ∑ŵₖⱼᵁ_common_center_1 + ŵₖᵢᴸ_common_center_1 ≥ 1)
 
-                wᵢᴸ = wᴸ[i]; wᵢᵁ = wᵁ[i]
-                @constraint(model, wᵢᴸ ≥ ŵₖᵢᴸ)
-                @constraint(model, wᵢᵁ ≥ wᵢᴸ)
-                @constraint(model, ŵₖᵢᵁ ≥ wᵢᵁ)
+                wᵢᴸ_common_center_1 = wᴸ_common_center_1[i]; wᵢᵁ_common_center_1 = wᵁ_common_center_1[i]
+                @constraint(model, wᵢᴸ_common_center_1 ≥ ŵₖᵢᴸ_common_center_1)
+                @constraint(model, wᵢᵁ_common_center_1 ≥ wᵢᴸ_common_center_1)
+                @constraint(model, ŵₖᵢᵁ_common_center_1 ≥ wᵢᵁ_common_center_1)
             end
 
-            @constraint(model, sum(ŵₖᴸ) + sum(ŵₖᵁ) == 2)
+            @constraint(model, sum(ŵₖᴸ_common_center_1) + sum(ŵₖᵁ_common_center_1) == 2)
         end
 
         for i = 1:n
-            wᵢᴸ = wᴸ[i]; wᵢᵁ = wᵁ[i] 
+            wᵢᴸ_common_center_1 = wᴸ_common_center_1[i]; wᵢᵁ_common_center_1 = wᵁ_common_center_1[i] 
             # kなしの正規性条件
-            ∑wⱼᴸ = sum(map(j -> wᴸ[j], filter(j -> i != j, 1:n)))
-            @constraint(model, ∑wⱼᴸ + wᵢᵁ ≤ 1)
-            ∑wⱼᵁ = sum(map(j -> wᵁ[j], filter(j -> i != j, 1:n)))
-            @constraint(model, ∑wⱼᵁ + wᵢᴸ ≥ 1)
+            ∑wⱼᴸ_common_center_1 = sum(map(j -> wᴸ_common_center_1[j], filter(j -> i != j, 1:n)))
+            @constraint(model, ∑wⱼᴸ_common_center_1 + wᵢᵁ_common_center_1 ≤ 1)
+            ∑wⱼᵁ_common_center_1 = sum(map(j -> wᵁ_common_center_1[j], filter(j -> i != j, 1:n)))
+            @constraint(model, ∑wⱼᵁ_common_center_1 + wᵢᴸ_common_center_1 ≥ 1)
         end
 
-        @constraint(model, sum(wᵁ) + sum(wᴸ) == 2)
+        @constraint(model, sum(wᵁ_common_center_1) + sum(wᴸ_common_center_1) == 2)
 
-        # 目的関数 ∑(wᵢᵁ - wᵢᴸ)
-        @objective(model, Max, sum(wᵁ) - sum(wᴸ))
+        # 目的関数 ∑(wᵢᵁ_common_center_1 - wᵢᴸ_common_center_1)
+        @objective(model, Max, sum(wᵁ_common_center_1) - sum(wᴸ_common_center_1))
 
         optimize!(model)
 
         if termination_status(model) == MOI.OPTIMAL
             # 解が見つかった場合の処理
-            optimalValue = sum(value.(wᵁ)) - sum(value.(wᴸ))
+            optimalValue_common_center_1 = sum(value.(wᵁ_common_center_1)) - sum(value.(wᴸ_common_center_1))
 
-            wᴸ_value = value.(wᴸ)
-            wᵁ_value = value.(wᵁ)
+            wᴸ_common_center_1_value = value.(wᴸ_common_center_1)
+            wᵁ_common_center_1_value = value.(wᵁ_common_center_1)
             # precision error 対応
             for i = 1:n
-                if wᴸ_value[i] > wᵁ_value[i]
-                    wᴸ_value[i] = wᵁ_value[i]
+                if wᴸ_common_center_1_value[i] > wᵁ_common_center_1_value[i]
+                    wᴸ_common_center_1_value[i] = wᵁ_common_center_1_value[i]
                 end
             end
-            W_value = map(i -> (wᴸ_value[i])..(wᵁ_value[i]), 1:n)
+            W_common_center_1_value = map(i -> (wᴸ_common_center_1_value[i])..(wᵁ_common_center_1_value[i]), 1:n)
             
-            ŵᴸ_value = value.(ŵᴸ)
-            ŵᵁ_value = value.(ŵᵁ)
+            ŵᴸ_common_center_1_value = value.(ŵᴸ_common_center_1)
+            ŵᵁ_common_center_1_value = value.(ŵᵁ_common_center_1)
             # precision error 対応
             for k = 1:l, i = 1:n
-                if ŵᴸ_value[k,i] > ŵᵁ_value[k,i]
-                    ŵᴸ_value[k,i] = ŵᵁ_value[k,i]
+                if ŵᴸ_common_center_1_value[k,i] > ŵᵁ_common_center_1_value[k,i]
+                    ŵᴸ_common_center_1_value[k,i] = ŵᵁ_common_center_1_value[k,i]
                 end
             end
-            Ŵ_value = map(
-                k -> map(i -> (ŵᴸ_value[k,i])..(ŵᵁ_value[k,i]), 1:n),
+            Ŵ_common_center_1_value = map(
+                k -> map(i -> (ŵᴸ_common_center_1_value[k,i])..(ŵᵁ_common_center_1_value[k,i]), 1:n),
                 1:l)
 
             return (
-                wᴸ=wᴸ_value, wᵁ=wᵁ_value,
-                W=W_value,
-                ŵᴸ=ŵᴸ_value, ŵᵁ=ŵᵁ_value,
-                Ŵ=Ŵ_value,
-                optimalValue=optimalValue
+                wᴸ_common_center_1=wᴸ_common_center_1_value, wᵁ_common_center_1=wᵁ_common_center_1_value,
+                W_common_center_1=W_common_center_1_value,
+                ŵᴸ_common_center_1=ŵᴸ_common_center_1_value, ŵᵁ_common_center_1=ŵᵁ_common_center_1_value,
+                Ŵ_common_center_1=Ŵ_common_center_1_value,
+                optimalValue_common_center_1=optimalValue_common_center_1
             )
         else
             # 解が見つからなかった場合の処理

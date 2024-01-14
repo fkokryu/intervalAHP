@@ -4,10 +4,48 @@ using Base.Threads
 using Statistics
 using Distributions
 
-# 正規化された重要度ベクトルの生成関数（調整された対数正規分布使用）
-function generate_normalized_weight_vector(n, std_dev=0.5)  # 標準偏差を引数で調整可能に
-    weights = rand(LogNormal(0, std_dev), n)
-    return weights / sum(weights)
+# 正規化された重要度ベクトルの生成関数（超平面上でのランダム点列の作り方による)
+function generate_normalized_weight_vector(n)
+    acceptable_ratio = false
+    weights = Vector{Float64}(undef, n)
+
+    while !acceptable_ratio
+        random_num = [rand(Uniform(0, 1)) for _ in 1:n-1]
+        sorted_random_num = sort(random_num)
+
+        weights[1] = sorted_random_num[1]
+        for i in 2:n-1
+            weights[i] = sorted_random_num[i] - sorted_random_num[i-1]
+        end
+        weights[n] = 1 - sorted_random_num[n-1]
+
+        max_weight = maximum(weights)
+        min_weight = minimum(weights)
+
+        if max_weight / min_weight <= 9
+            acceptable_ratio = true
+        end
+    end
+
+    return weights
+end
+
+# Saatyのスケールに基づいて数値を離散化する関数
+function discretize_saaty(a)
+    if 2a <= -log(9) - log(8)
+        return 1/9
+    elseif 2a >= log(9) + log(8)
+        return 9
+    else
+        for k in 2:8
+            if -log(k + 1) - log(k) < 2a <= -log(k) - log(k - 1)
+                return 1/k
+            elseif log(k - 1) + log(k) <= 2a < log(k) + log(k + 1)
+                return k
+            end
+        end
+    end
+    return 1  # Default return value if none of the conditions are met
 end
 
 # PCMの生成関数
@@ -16,7 +54,11 @@ function generate_pcm(weights)
     pcm = ones(n, n)
     for i in 1:n
         for j in 1:n
-            pcm[i, j] = weights[i] / weights[j]
+            if i != j
+                # Calculate the ratio and discretize it
+                pcm[i, j] = discretize_saaty(weights[i] / weights[j])
+                pcm[j, i] = 1 / pcm[i, j]  # The matrix is reciprocal
+            end
         end
     end
     return pcm
@@ -29,7 +71,7 @@ function perturbate_pcm(pcm, perturbation_strength)
 
     for i in 1:n
         for j in i+1:n  # 上三角行列の要素にのみ摂動を加える
-            perturbed_value = log(pcm[i, j]) + randn() * perturbation_strength
+            perturbed_value = log(pcm[i, j]) + rand(Uniform(-perturbation_strength, perturbation_strength)) #-1から1の一様分布に従って、たしこむ(調整用の定数倍)
             perturbed_pcm[i, j] = exp(perturbed_value)
             perturbed_pcm[j, i] = 1 / perturbed_pcm[i, j]  # 対称性を維持
 

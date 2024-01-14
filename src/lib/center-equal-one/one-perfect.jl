@@ -8,11 +8,11 @@ include("../ttimes/optimal-value.jl")
 
 LPResult_one_PerfectIncorporation = @NamedTuple{
     # 区間重みベクトル
-    wᴸ::Vector{T}, wᵁ::Vector{T},
-    W::Vector{Interval{T}}, # ([wᵢᴸ, wᵢᵁ])
-    ŵᴸ::Matrix{T}, ŵᵁ::Matrix{T},
-    Ŵ::Vector{Vector{Interval{T}}}, # ([ŵᵢᴸ, ŵᵢᵁ])
-    optimalValue::T
+    wᴸ_perfect_center_1::Vector{T}, wᵁ_perfect_center_1::Vector{T},
+    W_perfect_center_1::Vector{Interval{T}}, # ([wᵢᴸ_perfect_center_1, wᵢᵁ_perfect_center_1])
+    ŵᴸ_perfect_center_1::Matrix{T}, ŵᵁ_perfect_center_1::Matrix{T},
+    Ŵ_perfect_center_1::Vector{Vector{Interval{T}}}, # ([ŵᵢᴸ, ŵᵢᵁ])
+    optimalValue_perfect_center_1::T
     } where {T <: Real}
 
 function solveonePerfectIncorporationLP(matrices::Vector{Matrix{T}})::Union{LPResult_one_PerfectIncorporation{T}, Nothing} where {T <: Real}
@@ -33,93 +33,93 @@ function solveonePerfectIncorporationLP(matrices::Vector{Matrix{T}})::Union{LPRe
         throw(ArgumentError("Some matrices have different size"))
     end
 
-    ḋ = map(Aₖ -> solveCrispAHPLP(Aₖ).optimalValue, matrices)
+    ḋ = map(Aₖ -> solveCrispAHPLP(Aₖ).optimalValue_center_1, matrices)
 
     model = Model(HiGHS.Optimizer)
     set_silent(model)
 
     try
-        # wᵢᴸ ≥ ε, wᵢᵁ ≥ ε
-        @variable(model, wᴸ[i=1:n] ≥ ε); @variable(model, wᵁ[i=1:n] ≥ ε)
-        # ŵₖᵢᴸ ≥ ε, ŵₖᵢᵁ ≥ ε
-        @variable(model, ŵᴸ[k=1:l,i=1:n] ≥ ε); @variable(model, ŵᵁ[k=1:l,i=1:n] ≥ ε)
+        # wᵢᴸ_perfect_center_1 ≥ ε, wᵢᵁ_perfect_center_1 ≥ ε
+        @variable(model, wᴸ_perfect_center_1[i=1:n] ≥ ε); @variable(model, wᵁ_perfect_center_1[i=1:n] ≥ ε)
+        # ŵₖᵢᴸ_perfect_center_1 ≥ ε, ŵₖᵢᵁ_perfect_center_1 ≥ ε
+        @variable(model, ŵᴸ_perfect_center_1[k=1:l,i=1:n] ≥ ε); @variable(model, ŵᵁ_perfect_center_1[k=1:l,i=1:n] ≥ ε)
 
         for k = 1:l
-            ŵₖᴸ = ŵᴸ[k,:]; ŵₖᵁ = ŵᵁ[k,:]
+            ŵₖᴸ_perfect_center_1 = ŵᴸ_perfect_center_1[k,:]; ŵₖᵁ_perfect_center_1 = ŵᵁ_perfect_center_1[k,:]
 
             Aₖ = matrices[k]
 
-            # ∑(ŵₖᵢᵁ - ŵₖᵢᴸ) ≤ ḋₖ
-            @constraint(model, sum(ŵₖᵁ) - sum(ŵₖᴸ) ≤ ḋ[k])
+            # ∑(ŵₖᵢᵁ_perfect_center_1 - ŵₖᵢᴸ_perfect_center_1) ≤ ḋₖ
+            @constraint(model, sum(ŵₖᵁ_perfect_center_1) - sum(ŵₖᴸ_perfect_center_1) ≤ ḋ[k])
 
             for i = 1:n-1
-                ŵₖᵢᴸ = ŵₖᴸ[i]; ŵₖᵢᵁ = ŵₖᵁ[i]
+                ŵₖᵢᴸ_perfect_center_1 = ŵₖᴸ_perfect_center_1[i]; ŵₖᵢᵁ_perfect_center_1 = ŵₖᵁ_perfect_center_1[i]
     
                 for j = i+1:n
                     aₖᵢⱼ = Aₖ[i,j]
-                    ŵₖⱼᴸ = ŵₖᴸ[j]; ŵₖⱼᵁ = ŵₖᵁ[j]
+                    ŵₖⱼᴸ_perfect_center_1 = ŵₖᴸ_perfect_center_1[j]; ŵₖⱼᵁ_perfect_center_1 = ŵₖᵁ_perfect_center_1[j]
                     
-                    @constraint(model, ŵₖᵢᴸ ≤ aₖᵢⱼ * ŵₖⱼᵁ)
-                    @constraint(model, aₖᵢⱼ * ŵₖⱼᴸ ≤ ŵₖᵢᵁ)
+                    @constraint(model, ŵₖᵢᴸ_perfect_center_1 ≤ aₖᵢⱼ * ŵₖⱼᵁ_perfect_center_1)
+                    @constraint(model, aₖᵢⱼ * ŵₖⱼᴸ_perfect_center_1 ≤ ŵₖᵢᵁ_perfect_center_1)
                 end
             end
 
             for i = 1:n
-                ŵₖᵢᴸ = ŵₖᴸ[i]; ŵₖᵢᵁ = ŵₖᵁ[i]
+                ŵₖᵢᴸ_perfect_center_1 = ŵₖᴸ_perfect_center_1[i]; ŵₖᵢᵁ_perfect_center_1 = ŵₖᵁ_perfect_center_1[i]
 
                 # 正規性条件
-                ∑ŵₖⱼᴸ = sum(map(j -> ŵₖᴸ[j], filter(j -> i != j, 1:n)))
-                @constraint(model, ∑ŵₖⱼᴸ + ŵₖᵢᵁ ≤ 1)
-                ∑ŵₖⱼᵁ = sum(map(j -> ŵₖᵁ[j], filter(j -> i != j, 1:n)))
-                @constraint(model, ∑ŵₖⱼᵁ + ŵₖᵢᴸ ≥ 1)
+                ∑ŵₖⱼᴸ_perfect_center_1 = sum(map(j -> ŵₖᴸ_perfect_center_1[j], filter(j -> i != j, 1:n)))
+                @constraint(model, ∑ŵₖⱼᴸ_perfect_center_1 + ŵₖᵢᵁ_perfect_center_1 ≤ 1)
+                ∑ŵₖⱼᵁ_perfect_center_1 = sum(map(j -> ŵₖᵁ_perfect_center_1[j], filter(j -> i != j, 1:n)))
+                @constraint(model, ∑ŵₖⱼᵁ_perfect_center_1 + ŵₖᵢᴸ_perfect_center_1 ≥ 1)
 
-                wᵢᴸ = wᴸ[i]; wᵢᵁ = wᵁ[i] 
-                @constraint(model, ŵₖᵢᴸ ≥ wᵢᴸ)
-                @constraint(model, ŵₖᵢᵁ ≥ ŵₖᵢᴸ)
-                @constraint(model, wᵢᵁ ≥ ŵₖᵢᵁ)
+                wᵢᴸ_perfect_center_1 = wᴸ_perfect_center_1[i]; wᵢᵁ_perfect_center_1 = wᵁ_perfect_center_1[i] 
+                @constraint(model, ŵₖᵢᴸ_perfect_center_1 ≥ wᵢᴸ_perfect_center_1)
+                @constraint(model, ŵₖᵢᵁ_perfect_center_1 ≥ ŵₖᵢᴸ_perfect_center_1)
+                @constraint(model, wᵢᵁ_perfect_center_1 ≥ ŵₖᵢᵁ_perfect_center_1)
             end
-            @constraint(model, sum(ŵₖᴸ) + sum(ŵₖᵁ) == 2)
+            @constraint(model, sum(ŵₖᴸ_perfect_center_1) + sum(ŵₖᵁ_perfect_center_1) == 2)
         end
 
-        @constraint(model, sum(wᵁ) + sum(wᴸ) == 2)
+        @constraint(model, sum(wᵁ_perfect_center_1) + sum(wᴸ_perfect_center_1) == 2)
 
-        # 目的関数 ∑(wᵢᵁ - wᵢᴸ)
-        @objective(model, Min, sum(wᵁ) - sum(wᴸ))
+        # 目的関数 ∑(wᵢᵁ_perfect_center_1 - wᵢᴸ_perfect_center_1)
+        @objective(model, Min, sum(wᵁ_perfect_center_1) - sum(wᴸ_perfect_center_1))
 
         optimize!(model)
 
         if termination_status(model) == MOI.OPTIMAL
             # 解が見つかった場合の処理
-            optimalValue = sum(value.(wᵁ)) - sum(value.(wᴸ))
+            optimalValue_perfect_center_1 = sum(value.(wᵁ_perfect_center_1)) - sum(value.(wᴸ_perfect_center_1))
 
-            wᴸ_value = value.(wᴸ)
-            wᵁ_value = value.(wᵁ)
+            wᴸ_perfect_center_1_value = value.(wᴸ_perfect_center_1)
+            wᵁ_perfect_center_1_value = value.(wᵁ_perfect_center_1)
             # precision error 対応
             for i = 1:n
-                if wᴸ_value[i] > wᵁ_value[i]
-                    wᴸ_value[i] = wᵁ_value[i]
+                if wᴸ_perfect_center_1_value[i] > wᵁ_perfect_center_1_value[i]
+                    wᴸ_perfect_center_1_value[i] = wᵁ_perfect_center_1_value[i]
                 end
             end
-            W_value = map(i -> (wᴸ_value[i])..(wᵁ_value[i]), 1:n)
+            W_perfect_center_1_value = map(i -> (wᴸ_perfect_center_1_value[i])..(wᵁ_perfect_center_1_value[i]), 1:n)
             
-            ŵᴸ_value = value.(ŵᴸ)
-            ŵᵁ_value = value.(ŵᵁ)
+            ŵᴸ_perfect_center_1_value = value.(ŵᴸ_perfect_center_1)
+            ŵᵁ_perfect_center_1_value = value.(ŵᵁ_perfect_center_1)
             # precision error 対応
             for k = 1:l, i = 1:n
-                if ŵᴸ_value[k,i] > ŵᵁ_value[k,i]
-                    ŵᴸ_value[k,i] = ŵᵁ_value[k,i]
+                if ŵᴸ_perfect_center_1_value[k,i] > ŵᵁ_perfect_center_1_value[k,i]
+                    ŵᴸ_perfect_center_1_value[k,i] = ŵᵁ_perfect_center_1_value[k,i]
                 end
             end
-            Ŵ_value = map(
-                k -> map(i -> (ŵᴸ_value[k,i])..(ŵᵁ_value[k,i]), 1:n),
+            Ŵ_perfect_center_1_value = map(
+                k -> map(i -> (ŵᴸ_perfect_center_1_value[k,i])..(ŵᵁ_perfect_center_1_value[k,i]), 1:n),
                 1:l)
 
             return (
-                wᴸ=wᴸ_value, wᵁ=wᵁ_value,
-                W=W_value,
-                ŵᴸ=ŵᴸ_value, ŵᵁ=ŵᵁ_value,
-                Ŵ=Ŵ_value,
-                optimalValue=optimalValue
+                wᴸ_perfect_center_1=wᴸ_perfect_center_1_value, wᵁ_perfect_center_1=wᵁ_perfect_center_1_value,
+                W_perfect_center_1=W_perfect_center_1_value,
+                ŵᴸ_perfect_center_1=ŵᴸ_perfect_center_1_value, ŵᵁ_perfect_center_1=ŵᵁ_perfect_center_1_value,
+                Ŵ_perfect_center_1=Ŵ_perfect_center_1_value,
+                optimalValue_perfect_center_1=optimalValue_perfect_center_1
             )
         else
             # 解が見つからなかった場合の処理
