@@ -8,13 +8,12 @@ include("../ttimes/optimal-value.jl")
 
 LPResult_t_2_PartialIncorporation = @NamedTuple{
     # 区間重みベクトル
-    wᴸ::Vector{T}, wᵁ::Vector{T},
-    W::Vector{Interval{T}}, # ([wᵢᴸ, wᵢᵁ])
-    ŵᴸ::Matrix{T}, ŵᵁ::Matrix{T},
-    ŵ::Vector{Vector{Interval{T}}}, # ([ŵᵢᴸ, ŵᵢᵁ])
-    Ŵ::Vector{Vector{T}},
-    optimalValue::T,
-    s::Vector{T}
+    wᴸ_tpartial_center_1::Vector{T}, wᵁ_tpartial_center_1::Vector{T},
+    W_tpartial_center_1::Vector{Interval{T}}, # ([wᵢᴸ_tpartial_center_1, wᵢᵁ_tpartial_center_1])
+    ŵᴸ_tpartial_center_1::Matrix{T}, ŵᵁ_tpartial_center_1::Matrix{T},
+    ŵ_tpartial_center_1::Vector{Vector{Interval{T}}}, # ([ŵᵢᴸ, ŵᵢᵁ])
+    Ŵ_tpartial_center_1::Vector{Vector{T}},
+    optimalValue_tpartial_center_1::T
     } where {T <: Real}
 
 function solvetPartialIncorporationLP2(
@@ -37,115 +36,106 @@ function solvetPartialIncorporationLP2(
         throw(ArgumentError("Some matrices have different size"))
     end
 
-    ḋ = map(Aₖ -> solveCrispAHPLP(Aₖ).optimalValue, matrices)
+    ḋ = map(Aₖ -> solveCrispAHPLP(Aₖ).optimalValue_center_1, matrices)
 
     model = Model(HiGHS.Optimizer)
     set_silent(model)
 
     try
-        # wᵢᴸ ≥ ε, wᵢᵁ ≥ ε
-        @variable(model, wᴸ[i=1:n] ≥ ε)
-        @variable(model, wᵁ[i=1:n] ≥ ε)
-        # ŵₖᵢᴸ ≥ ε, ŵₖᵢᵁ ≥ ε
-        @variable(model, ŵᴸ[k=1:l,i=1:n] ≥ ε)
-        @variable(model, ŵᵁ[k=1:l,i=1:n] ≥ ε)
-        # Ŵₖᵢ ≥ ε
-        @variable(model, Ŵ[k=1:l,i=1:n] ≥ ε)
-        # s ≥ ε
-        @variable(model, s[k=1:l] ≥ ε)
+        # wᵢᴸ_tpartial_center_1 ≥ ε, wᵢᵁ_tpartial_center_1 ≥ ε
+        @variable(model, wᴸ_tpartial_center_1[i=1:n] ≥ ε)
+        @variable(model, wᵁ_tpartial_center_1[i=1:n] ≥ ε)
+        # ŵₖᵢᴸ_tpartial_center_1 ≥ ε, ŵₖᵢᵁ_tpartial_center_1 ≥ ε
+        @variable(model, ŵᴸ_tpartial_center_1[k=1:l,i=1:n] ≥ ε)
+        @variable(model, ŵᵁ_tpartial_center_1[k=1:l,i=1:n] ≥ ε)
+        # Ŵ_tpartial_center_1ₖᵢ ≥ ε
+        @variable(model, Ŵ_tpartial_center_1[k=1:l,i=1:n] ≥ ε)
 
         for k = 1:l
-            ŵₖᴸ = ŵᴸ[k,:]; ŵₖᵁ = ŵᵁ[k,:]
-            Ŵₖ = Ŵ[k,:]
+            ŵₖᴸ_tpartial_center_1 = ŵᴸ_tpartial_center_1[k,:]; ŵₖᵁ_tpartial_center_1 = ŵᵁ_tpartial_center_1[k,:]
+            Ŵ_tpartial_center_1ₖ = Ŵ_tpartial_center_1[k,:]
 
             Aₖ = matrices[k]
 
-            # ∑(ŵₖᵢᵁ - ŵₖᵢᴸ) ≤ sₖḋₖ
-            @constraint(model, sum(ŵₖᵁ) - sum(ŵₖᴸ) == s[k]ḋ[k])
+            # ∑(ŵₖᵢᵁ_tpartial_center_1 - ŵₖᵢᴸ_tpartial_center_1) ≤ sₖḋₖ
+            @constraint(model, sum(ŵₖᵁ_tpartial_center_1) - sum(ŵₖᴸ_tpartial_center_1) == (sum(ŵₖᴸ_tpartial_center_1) + sum(ŵₖᵁ_tpartial_center_1)) / 2 * ḋ[k])
 
             for i = 1:n-1
-                ŵₖᵢᴸ = ŵₖᴸ[i]; ŵₖᵢᵁ = ŵₖᵁ[i]
+                ŵₖᵢᴸ_tpartial_center_1 = ŵₖᴸ_tpartial_center_1[i]; ŵₖᵢᵁ_tpartial_center_1 = ŵₖᵁ_tpartial_center_1[i]
 
                 for j = i+1:n
                     aₖᵢⱼ = Aₖ[i,j]
-                    ŵₖⱼᴸ = ŵₖᴸ[j]; ŵₖⱼᵁ = ŵₖᵁ[j]
+                    ŵₖⱼᴸ_tpartial_center_1 = ŵₖᴸ_tpartial_center_1[j]; ŵₖⱼᵁ_tpartial_center_1 = ŵₖᵁ_tpartial_center_1[j]
 
-                    @constraint(model, ŵₖᵢᴸ ≤ aₖᵢⱼ * ŵₖⱼᵁ)
-                    @constraint(model, aₖᵢⱼ * ŵₖⱼᴸ ≤ ŵₖᵢᵁ)
+                    @constraint(model, ŵₖᵢᴸ_tpartial_center_1 ≤ aₖᵢⱼ * ŵₖⱼᵁ_tpartial_center_1)
+                    @constraint(model, aₖᵢⱼ * ŵₖⱼᴸ_tpartial_center_1 ≤ ŵₖᵢᵁ_tpartial_center_1)
                 end
             end
 
-            @constraint(model, sum(wᵁ) + sum(wᴸ) == 2)
+            @constraint(model, sum(wᵁ_tpartial_center_1) + sum(wᴸ_tpartial_center_1) == 2)
 
             # 正規性条件
-            @constraint(model, sum(Ŵₖ) == 1)
+            @constraint(model, sum(Ŵ_tpartial_center_1ₖ) == 1)
 
             for i = 1:n
-                ŵₖᵢᴸ = ŵₖᴸ[i]; ŵₖᵢᵁ = ŵₖᵁ[i]
-                wᵢᴸ = wᴸ[i]; wᵢᵁ = wᵁ[i]
-                Ŵₖᵢ = Ŵₖ[i]
+                ŵₖᵢᴸ_tpartial_center_1 = ŵₖᴸ_tpartial_center_1[i]; ŵₖᵢᵁ_tpartial_center_1 = ŵₖᵁ_tpartial_center_1[i]
+                wᵢᴸ_tpartial_center_1 = wᴸ_tpartial_center_1[i]; wᵢᵁ_tpartial_center_1 = wᵁ_tpartial_center_1[i]
+                Ŵ_tpartial_center_1ₖᵢ = Ŵ_tpartial_center_1ₖ[i]
 
                 # 正規性条件
-                ∑ŵₖⱼᴸ = sum(map(j -> ŵₖᴸ[j], filter(j -> i != j, 1:n)))
-                @constraint(model, ∑ŵₖⱼᴸ + ŵₖᵢᵁ ≤ 1)
-                ∑ŵₖⱼᵁ = sum(map(j -> ŵₖᵁ[j], filter(j -> i != j, 1:n)))
-                @constraint(model, ∑ŵₖⱼᵁ + ŵₖᵢᴸ ≥ 1)
+                ∑ŵₖⱼᴸ_tpartial_center_1 = sum(map(j -> ŵₖᴸ_tpartial_center_1[j], filter(j -> i != j, 1:n)))
+                @constraint(model, ∑ŵₖⱼᴸ_tpartial_center_1 + ŵₖᵢᵁ_tpartial_center_1 ≤ 1)
+                ∑ŵₖⱼᵁ_tpartial_center_1 = sum(map(j -> ŵₖᵁ_tpartial_center_1[j], filter(j -> i != j, 1:n)))
+                @constraint(model, ∑ŵₖⱼᵁ_tpartial_center_1 + ŵₖᵢᴸ_tpartial_center_1 ≥ 1)
 
-                @constraint(model, Ŵₖᵢ ≥ wᵢᴸ)
-                @constraint(model, ŵₖᵢᵁ ≥ Ŵₖᵢ)
+                @constraint(model, Ŵ_tpartial_center_1ₖᵢ ≥ wᵢᴸ_tpartial_center_1)
+                @constraint(model, ŵₖᵢᵁ_tpartial_center_1 ≥ Ŵ_tpartial_center_1ₖᵢ)
 
-                @constraint(model, Ŵₖᵢ ≥ ŵₖᵢᴸ)
-                @constraint(model, wᵢᵁ ≥ Ŵₖᵢ)
+                @constraint(model, Ŵ_tpartial_center_1ₖᵢ ≥ ŵₖᵢᴸ_tpartial_center_1)
+                @constraint(model, wᵢᵁ_tpartial_center_1 ≥ Ŵ_tpartial_center_1ₖᵢ)
             end
-            
-            @constraint(model, 2*s[k] == sum(ŵₖᴸ) + sum(ŵₖᵁ))
         end
 
-        # 目的関数 ∑(wᵢᵁ - wᵢᴸ)
-        @objective(model, Min, sum(wᵁ) - sum(wᴸ))
+        # 目的関数 ∑(wᵢᵁ_tpartial_center_1 - wᵢᴸ_tpartial_center_1)
+        @objective(model, Min, sum(wᵁ_tpartial_center_1) - sum(wᴸ_tpartial_center_1))
 
         optimize!(model)
 
         if termination_status(model) == MOI.OPTIMAL
             # 解が見つかった場合の処理
-            optimalValue = sum(value.(wᵁ)) - sum(value.(wᴸ))
+            optimalValue_tpartial_center_1 = sum(value.(wᵁ_tpartial_center_1)) - sum(value.(wᴸ_tpartial_center_1))
 
-            wᴸ_value = value.(wᴸ); wᵁ_value = value.(wᵁ)
+            wᴸ_tpartial_center_1_value = value.(wᴸ_tpartial_center_1); wᵁ_tpartial_center_1_value = value.(wᵁ_tpartial_center_1)
             # precision error 対応
             for i = 1:n
-                if wᴸ_value[i] > wᵁ_value[i]
-                    wᴸ_value[i] = wᵁ_value[i]
+                if wᴸ_tpartial_center_1_value[i] > wᵁ_tpartial_center_1_value[i]
+                    wᴸ_tpartial_center_1_value[i] = wᵁ_tpartial_center_1_value[i]
                 end
             end
-            W_value = map(i -> (wᴸ_value[i])..(wᵁ_value[i]), 1:n)
+            W_tpartial_center_1_value = map(i -> (wᴸ_tpartial_center_1_value[i])..(wᵁ_tpartial_center_1_value[i]), 1:n)
 
-            ŵᴸ_value = value.(ŵᴸ); ŵᵁ_value = value.(ŵᵁ)
-            ŵᴸ_value ./= value.(s)
-            ŵᵁ_value ./= value.(s)
+            ŵᴸ_tpartial_center_1_value = value.(ŵᴸ_tpartial_center_1); ŵᵁ_tpartial_center_1_value = value.(ŵᵁ_tpartial_center_1)
 
             # precision error 対応
             for k = 1:l, i = 1:n
-                if ŵᴸ_value[k,i] > ŵᵁ_value[k,i]
-                    ŵᴸ_value[k,i] = ŵᵁ_value[k,i]
+                if ŵᴸ_tpartial_center_1_value[k,i] > ŵᵁ_tpartial_center_1_value[k,i]
+                    ŵᴸ_tpartial_center_1_value[k,i] = ŵᵁ_tpartial_center_1_value[k,i]
                 end
             end
 
-            ŵ_value = map(
-                k -> map(i -> (ŵᴸ_value[k,i])..(ŵᵁ_value[k,i]), 1:n),
+            ŵ_tpartial_center_1_value = map(
+                k -> map(i -> (ŵᴸ_tpartial_center_1_value[k,i])..(ŵᵁ_tpartial_center_1_value[k,i]), 1:n),
                 1:l)
 
-            Ŵ_value = map(k -> value.(Ŵ[k,:]), 1:l)
-
-            s_value = value.(s)
+            Ŵ_tpartial_center_1_value = map(k -> value.(Ŵ_tpartial_center_1[k,:]), 1:l)
 
             return (
-                wᴸ=wᴸ_value, wᵁ=wᵁ_value,
-                W=W_value,
-                ŵᴸ=ŵᴸ_value, ŵᵁ=ŵᵁ_value,
-                ŵ=ŵ_value,
-                Ŵ=Ŵ_value,
-                optimalValue=optimalValue,
-                s=s_value
+                wᴸ_tpartial_center_1=wᴸ_tpartial_center_1_value, wᵁ_tpartial_center_1=wᵁ_tpartial_center_1_value,
+                W_tpartial_center_1=W_tpartial_center_1_value,
+                ŵᴸ_tpartial_center_1=ŵᴸ_tpartial_center_1_value, ŵᵁ_tpartial_center_1=ŵᵁ_tpartial_center_1_value,
+                ŵ_tpartial_center_1=ŵ_tpartial_center_1_value,
+                Ŵ_tpartial_center_1=Ŵ_tpartial_center_1_value,
+                optimalValue_tpartial_center_1=optimalValue_tpartial_center_1,
             )
         else
             # 解が見つからなかった場合の処理

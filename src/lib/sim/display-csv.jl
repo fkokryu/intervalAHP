@@ -26,13 +26,19 @@ function random_select_pcms(pcms, count)
 end
 
 # 計算結果のチェックと計算を行う関数
-function calculate_result(Method, n)
-    if Method == "Error"
+function calculate_result(method, n, name)
+    # methodが"Error"の場合、エラーを返す
+    if method == "Error"
         return "Error"
     else
-        return (n-1) * sum(log.(Method.wᵁ[i]) - log.(Method.wᴸ[i]) for i in 1:n)
+        # Methodのフィールドにアクセスして計算を行う
+        wᴸ = getfield(method, Symbol("wᴸ_", name))
+        wᵁ = getfield(method, Symbol("wᵁ_", name))
+
+        return (n - 1) * sum(log.(wᵁ[i]) - log.(wᴸ[i]) for i in 1:n)
     end
 end
+
 
 # 実験を実行する関数
 function run_experiments(pcms, n, k, trials)    
@@ -87,15 +93,15 @@ function run_experiments(pcms, n, k, trials)
 
     # スレッドごとの結果を一時的に保存
     local_results = (
-        entani論文のPerfectIncorporation = calculate_result(PerfectIncorporation_before, n),
-        中心総和1のPerfectIncorporation = calculate_result(PerfectIncorporation, n),
-        解の非唯一性考慮のPerfectIncorporation = calculate_result(tPerfectIncorporation2, n),
-        entani論文のCommonGround = calculate_result(CommonGround_before, n),
-        中心総和1のCommonGround = calculate_result(CommonGround, n),
-        解の非唯一性考慮のCommonGround = calculate_result(tCommonGround2, n),
-        entani論文のPartialIncorporation = calculate_result(PartialIncorporation_before, n),
-        中心総和1のPartialIncorporation = calculate_result(PartialIncorporation, n),
-        解の非唯一性考慮のPartialIncorporation = calculate_result(tPartialIncorporation2, n),
+        entani論文のPerfectIncorporation = calculate_result(PerfectIncorporation_before, n, "perfect_entani"),
+        中心総和1のPerfectIncorporation = calculate_result(PerfectIncorporation, n, "perfect_center_1"),
+        解の非唯一性考慮のPerfectIncorporation = calculate_result(tPerfectIncorporation2, n, "tperfect_center_1"),
+        entani論文のCommonGround = calculate_result(CommonGround_before, n, "common_entani"),
+        中心総和1のCommonGround = calculate_result(CommonGround, n, "common_center_1"),
+        解の非唯一性考慮のCommonGround = calculate_result(tCommonGround2, n, "tcommon_center_1"),
+        entani論文のPartialIncorporation = calculate_result(PartialIncorporation_before, n, "partial_entani"),
+        中心総和1のPartialIncorporation = calculate_result(PartialIncorporation, n, "partial_center_1"),
+        解の非唯一性考慮のPartialIncorporation = calculate_result(tPartialIncorporation2, n, "tpartial_center_1"),
     )
 
         # 結果を一時配列に保存
