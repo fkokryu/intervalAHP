@@ -4,8 +4,6 @@ using Base.Threads
 using Statistics
 using Distributions
 
-include("../ttimes/optimal-value.jl")
-
 # 正規化された重要度ベクトルの生成関数（超平面上でのランダム点列の作り方による)
 function generate_normalized_weight_vector(n)
     acceptable_ratio = false
@@ -81,35 +79,7 @@ function perturbate_and_discretize_pcm(pcm, perturbation_strength)
         end
     end
 
-    return enforce_pcm_constraints(perturbed_pcm)
-end
-
-# PCMの制約を適用する関数
-function enforce_pcm_constraints(pcm)
-    n = size(pcm, 1)
-    max_val = maximum(pcm)
-    min_val = minimum(pcm)
-
-    # スケーリング係数を計算
-    scale_factor = 1.0
-    if max_val > 9
-        scale_factor = min(scale_factor, 9 / max_val)
-    end
-    if min_val < 1/9
-        scale_factor = min(scale_factor, min_val / (1/9))
-    end
-
-    # 全要素にスケーリング係数を適用
-    for i in 1:n
-        for j in 1:n
-            if i != j
-                pcm[i, j] = max(min(pcm[i, j] * scale_factor, 9), 1/9)
-                pcm[j, i] = 1 / pcm[i, j]
-            end
-        end
-        pcm[i, i] = 1.0  # 対角成分を1に設定
-    end
-    return pcm
+    return perturbed_pcm
 end
 
 # 整合性のチェック関数
@@ -121,45 +91,27 @@ function check_consistency_saaty(pcm)
     return CI < 0.1
 end
 
-# 2つの区間が共通部分を持つかチェックする関数
-function intervals_overlap(interval1, interval2)
-    return !(interval1.hi < interval2.lo || interval2.hi < interval1.lo)
-end
-
-# 2つの区間重要度ベクトルが全要素において共通部分を持つかチェックする関数
-function has_common_intervals(v1, v2)
-    return all(intervals_overlap(interval1, interval2) for (interval1, interval2) in zip(v1.W_center_1, v2.W_center_1))
-end
-
-# 類似したPCMをマルチスレッドで生成する関数
+# 指定された数の類似したPCMを生成する関数（マルチスレッド版）
 function generate_similar_pcms(n, perturbation_strength, desired_count)
-    shared_pcms = Vector{Matrix{Float64}}()
-    lock = ReentrantLock()
-
-    # 最初のPCMを生成して区間重要度ベクトルを推定する
+    local_pcms = [Vector{Matrix{Float64}}() for _ in 1:nthreads()]
     weights = generate_normalized_weight_vector(n)
-    initial_pcm = generate_pcm(weights)
-    initial_interval_vector = solveCrispAHPLP(initial_pcm)
+    original_pcm = generate_pcm(weights)
+    generated_count = Threads.Atomic{Int}(0)
 
-    # 各スレッドで生成を試みる
-    Threads.@threads for _ in 1:desired_count
-        while true
-            perturbed_pcm = perturbate_and_discretize_pcm(initial_pcm, perturbation_strength)
-            if check_consistency_saaty(perturbed_pcm)
-                interval_vector = solveCrispAHPLP(perturbed_pcm)
-                if has_common_intervals(interval_vector, initial_interval_vector)
-                    lock!(lock)
-                    try
-                        # 条件に合致するPCMを共有リストに追加
-                        push!(shared_pcms, perturbed_pcm)
-                    finally
-                        unlock!(lock)
-                    end
-                    break  # このスレッドの処理を終了
-                end
+    Threads.@threads for i in 1:desired_count * nthreads()
+        if generated_count[] >= desired_count
+            break
+        end
+
+        perturbed_pcm = perturbate_and_discretize_pcm(original_pcm, perturbation_strength)
+        if check_consistency_saaty(perturbed_pcm)
+            if atomic_add!(generated_count, 1) <= desired_count
+                push!(local_pcms[threadid()], perturbed_pcm)
+            else
+                break
             end
         end
     end
 
-    return shared_pcms
+    return vcat(local_pcms...)
 end

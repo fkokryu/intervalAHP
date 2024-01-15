@@ -41,7 +41,7 @@ end
 
 
 # 実験を実行する関数
-function run_experiments(pcms, n, k, trials)    
+function run_experiments(pcms, n, k, trials, filename::String)
     # 結果を保存するための配列を初期化
     temp_results = Array{Any}(undef, trials)
 
@@ -111,6 +111,6 @@ function run_experiments(pcms, n, k, trials)
     # 結果をDataFrameに変換
     results = DataFrame(vcat(temp_results...))
 
-    # 結果をCSVファイルに保存
-    CSV.write("results.csv", results)
+    # 結果をCSVファイルに保存（ファイル名は引数で指定）
+    CSV.write(filename, results)
 end
