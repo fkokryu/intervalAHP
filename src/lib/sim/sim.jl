@@ -4,6 +4,8 @@ using Base.Threads
 using Statistics
 using Distributions
 
+include("../ttimes/optimal-value.jl")
+
 # 正規化された重要度ベクトルの生成関数（超平面上でのランダム点列の作り方による)
 function generate_normalized_weight_vector(n)
     acceptable_ratio = false
@@ -22,7 +24,7 @@ function generate_normalized_weight_vector(n)
         max_weight = maximum(weights)
         min_weight = minimum(weights)
 
-        if max_weight / min_weight <= 9
+        if 8.5 <= max_weight / min_weight && max_weight / min_weight <= 9.5
             acceptable_ratio = true
         end
     end
@@ -64,18 +66,18 @@ function generate_pcm(weights)
     return pcm
 end
 
-# 対数変換と摂動の適用関数（各要素に独立した摂動を加える）
-function perturbate_pcm(pcm, perturbation_strength)
+# PCMの摂動と離散化を適用する関数
+function perturbate_and_discretize_pcm(pcm, perturbation_strength)
     n = size(pcm, 1)
     perturbed_pcm = copy(pcm)
 
     for i in 1:n
         for j in i+1:n  # 上三角行列の要素にのみ摂動を加える
-            perturbed_value = log(pcm[i, j]) + rand(Uniform(-perturbation_strength, perturbation_strength)) #-1から1の一様分布に従って、たしこむ(調整用の定数倍)
-            perturbed_pcm[i, j] = exp(perturbed_value)
+            # 摂動を加える
+            perturbed_value = log(pcm[i, j]) + rand(Uniform(-perturbation_strength, perturbation_strength))
+            # 摂動後の値を離散化
+            perturbed_pcm[i, j] = discretize_saaty(exp(perturbed_value))
             perturbed_pcm[j, i] = 1 / perturbed_pcm[i, j]  # 対称性を維持
-
-            perturbed_value = 0
         end
     end
 
@@ -111,31 +113,53 @@ function enforce_pcm_constraints(pcm)
 end
 
 # 整合性のチェック関数
-function check_consistency(pcm)
-    return maximum(abs.(pcm * inv(pcm) - I)) < 0.1
+function check_consistency_saaty(pcm)
+    n = size(pcm, 1)
+    eigenvalues = eigvals(pcm)
+    λ_max = maximum(real.(eigenvalues))
+    CI = (λ_max - n) / (n - 1)
+    return CI < 0.1
 end
 
-# 指定された数の類似したPCMを生成する関数（マルチスレッド版）
+# 2つの区間が共通部分を持つかチェックする関数
+function intervals_overlap(interval1, interval2)
+    return !(interval1.hi < interval2.lo || interval2.hi < interval1.lo)
+end
+
+# 2つの区間重要度ベクトルが全要素において共通部分を持つかチェックする関数
+function has_common_intervals(v1, v2)
+    return all(intervals_overlap(interval1, interval2) for (interval1, interval2) in zip(v1.W_center_1, v2.W_center_1))
+end
+
+# 類似したPCMをマルチスレッドで生成する関数
 function generate_similar_pcms(n, perturbation_strength, desired_count)
-    local_pcms = [Vector{Matrix{Float64}}() for _ in 1:nthreads()]
+    shared_pcms = Vector{Matrix{Float64}}()
+    lock = ReentrantLock()
+
+    # 最初のPCMを生成して区間重要度ベクトルを推定する
     weights = generate_normalized_weight_vector(n)
-    original_pcm = generate_pcm(weights)
-    generated_count = Threads.Atomic{Int}(0)
+    initial_pcm = generate_pcm(weights)
+    initial_interval_vector = solveCrispAHPLP(initial_pcm)
 
-    Threads.@threads for i in 1:desired_count * nthreads()
-        if generated_count[] >= desired_count
-            break
-        end
-
-        perturbed_pcm = perturbate_pcm(original_pcm, perturbation_strength)
-        if check_consistency(perturbed_pcm)
-            if atomic_add!(generated_count, 1) <= desired_count
-                push!(local_pcms[threadid()], perturbed_pcm)
-            else
-                break
+    # 各スレッドで生成を試みる
+    Threads.@threads for _ in 1:desired_count
+        while true
+            perturbed_pcm = perturbate_and_discretize_pcm(initial_pcm, perturbation_strength)
+            if check_consistency_saaty(perturbed_pcm)
+                interval_vector = solveCrispAHPLP(perturbed_pcm)
+                if has_common_intervals(interval_vector, initial_interval_vector)
+                    lock!(lock)
+                    try
+                        # 条件に合致するPCMを共有リストに追加
+                        push!(shared_pcms, perturbed_pcm)
+                    finally
+                        unlock!(lock)
+                    end
+                    break  # このスレッドの処理を終了
+                end
             end
         end
     end
 
-    return vcat(local_pcms...)
+    return shared_pcms
 end
