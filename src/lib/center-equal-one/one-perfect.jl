@@ -33,7 +33,7 @@ function solveonePerfectIncorporationLP(matrices::Vector{Matrix{T}})::Union{LPRe
         throw(ArgumentError("Some matrices have different size"))
     end
 
-    ḋ = map(Aₖ -> solveCrispAHPLP(Aₖ).optimalValue_center_1, matrices)
+    ḋ_perfect_center_1 = map(Aₖ -> solveCrispAHPLP(Aₖ).optimalValue_center_1, matrices)
 
     model = Model(HiGHS.Optimizer)
     set_silent(model)
@@ -49,8 +49,8 @@ function solveonePerfectIncorporationLP(matrices::Vector{Matrix{T}})::Union{LPRe
 
             Aₖ = matrices[k]
 
-            # ∑(ŵₖᵢᵁ_perfect_center_1 - ŵₖᵢᴸ_perfect_center_1) ≤ ḋₖ
-            @constraint(model, sum(ŵₖᵁ_perfect_center_1) - sum(ŵₖᴸ_perfect_center_1) ≤ ḋ[k])
+            # ∑(ŵₖᵢᵁ_perfect_center_1 - ŵₖᵢᴸ_perfect_center_1) ≤ ḋ_perfect_center_1ₖ
+            @constraint(model, sum(ŵₖᵁ_perfect_center_1) - sum(ŵₖᴸ_perfect_center_1) ≤ ḋ_perfect_center_1[k])
 
             for i = 1:n-1
                 ŵₖᵢᴸ_perfect_center_1 = ŵₖᴸ_perfect_center_1[i]; ŵₖᵢᵁ_perfect_center_1 = ŵₖᵁ_perfect_center_1[i]

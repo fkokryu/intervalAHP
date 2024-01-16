@@ -36,7 +36,7 @@ function solveonePartialIncorporationLP(
         throw(ArgumentError("Some matrices have different size"))
     end
 
-    ḋ = map(Aₖ -> solveCrispAHPLP(Aₖ).optimalValue_center_1, matrices)
+    ḋ_partial_center_1 = map(Aₖ -> solveCrispAHPLP(Aₖ).optimalValue_center_1, matrices)
 
     model = Model(HiGHS.Optimizer)
     set_silent(model)
@@ -57,8 +57,8 @@ function solveonePartialIncorporationLP(
 
             Aₖ = matrices[k]
 
-            # ∑(ŵₖᵢᵁ_partial_center_1 - ŵₖᵢᴸ_partial_center_1) ≤ ḋₖ
-            @constraint(model, sum(ŵₖᵁ_partial_center_1) - sum(ŵₖᴸ_partial_center_1) ≤ ḋ[k])
+            # ∑(ŵₖᵢᵁ_partial_center_1 - ŵₖᵢᴸ_partial_center_1) ≤ ḋ_partial_center_1ₖ
+            @constraint(model, sum(ŵₖᵁ_partial_center_1) - sum(ŵₖᴸ_partial_center_1) ≤ ḋ_partial_center_1[k])
 
             for i = 1:n-1
                 ŵₖᵢᴸ_partial_center_1 = ŵₖᴸ_partial_center_1[i]; ŵₖᵢᵁ_partial_center_1 = ŵₖᵁ_partial_center_1[i]

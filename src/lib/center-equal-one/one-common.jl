@@ -33,7 +33,7 @@ function solveoneCommonGroundLP(matrices::Vector{Matrix{T}})::Union{LPResult_one
         throw(ArgumentError("Some matrices have different size"))
     end
 
-    ḋ = map(Aₖ -> solveCrispAHPLP(Aₖ).optimalValue_center_1, matrices)
+    ḋ_common_center_1 = map(Aₖ -> solveCrispAHPLP(Aₖ).optimalValue_center_1, matrices)
 
     model = Model(HiGHS.Optimizer)
     set_silent(model)
@@ -49,8 +49,8 @@ function solveoneCommonGroundLP(matrices::Vector{Matrix{T}})::Union{LPResult_one
 
             Aₖ = matrices[k]
 
-            # ∑(ŵₖᵢᵁ_common_center_1 - ŵₖᵢᴸ_common_center_1) ≤ ḋₖ
-            @constraint(model, sum(ŵₖᵁ_common_center_1) - sum(ŵₖᴸ_common_center_1) ≤ ḋ[k])
+            # ∑(ŵₖᵢᵁ_common_center_1 - ŵₖᵢᴸ_common_center_1) ≤ ḋ_common_center_1ₖ
+            @constraint(model, sum(ŵₖᵁ_common_center_1) - sum(ŵₖᴸ_common_center_1) ≤ ḋ_common_center_1[k])
 
             for i = 1:n-1
                 ŵₖᵢᴸ_common_center_1 = ŵₖᴸ_common_center_1[i]; ŵₖᵢᵁ_common_center_1 = ŵₖᵁ_common_center_1[i]

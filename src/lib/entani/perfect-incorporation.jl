@@ -33,7 +33,7 @@ function solvePerfectIncorporationLP(matrices::Vector{Matrix{T}})::Union{LPResul
         throw(ArgumentError("Some matrices have different size"))
     end
 
-    ḋ = map(Aₖ -> solveIntervalAHPLP(Aₖ).optimalValue, matrices)
+    ḋ_perfect_entani = map(Aₖ -> solveIntervalAHPLP(Aₖ).optimalValue, matrices)
 
     model = Model(HiGHS.Optimizer)
     set_silent(model)
@@ -49,8 +49,8 @@ function solvePerfectIncorporationLP(matrices::Vector{Matrix{T}})::Union{LPResul
 
             Aₖ = matrices[k]
 
-            # ∑(ŵₖᵢᵁ_perfect_entani - ŵₖᵢᴸ_perfect_entani) ≤ ḋₖ
-            @constraint(model, sum(ŵₖᵁ_perfect_entani) - sum(ŵₖᴸ_perfect_entani) ≤ ḋ[k])
+            # ∑(ŵₖᵢᵁ_perfect_entani - ŵₖᵢᴸ_perfect_entani) ≤ ḋ_perfect_entaniₖ
+            @constraint(model, sum(ŵₖᵁ_perfect_entani) - sum(ŵₖᴸ_perfect_entani) ≤ ḋ_perfect_entani[k])
 
             for i = 1:n-1
                 ŵₖᵢᴸ_perfect_entani = ŵₖᴸ_perfect_entani[i]; ŵₖᵢᵁ_perfect_entani = ŵₖᵁ_perfect_entani[i]

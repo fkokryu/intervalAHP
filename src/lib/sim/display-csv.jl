@@ -39,78 +39,115 @@ function calculate_result(method, n, name)
     end
 end
 
-
-# 実験を実行する関数
-function run_experiments(pcms, n, k, trials, filename::String)
-    # 結果を保存するための配列を初期化
+# 実験を実行する関数（修正版）
+function run_experiments(pcms, n, k, trials, result_filename::String, pcm_filename::String)
     temp_results = Array{Any}(undef, trials)
+    all_pcms = []  # 全スレッドのPCMデータを保持する配列
 
     # trials回の実験を実行
     Threads.@threads for i in 1:trials
         selected_pcms = random_select_pcms(pcms, k)
 
-    # PerfectIncorporationの計算
-    PerfectIncorporation_before = solvePerfectIncorporationLP(selected_pcms)
-    if PerfectIncorporation_before === nothing
-        PerfectIncorporation_before = "Error"
-    end
-    PerfectIncorporation = solveonePerfectIncorporationLP(selected_pcms)
-    if PerfectIncorporation === nothing
-        PerfectIncorporation = "Error"
-    end
-    tPerfectIncorporation2 = solvetPerfectIncorporationLP2(selected_pcms)
-    if tPerfectIncorporation2 === nothing
-        tPerfectIncorporation2 = "Error"
-    end
+        # PCMデータと識別子を取得
+        pcm_identifiers = []
+        pcm_weights = []
+        for (index, pcm) in enumerate(selected_pcms)
+            W = solveCrispAHPLP(pcm)
+            push!(pcm_identifiers, "Trial-$(i)_PCM-$(index)")
+            push!(pcm_weights, (W.wᴸ_center_1, W.wᵁ_center_1))
+        end
+        push!(all_pcms, (i, selected_pcms, pcm_identifiers, pcm_weights))
 
-    # CommonGroundの計算
-    CommonGround_before = solveCommonGroundLP(selected_pcms)
-    if CommonGround_before === nothing
-        CommonGround_before = "Error"
-    end
-    CommonGround = solveoneCommonGroundLP(selected_pcms)
-    if CommonGround === nothing
-        CommonGround = "Error"
-    end
-    tCommonGround2 = solvetCommonGroundLP2(selected_pcms)
-    if tCommonGround2 === nothing
-        tCommonGround2 = "Error"
-    end
+         # PerfectIncorporationの計算
+        PerfectIncorporation_before = solvePerfectIncorporationLP(selected_pcms)
+        if PerfectIncorporation_before === nothing
+            PerfectIncorporation_before = "Error"
+        end
+        PerfectIncorporation = solveonePerfectIncorporationLP(selected_pcms)
+        if PerfectIncorporation === nothing
+            PerfectIncorporation = "Error"
+        end
+        tPerfectIncorporation2 = solvetPerfectIncorporationLP2(selected_pcms)
+        if tPerfectIncorporation2 === nothing
+            tPerfectIncorporation2 = "Error"
+        end
 
-    # PartialIncorporationの計算
-    PartialIncorporation_before = solvePartialIncorporationLP(selected_pcms)
-    if PartialIncorporation_before === nothing
-        PartialIncorporation_before = "Error"
-    end
-    PartialIncorporation = solveonePartialIncorporationLP(selected_pcms)
-    if PartialIncorporation === nothing
-        PartialIncorporation = "Error"
-    end
-    tPartialIncorporation2 = solvetPartialIncorporationLP2(selected_pcms)
-    if tPartialIncorporation2 === nothing
-        tPartialIncorporation2 = "Error"
-    end
+        # CommonGroundの計算
+        CommonGround_before = solveCommonGroundLP(selected_pcms)
+        if CommonGround_before === nothing
+            CommonGround_before = "Error"
+        end
+        CommonGround = solveoneCommonGroundLP(selected_pcms)
+        if CommonGround === nothing
+            CommonGround = "Error"
+        end
+        tCommonGround2 = solvetCommonGroundLP2(selected_pcms)
+        if tCommonGround2 === nothing
+            tCommonGround2 = "Error"
+        end
 
-    # スレッドごとの結果を一時的に保存
-    local_results = (
-        entani論文のPerfectIncorporation = calculate_result(PerfectIncorporation_before, n, "perfect_entani"),
-        中心総和1のPerfectIncorporation = calculate_result(PerfectIncorporation, n, "perfect_center_1"),
-        解の非唯一性考慮のPerfectIncorporation = calculate_result(tPerfectIncorporation2, n, "tperfect_center_1"),
-        entani論文のCommonGround = calculate_result(CommonGround_before, n, "common_entani"),
-        中心総和1のCommonGround = calculate_result(CommonGround, n, "common_center_1"),
-        解の非唯一性考慮のCommonGround = calculate_result(tCommonGround2, n, "tcommon_center_1"),
-        entani論文のPartialIncorporation = calculate_result(PartialIncorporation_before, n, "partial_entani"),
-        中心総和1のPartialIncorporation = calculate_result(PartialIncorporation, n, "partial_center_1"),
-        解の非唯一性考慮のPartialIncorporation = calculate_result(tPartialIncorporation2, n, "tpartial_center_1"),
-    )
+        # PartialIncorporationの計算
+        PartialIncorporation_before = solvePartialIncorporationLP(selected_pcms)
+        if PartialIncorporation_before === nothing
+            PartialIncorporation_before = "Error"
+        end
+        PartialIncorporation = solveonePartialIncorporationLP(selected_pcms)
+        if PartialIncorporation === nothing
+            PartialIncorporation = "Error"
+        end
+        tPartialIncorporation2 = solvetPartialIncorporationLP2(selected_pcms)
+        if tPartialIncorporation2 === nothing
+            tPartialIncorporation2 = "Error"
+        end
 
-        # 結果を一時配列に保存
+        # スレッドごとの結果を一時的に保存
+        local_results = (
+            PCM_Identifiers = pcm_identifiers,
+            entani論文のPerfectIncorporation = calculate_result(PerfectIncorporation_before, n, "perfect_entani"),
+            中心総和1のPerfectIncorporation = calculate_result(PerfectIncorporation, n, "perfect_center_1"),
+            解の非唯一性考慮のPerfectIncorporation = calculate_result(tPerfectIncorporation2, n, "tperfect_center_1"),
+            entani論文のCommonGround = calculate_result(CommonGround_before, n, "common_entani"),
+            中心総和1のCommonGround = calculate_result(CommonGround, n, "common_center_1"),
+            解の非唯一性考慮のCommonGround = calculate_result(tCommonGround2, n, "tcommon_center_1"),
+            entani論文のPartialIncorporation = calculate_result(PartialIncorporation_before, n, "partial_entani"),
+            中心総和1のPartialIncorporation = calculate_result(PartialIncorporation, n, "partial_center_1"),
+            解の非唯一性考慮のPartialIncorporation = calculate_result(tPartialIncorporation2, n, "tpartial_center_1"),
+        )
+
         temp_results[i] = local_results
     end
 
     # 結果をDataFrameに変換
     results = DataFrame(vcat(temp_results...))
 
-    # 結果をCSVファイルに保存（ファイル名は引数で指定）
-    CSV.write(filename, results)
+    # 結果をCSVファイルに保存
+    CSV.write(result_filename, results)
+
+    # トライアル番号に基づいてall_pcms配列をソート
+    sort!(all_pcms, by = x -> x[1])
+
+    # PCMデータと区間重要度をCSVに書き込む
+    open(pcm_filename, "w") do file
+        for (trial_number, pcms, identifiers, weights) in all_pcms
+            for (index, (pcm, (wᴸ, wᵁ))) in enumerate(zip(pcms, weights))
+                identifier = identifiers[index]
+
+                # 識別子を書き込む
+                write(file, "$identifier\n")
+
+                # PCMデータと区間重要度を書き込む
+                for (row_index, row) in enumerate(eachrow(pcm))
+                    # PCMデータを書き込む
+                    write(file, join(row, ","))
+
+                    # 対応する区間重要度の左端と右端の値を追加
+                    left = wᴸ[row_index]
+                    right = wᵁ[row_index]
+                    write(file, ",[$left, $right]")
+                    write(file, "\n")
+                end
+                write(file, "\n")
+            end
+        end
+    end
 end
