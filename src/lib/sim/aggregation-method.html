@@ -7482,29 +7482,28 @@ a.anchor-link {
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<p>$\hat{d}_k$ を以下の区間重要度推定問題の最適値とする。
+<p>$\hat{d}_{k}$ を以下の区間重要度推定問題の最適値とする。
 $$
     \begin{align}
         \begin{split}
-            \text{minimize} ~~ &amp; ~~ \sum_{i\in N} (w_{ki}^{U} - w_{ki}^{L}) \\
-            \text{subject to} ~~ &amp; ~~ w_{ki}^{L}\leq a_{kij}w_{kj}^{U},\, a_{kij}w_{kj}^{L}\leq w_{ki}^{U},\, i,j,\in N(i&lt;j) \\
-            ~~ &amp; ~~ \sum_{j\in N\setminus i} w_{kj}^{U} + w_{ki}^{L}\geq 1, i\in N, \\
-            ~~ &amp; ~~ \sum_{j\in N\setminus i} w_{kj}^{L} + w_{ki}^{U}\leq 1, i\in N, \\
-            ~~ &amp; ~~ w_{ki}^{U}\geq w_{ki}^{L}\geq \epsilon, i\in N. 
+            \text{minimize} ~~ &amp; ~~ \sum_{i\in N} (w_{ki}^{\rm U} - w_{ki}^{\rm L}) \\
+            \text{subject to} ~~ &amp; ~~ w_{ki}^{\rm L}\leq a_{kij}w_{kj}^{\rm U},\, a_{kij}w_{kj}^{\rm L}\leq w_{ki}^{\rm U},\, i,j,\in N(i&lt;j) \\
+            ~~ &amp; ~~ \sum_{j\in N\setminus i} w_{kj}^{\rm U} + w_{ki}^{\rm L}\geq 1, i\in N, \\
+            ~~ &amp; ~~ \sum_{j\in N\setminus i} w_{kj}^{\rm L} + w_{ki}^{\rm U}\leq 1, i\in N, \\
+            ~~ &amp; ~~ w_{ki}^{\rm U}\geq w_{ki}^{\rm L}\geq \epsilon, i\in N. 
         \end{split}
     \end{align}
 $$</p>
-<p>entani論文の統合手法</p>
-<p>Perfect incorporation apploach
+<h3 id="entani%E8%AB%96%E6%96%87%E3%81%AE%E7%B5%B1%E5%90%88%E6%89%8B%E6%B3%95">entani論文の統合手法<a class="anchor-link" href="#entani%E8%AB%96%E6%96%87%E3%81%AE%E7%B5%B1%E5%90%88%E6%89%8B%E6%B3%95">¶</a></h3><p>Perfect incorporation apploach
 $$
     \begin{align}
         \begin{split}
-            \text{minimize} ~~ &amp; ~~ \sum_{i\in N} (w_{i}^{U} - w_{i}^{L}) \\
-            \text{subject to} ~~ &amp; ~~ \sum_{i\in N} (w_{ki}^{U} - w_{ki}^{L}) \leq \hat{d_{k}} , k\in M \\
-            ~~ &amp; ~~ w_{ki}^{L}\leq a_{kij}w_{kj}^{R},\, a_{kij}w_{kj}^{L}\leq w_{ki}^{U},\, i,j,\in N(i&lt;j) , k\in M\\
-            ~~ &amp; ~~ \sum_{j\in N\setminus i} w_{kj}^{R} + w_{ki}^{L}\geq 1, k\in M, i\in N, \\
-            ~~ &amp; ~~ \sum_{j\in N\setminus i} w_{kj}^{L} + w_{ki}^{U}\leq 1, k\in M, i\in N, \\
-            ~~ &amp; ~~ \epsilon \leq w_{i}^{L}\leq w_{ki}^{L}\leq w_{ki}^{U} \leq w_{i}^{U}, k\in M, i\in N.
+            \text{minimize} ~~ &amp; ~~ \sum_{i\in N} (w_{i}^{\rm U} - w_{i}^{\rm L}) \\
+            \text{subject to} ~~ &amp; ~~ \sum_{i\in N} (w_{ki}^{\rm U} - w_{ki}^{\rm L}) \leq \hat{d_{k}} , k\in M \\
+            ~~ &amp; ~~ w_{ki}^{\rm L}\leq a_{kij}w_{kj}^{R},\, a_{kij}w_{kj}^{\rm L}\leq w_{ki}^{\rm U},\, i,j,\in N(i&lt;j) , k\in M\\
+            ~~ &amp; ~~ \sum_{j\in N\setminus i} w_{kj}^{R} + w_{ki}^{\rm L}\geq 1, k\in M, i\in N, \\
+            ~~ &amp; ~~ \sum_{j\in N\setminus i} w_{kj}^{\rm L} + w_{ki}^{\rm U}\leq 1, k\in M, i\in N, \\
+            ~~ &amp; ~~ \epsilon \leq w_{i}^{\rm L}\leq w_{ki}^{\rm L}\leq w_{ki}^{\rm U} \leq w_{i}^{\rm U}, k\in M, i\in N.
         \end{split}
     
     \end{align}
@@ -7513,14 +7512,14 @@ $$</p>
 $$
     \begin{align}
         \begin{split}
-            \text{maximize} ~~ &amp; ~~ \sum_{i\in N} (w_{i}^{U} - w_{i}^{L}) \\
-            \text{subject to} ~~ &amp; ~~ \sum_{i\in N} (w_{ki}^{U} - w_{ki}^{L}) \leq \hat{d_{k}} , k\in M \\
-            ~~ &amp; ~~ w_{ki}^{L}\leq a_{kij}w_{kj}^{U},\, a_{kij}w_{kj}^{L}\leq w_{ki}^{U},\, i,j,\in N(i&lt;j) , k\in M\\
-            ~~ &amp; ~~ \sum_{j\in N\setminus i} w_{kj}^{U} + w_{ki}^{L}\geq 1, k\in M, i\in N, \\
-            ~~ &amp; ~~ \sum_{j\in N\setminus i} w_{kj}^{L} + w_{ki}^{U}\leq 1, k\in M, i\in N, \\
-            ~~ &amp; ~~ \sum_{j\in N\setminus i} w_{j}^{U} + w_{i}^{L}\geq 1, i\in N, \\
-            ~~ &amp; ~~ \sum_{j\in N\setminus i} w_{j}^{L} + w_{i}^{U}\leq 1, i\in N, \\
-            ~~ &amp; ~~ \epsilon \leq w_{ki}^{L}\leq w_{i}^{L}\leq w_{i}^{U}\leq w_{ki}^{U}, k\in M, i\in N.
+            \text{maximize} ~~ &amp; ~~ \sum_{i\in N} (w_{i}^{\rm U} - w_{i}^{\rm L}) \\
+            \text{subject to} ~~ &amp; ~~ \sum_{i\in N} (w_{ki}^{\rm U} - w_{ki}^{\rm L}) \leq \hat{d_{k}} , k\in M \\
+            ~~ &amp; ~~ w_{ki}^{\rm L}\leq a_{kij}w_{kj}^{\rm U},\, a_{kij}w_{kj}^{\rm L}\leq w_{ki}^{\rm U},\, i,j,\in N(i&lt;j) , k\in M\\
+            ~~ &amp; ~~ \sum_{j\in N\setminus i} w_{kj}^{\rm U} + w_{ki}^{\rm L}\geq 1, k\in M, i\in N, \\
+            ~~ &amp; ~~ \sum_{j\in N\setminus i} w_{kj}^{\rm L} + w_{ki}^{\rm U}\leq 1, k\in M, i\in N, \\
+            ~~ &amp; ~~ \sum_{j\in N\setminus i} w_{j}^{\rm U} + w_{i}^{\rm L}\geq 1, i\in N, \\
+            ~~ &amp; ~~ \sum_{j\in N\setminus i} w_{j}^{\rm L} + w_{i}^{\rm U}\leq 1, i\in N, \\
+            ~~ &amp; ~~ \epsilon \leq w_{ki}^{\rm L}\leq w_{i}^{\rm L}\leq w_{i}^{\rm U}\leq w_{ki}^{\rm U}, k\in M, i\in N.
         \end{split}
     \end{align}
 $$</p>
@@ -7528,42 +7527,41 @@ $$</p>
 $$
     \begin{align}
         \begin{split}
-            \text{minimize} ~~ &amp; ~~ \sum_{i\in N} (w_{i}^{U} - w_{i}^{L}) \\
-            \text{subject to}  ~~ &amp; ~~ \sum_{i\in N} (w_{ki}^{U} - w_{ki}^{L}) \leq \hat{d_{k}} , k\in M \\
-            ~~ &amp; ~~ w_{ki}^{L}\leq a_{kij}w_{kj}^{U},\, a_{kij}w_{kj}^{L}\leq w_{ki}^{U},\, i,j,\in N(i&lt;j) , k\in M\\
-            ~~ &amp; ~~ \sum_{j\in N\setminus i} w_{kj}^{U} + w_{ki}^{L}\geq 1, k\in M, i\in N, \\
-            ~~ &amp; ~~ \sum_{j\in N\setminus i} w_{kj}^{L} + w_{ki}^{U}\leq 1, k\in M, i\in N, \\
+            \text{minimize} ~~ &amp; ~~ \sum_{i\in N} (w_{i}^{\rm U} - w_{i}^{\rm L}) \\
+            \text{subject to}  ~~ &amp; ~~ \sum_{i\in N} (w_{ki}^{\rm U} - w_{ki}^{\rm L}) \leq \hat{d_{k}} , k\in M \\
+            ~~ &amp; ~~ w_{ki}^{\rm L}\leq a_{kij}w_{kj}^{\rm U},\, a_{kij}w_{kj}^{\rm L}\leq w_{ki}^{\rm U},\, i,j,\in N(i&lt;j) , k\in M\\
+            ~~ &amp; ~~ \sum_{j\in N\setminus i} w_{kj}^{\rm U} + w_{ki}^{\rm L}\geq 1, k\in M, i\in N, \\
+            ~~ &amp; ~~ \sum_{j\in N\setminus i} w_{kj}^{\rm L} + w_{ki}^{\rm U}\leq 1, k\in M, i\in N, \\
             ~~ &amp; ~~ \sum_{i\in N} w_{ki} = 1, k\in M, \\
-            ~~ &amp; ~~ \epsilon \leq w_{i}^{L}\leq w_{ki}\leq w_{ki}^{U}, \epsilon \leq w_{ki}^{L}\leq w_{ki}\leq w_{i}^{U}, k\in M, i\in N.
+            ~~ &amp; ~~ \epsilon \leq w_{i}^{\rm L}\leq w_{ki}\leq w_{ki}^{\rm U}, \epsilon \leq w_{ki}^{\rm L}\leq w_{ki}\leq w_{i}^{\rm U}, k\in M, i\in N.
         \end{split}
     \end{align}
 $$</p>
-<p>$\hat{o}_k$ を以下の区間重要度推定問題の最適値とする。</p>
+<p>$\hat{\delta}_{k}$ を以下の区間重要度推定問題の最適値とする。</p>
 <p>$$
     \begin{align}
         \begin{split}
-            \text{minimize} ~~ &amp; ~~ \sum_{i\in N} (w_{ki}^{U} - w_{ki}^{L}) \\
-            \text{subject to} ~~ &amp; ~~ w_{ki}^{L}\leq a_{kij}w_{kj}^{U},\, a_{kij}w_{kj}^{L}\leq w_{ki}^{U},\, i,j,\in N(i&lt;j) \\
-            ~~ &amp; ~~ \sum_{j\in N\setminus i} w_{kj}^{U} + w_{ki}^{L}\geq 1, i\in N, \\
-            ~~ &amp; ~~ \sum_{j\in N\setminus i} w_{kj}^{L} + w_{ki}^{U}\leq 1, i\in N, \\
-            ~~ &amp; ~~ \sum_{i\in N} (w_{ki}^{U} + w_{ki}^{L}) = 2 \\
-            ~~ &amp; ~~ w_{ki}^{U}\geq w_{ki}^{L}\geq \epsilon, i\in N. 
+            \text{minimize} ~~ &amp; ~~ \sum_{i\in N} (w_{ki}^{\rm U} - w_{ki}^{\rm L}) \\
+            \text{subject to} ~~ &amp; ~~ w_{ki}^{\rm L}\leq a_{kij}w_{kj}^{\rm U},\, a_{kij}w_{kj}^{\rm L}\leq w_{ki}^{\rm U},\, i,j,\in N(i&lt;j) \\
+            ~~ &amp; ~~ \sum_{j\in N\setminus i} w_{kj}^{\rm U} + w_{ki}^{\rm L}\geq 1, i\in N, \\
+            ~~ &amp; ~~ \sum_{j\in N\setminus i} w_{kj}^{\rm L} + w_{ki}^{\rm U}\leq 1, i\in N, \\
+            ~~ &amp; ~~ \sum_{i\in N} (w_{ki}^{\rm U} + w_{ki}^{\rm L}) = 2 \\
+            ~~ &amp; ~~ w_{ki}^{\rm U}\geq w_{ki}^{\rm L}\geq \epsilon, i\in N. 
         \end{split}
     \end{align}
 $$</p>
-<p>中心総和1の統合手法</p>
-<p>Perfect incorporation apploach
+<h3 id="%E4%B8%AD%E5%BF%83%E7%B7%8F%E5%92%8C1%E3%81%AE%E7%B5%B1%E5%90%88%E6%89%8B%E6%B3%95">中心総和1の統合手法<a class="anchor-link" href="#%E4%B8%AD%E5%BF%83%E7%B7%8F%E5%92%8C1%E3%81%AE%E7%B5%B1%E5%90%88%E6%89%8B%E6%B3%95">¶</a></h3><p>Perfect incorporation apploach
 $$
     \begin{align}
         \begin{split}
-            \text{minimize} ~~ &amp; ~~ \sum_{i\in N} (w_{i}^{U} - w_{i}^{L}) \\
-            \text{subject to} ~~ &amp; ~~ \sum_{i\in N} (w_{ki}^{U} - w_{ki}^{L}) \leq \hat{o_{k}} , k\in M \\
-            ~~ &amp; ~~ w_{ki}^{L}\leq a_{kij}w_{kj}^{R},\, a_{kij}w_{kj}^{L}\leq w_{ki}^{U},\, i,j,\in N(i&lt;j) , k\in M\\
-            ~~ &amp; ~~ \sum_{j\in N\setminus i} w_{kj}^{R} + w_{ki}^{L}\geq 1, k\in M, i\in N, \\
-            ~~ &amp; ~~ \sum_{j\in N\setminus i} w_{kj}^{L} + w_{ki}^{U}\leq 1, k\in M, i\in N, \\
-            ~~ &amp; ~~ \sum_{i\in N} \frac{w_{ki}^{U} + w_{ki}^{L}}{2} = 1, k\in M,  \\
-            ~~ &amp; ~~ \sum_{i\in N} \frac{w_{i}^{U} + w_{i}^{L}}{2} = 1,  \\
-            ~~ &amp; ~~ \epsilon \leq w_{i}^{L}\leq w_{ki}^{L}\leq w_{ki}^{U} \leq w_{i}^{U}, k\in M, i\in N.
+            \text{minimize} ~~ &amp; ~~ \sum_{i\in N} (w_{i}^{\rm U} - w_{i}^{\rm L}) \\
+            \text{subject to} ~~ &amp; ~~ \sum_{i\in N} (w_{ki}^{\rm U} - w_{ki}^{\rm L}) \leq \hat{\delta}_{k} , k\in M \\
+            ~~ &amp; ~~ w_{ki}^{\rm L}\leq a_{kij}w_{kj}^{R},\, a_{kij}w_{kj}^{\rm L}\leq w_{ki}^{\rm U},\, i,j,\in N(i&lt;j) , k\in M\\
+            ~~ &amp; ~~ \sum_{j\in N\setminus i} w_{kj}^{R} + w_{ki}^{\rm L}\geq 1, k\in M, i\in N, \\
+            ~~ &amp; ~~ \sum_{j\in N\setminus i} w_{kj}^{\rm L} + w_{ki}^{\rm U}\leq 1, k\in M, i\in N, \\
+            ~~ &amp; ~~ \sum_{i\in N} \frac{w_{ki}^{\rm U} + w_{ki}^{\rm L}}{2} = 1, k\in M,  \\
+            ~~ &amp; ~~ \sum_{i\in N} \frac{w_{i}^{\rm U} + w_{i}^{\rm L}}{2} = 1,  \\
+            ~~ &amp; ~~ \epsilon \leq w_{i}^{\rm L}\leq w_{ki}^{\rm L}\leq w_{ki}^{\rm U} \leq w_{i}^{\rm U}, k\in M, i\in N.
         \end{split}
     
     \end{align}
@@ -7572,16 +7570,16 @@ $$</p>
 $$
     \begin{align}
         \begin{split}
-            \text{maximize} ~~ &amp; ~~ \sum_{i\in N} (w_{i}^{U} - w_{i}^{L}) \\
-            \text{subject to} ~~ &amp; ~~ \sum_{i\in N} (w_{ki}^{U} - w_{ki}^{L}) \leq \hat{o_{k}} , k\in M \\
-            ~~ &amp; ~~ w_{ki}^{L}\leq a_{kij}w_{kj}^{U},\, a_{kij}w_{kj}^{L}\leq w_{ki}^{U},\, i,j,\in N(i&lt;j) , k\in M\\
-            ~~ &amp; ~~ \sum_{j\in N\setminus i} w_{kj}^{U} + w_{ki}^{L}\geq 1, k\in M, i\in N, \\
-            ~~ &amp; ~~ \sum_{j\in N\setminus i} w_{kj}^{L} + w_{ki}^{U}\leq 1, k\in M, i\in N, \\
-            ~~ &amp; ~~ \sum_{j\in N\setminus i} w_{j}^{U} + w_{i}^{L}\geq 1, i\in N, \\
-            ~~ &amp; ~~ \sum_{j\in N\setminus i} w_{j}^{L} + w_{i}^{U}\leq 1, i\in N, \\
-            ~~ &amp; ~~ \sum_{i\in N} \frac{w_{ki}^{U} + w_{ki}^{L}}{2} = 1, k\in M,  \\
-            ~~ &amp; ~~ \sum_{i\in N} \frac{w_{i}^{U} + w_{i}^{L}}{2} = 1,  \\
-            ~~ &amp; ~~ \epsilon \leq w_{ki}^{L}\leq w_{i}^{L}\leq w_{i}^{U}\leq w_{ki}^{U}, k\in M, i\in N.
+            \text{maximize} ~~ &amp; ~~ \sum_{i\in N} (w_{i}^{\rm U} - w_{i}^{\rm L}) \\
+            \text{subject to} ~~ &amp; ~~ \sum_{i\in N} (w_{ki}^{\rm U} - w_{ki}^{\rm L}) \leq \hat{\delta}_{k} , k\in M \\
+            ~~ &amp; ~~ w_{ki}^{\rm L}\leq a_{kij}w_{kj}^{\rm U},\, a_{kij}w_{kj}^{\rm L}\leq w_{ki}^{\rm U},\, i,j,\in N(i&lt;j) , k\in M\\
+            ~~ &amp; ~~ \sum_{j\in N\setminus i} w_{kj}^{\rm U} + w_{ki}^{\rm L}\geq 1, k\in M, i\in N, \\
+            ~~ &amp; ~~ \sum_{j\in N\setminus i} w_{kj}^{\rm L} + w_{ki}^{\rm U}\leq 1, k\in M, i\in N, \\
+            ~~ &amp; ~~ \sum_{j\in N\setminus i} w_{j}^{\rm U} + w_{i}^{\rm L}\geq 1, i\in N, \\
+            ~~ &amp; ~~ \sum_{j\in N\setminus i} w_{j}^{\rm L} + w_{i}^{\rm U}\leq 1, i\in N, \\
+            ~~ &amp; ~~ \sum_{i\in N} \frac{w_{ki}^{\rm U} + w_{ki}^{\rm L}}{2} = 1, k\in M,  \\
+            ~~ &amp; ~~ \sum_{i\in N} \frac{w_{i}^{\rm U} + w_{i}^{\rm L}}{2} = 1,  \\
+            ~~ &amp; ~~ \epsilon \leq w_{ki}^{\rm L}\leq w_{i}^{\rm L}\leq w_{i}^{\rm U}\leq w_{ki}^{\rm U}, k\in M, i\in N.
         \end{split}
     \end{align}
 $$</p>
@@ -7589,65 +7587,157 @@ $$</p>
 $$
     \begin{align}
         \begin{split}
-            \text{minimize} ~~ &amp; ~~ \sum_{i\in N} (w_{i}^{U} - w_{i}^{L}) \\
-            \text{subject to}  ~~ &amp; ~~ \sum_{i\in N} (w_{ki}^{U} - w_{ki}^{L}) \leq \hat{o_{k}} , k\in M \\
-            ~~ &amp; ~~ w_{ki}^{L}\leq a_{kij}w_{kj}^{U},\, a_{kij}w_{kj}^{L}\leq w_{ki}^{U},\, i,j,\in N(i&lt;j) , k\in M\\
-            ~~ &amp; ~~ \sum_{j\in N\setminus i} w_{kj}^{U} + w_{ki}^{L}\geq 1, k\in M, i\in N, \\
-            ~~ &amp; ~~ \sum_{j\in N\setminus i} w_{kj}^{L} + w_{ki}^{U}\leq 1, k\in M, i\in N, \\
+            \text{minimize} ~~ &amp; ~~ \sum_{i\in N} (w_{i}^{\rm U} - w_{i}^{\rm L}) \\
+            \text{subject to}  ~~ &amp; ~~ \sum_{i\in N} (w_{ki}^{\rm U} - w_{ki}^{\rm L}) \leq \hat{\delta}_{k} , k\in M \\
+            ~~ &amp; ~~ w_{ki}^{\rm L}\leq a_{kij}w_{kj}^{\rm U},\, a_{kij}w_{kj}^{\rm L}\leq w_{ki}^{\rm U},\, i,j,\in N(i&lt;j) , k\in M\\
+            ~~ &amp; ~~ \sum_{j\in N\setminus i} w_{kj}^{\rm U} + w_{ki}^{\rm L}\geq 1, k\in M, i\in N, \\
+            ~~ &amp; ~~ \sum_{j\in N\setminus i} w_{kj}^{\rm L} + w_{ki}^{\rm U}\leq 1, k\in M, i\in N, \\
             ~~ &amp; ~~ \sum_{i\in N} w_{ki} = 1, k\in M, \\
-            ~~ &amp; ~~ \sum_{i\in N} \frac{w_{ki}^{U} + w_{ki}^{L}}{2} = 1, k\in M,  \\
-            ~~ &amp; ~~ \sum_{i\in N} \frac{w_{i}^{U} + w_{i}^{L}}{2} = 1,  \\
-            ~~ &amp; ~~ \epsilon \leq w_{i}^{L}\leq w_{ki}\leq w_{ki}^{U}, \epsilon \leq w_{ki}^{L}\leq w_{ki}\leq w_{i}^{U}, k\in M, i\in N.
+            ~~ &amp; ~~ \sum_{i\in N} \frac{w_{ki}^{\rm U} + w_{ki}^{\rm L}}{2} = 1, k\in M,  \\
+            ~~ &amp; ~~ \sum_{i\in N} \frac{w_{i}^{\rm U} + w_{i}^{\rm L}}{2} = 1,  \\
+            ~~ &amp; ~~ \epsilon \leq w_{i}^{\rm L}\leq w_{ki}\leq w_{ki}^{\rm U}, \epsilon \leq w_{ki}^{\rm L}\leq w_{ki}\leq w_{i}^{\rm U}, k\in M, i\in N.
         \end{split}
     \end{align}
 $$</p>
-<p>界の非唯一性を考慮した統合手法</p>
+<h3 id="%E8%A7%A3%E3%81%AE%E9%9D%9E%E5%94%AF%E4%B8%80%E6%80%A7%E3%82%92%E8%80%83%E6%85%AE%E3%81%97%E3%81%9F%E7%B5%B1%E5%90%88%E6%89%8B%E6%B3%95">解の非唯一性を考慮した統合手法<a class="anchor-link" href="#%E8%A7%A3%E3%81%AE%E9%9D%9E%E5%94%AF%E4%B8%80%E6%80%A7%E3%82%92%E8%80%83%E6%85%AE%E3%81%97%E3%81%9F%E7%B5%B1%E5%90%88%E6%89%8B%E6%B3%95">¶</a></h3><p>$$
+    \begin{align}
+        \begin{split}
+            ~~ &amp; ~~ \frac{1}{\sum_{i\in N} \frac{w_{i}^{\rm L}+w_{i}^{\rm U}}{2}} = t \\
+            \Leftrightarrow ~~ &amp; ~~ \sum_{i\in Ñ} \frac{tw_{i}^{\rm L}+tw_{i}^{\rm U}}{2} = 1
+        \end{split}
+    \end{align}
+$$</p>
+<p>以下のように$v_{i}^{\rm L}$、$v_{i}^{\rm U}$、$v_{ki}^{\rm L}$、$v_{ik}^{\rm U}$定義
+$$
+    \begin{align}
+            ~~ &amp; ~~ v_{i}^{\rm L} = tw_{i}^{\rm L} \\
+            ~~ &amp; ~~ v_{i}^{\rm U} = tw_{i}^{\rm U} \\
+            ~~ &amp; ~~ v_{ki}^{\rm L} = tw_{ki}^{\rm L} \\
+            ~~ &amp; ~~ v_{ki}^{\rm U} = tw_{ki}^{\rm U}
+    \end{align}
+$$</p>
 <p>Perfect incorporation apploach
 $$
     \begin{align}
         \begin{split}
-            \text{minimize} ~~ &amp; ~~ \sum_{i\in N} (w_{i}^{U} - w_{i}^{L}) \\
-            \text{subject to} ~~ &amp; ~~ \sum_{i\in N} (w_{ki}^{U} - w_{ki}^{L}) = \sum_{i\in N} \frac{w_{ki}^{U} + w_{ki}^{L}}{2}\hat{o_{k}} , k\in M \\
-            ~~ &amp; ~~ w_{ki}^{L}\leq a_{kij}w_{kj}^{U},\, a_{kij}w_{kj}^{L}\leq w_{ki}^{U},\, i,j,\in N(i&lt;j) , k\in M\\
-            ~~ &amp; ~~ \sum_{j\in N\setminus i} w_{kj}^{U} + w_{ki}^{L}\geq 1, k\in M, i\in N, \\
-            ~~ &amp; ~~ \sum_{j\in N\setminus i} w_{kj}^{L} + w_{ki}^{U}\leq 1, k\in M, i\in N, \\
-            ~~ &amp; ~~ \sum_{i\in N} \frac{w_{i}^{U} + w_{i}^{L}}{2} = 1, \\
-            ~~ &amp; ~~ \epsilon \leq w_{i}^{L}\leq w_{ki}^{L}\leq w_{ki}^{U} \leq w_{i}^{U}, k\in M, i\in N.
-        \end{split}
-    
-    \end{align}
-$$</p>
-<p>Common ground apploach
-$$
-    \begin{align}
-        \begin{split}
-            \text{maximize} ~~ &amp; ~~ \sum_{i\in N} (w_{i}^{U} - w_{i}^{L}) \\
-            \text{subject to} ~~ &amp; ~~ \sum_{i\in N} (w_{ki}^{U} - w_{ki}^{L}) = \sum_{i\in N} \frac{w_{ki}^{U} + w_{ki}^{L}}{2}\hat{o_{k}} , k\in M \\
-            ~~ &amp; ~~ w_{ki}^{L}\leq a_{kij}w_{kj}^{U},\, a_{kij}w_{kj}^{L}\leq w_{ki}^{U},\, i,j,\in N(i&lt;j) , k\in M\\
-            ~~ &amp; ~~ \sum_{j\in N\setminus i} w_{kj}^{U} + w_{ki}^{L}\geq 1, k\in M, i\in N, \\
-            ~~ &amp; ~~ \sum_{j\in N\setminus i} w_{kj}^{L} + w_{ki}^{U}\leq 1, k\in M, i\in N, \\
-            ~~ &amp; ~~ \sum_{j\in N\setminus i} w_{j}^{U} + w_{i}^{L}\geq 1, i\in N, \\
-            ~~ &amp; ~~ \sum_{j\in N\setminus i} w_{j}^{L} + w_{i}^{U}\leq 1, i\in N, \\
-            ~~ &amp; ~~ \sum_{i\in N} \frac{w_{i}^{U} + w_{i}^{L}}{2} = 1,  \\
-            ~~ &amp; ~~ \epsilon \leq w_{ki}^{L}\leq w_{i}^{L}\leq w_{i}^{U}\leq w_{ki}^{U}, k\in M, i\in N.
+            \text{minimize} ~~ &amp; ~~ \sum_{i\in N} (v_{i}^{\rm U} - v_{i}^{\rm L}) \\
+            \text{subject to} ~~ &amp; ~~ \sum_{i\in N} (v_{ki}^{\rm U} - v_{ki}^{\rm L}) = \sum_{i\in N} \frac{v_{ki}^{\rm U} + v_{ki}^{\rm L}}{2}\hat{\delta}_{k} , k\in M \\
+            ~~ &amp; ~~ v_{ki}^{\rm L}\leq a_{kij}v_{kj}^{\rm U},\, a_{kij}v_{kj}^{\rm L}\leq v_{ki}^{\rm U},\, i,j,\in N(i&lt;j) , k\in M\\
+            ~~ &amp; ~~ \sum_{j\in N\setminus i} v_{kj}^{\rm U} + v_{ki}^{\rm L}\geq t, k\in M, i\in N, \\
+            ~~ &amp; ~~ \sum_{j\in N\setminus i} v_{kj}^{\rm L} + v_{ki}^{\rm U}\leq t, k\in M, i\in N, \\
+            ~~ &amp; ~~ \sum_{i\in N} \frac{v_{i}^{\rm U} + v_{i}^{\rm L}}{2} = 1, \\
+            ~~ &amp; ~~ \epsilon \leq v_{i}^{\rm L}\leq v_{ki}^{\rm L}\leq v_{ki}^{\rm U} \leq v_{i}^{\rm U}, k\in M, i\in N.
         \end{split}
     \end{align}
 $$</p>
-<p>Partial incorporation apploach
+<p>Common ground apploach(変更前)
 $$
     \begin{align}
         \begin{split}
-            \text{minimize} ~~ &amp; ~~ \sum_{i\in N} (w_{i}^{U} - w_{i}^{L}) \\
-            \text{subject to}  ~~ &amp; ~~ \sum_{i\in N} (w_{ki}^{U} - w_{ki}^{L}) = \sum_{i\in N} \frac{w_{ki}^{U} + w_{ki}^{L}}{2}\hat{o_{k}} , k\in M \\
-            ~~ &amp; ~~ w_{ki}^{L}\leq a_{kij}w_{kj}^{U},\, a_{kij}w_{kj}^{L}\leq w_{ki}^{U},\, i,j,\in N(i&lt;j) , k\in M\\
-            ~~ &amp; ~~ \sum_{j\in N\setminus i} w_{kj}^{U} + w_{ki}^{L}\geq 1, k\in M, i\in N, \\
-            ~~ &amp; ~~ \sum_{j\in N\setminus i} w_{kj}^{L} + w_{ki}^{U}\leq 1, k\in M, i\in N, \\
+            \text{maximize} ~~ &amp; ~~ \sum_{i\in N} (w_{i}^{\rm U} - w_{i}^{\rm L}) \\
+            \text{subject to} ~~ &amp; ~~ \sum_{i\in N} (w_{ki}^{\rm U} - w_{ki}^{\rm L}) = \sum_{i\in N} \frac{w_{ki}^{\rm U} + w_{ki}^{\rm L}}{2}\hat{\delta}_{k} , k\in M \\
+            ~~ &amp; ~~ w_{ki}^{\rm L}\leq a_{kij}w_{kj}^{\rm U},\, a_{kij}w_{kj}^{\rm L}\leq w_{ki}^{\rm U},\, i,j,\in N(i&lt;j) , k\in M\\
+            ~~ &amp; ~~ \sum_{j\in N\setminus i} w_{kj}^{\rm U} + w_{ki}^{\rm L}\geq 1, k\in M, i\in N, \\
+            ~~ &amp; ~~ \sum_{j\in N\setminus i} w_{kj}^{\rm L} + w_{ki}^{\rm U}\leq 1, k\in M, i\in N, \\
+            ~~ &amp; ~~ \sum_{j\in N\setminus i} w_{j}^{\rm U} + w_{i}^{\rm L}\geq 1, i\in N, \\
+            ~~ &amp; ~~ \sum_{j\in N\setminus i} w_{j}^{\rm L} + w_{i}^{\rm U}\leq 1, i\in N, \\
+            ~~ &amp; ~~ \sum_{i\in N} \frac{w_{i}^{\rm U} + w_{i}^{\rm L}}{2} = 1,  \\
+            ~~ &amp; ~~ \epsilon \leq w_{ki}^{\rm L}\leq w_{i}^{\rm L}\leq w_{i}^{\rm U}\leq w_{ki}^{\rm U}, k\in M, i\in N.
+        \end{split}
+    \end{align}
+$$</p>
+<p>Common ground apploach(変更後?)
+$$
+    \begin{align}
+        \begin{split}
+            \text{maximize} ~~ &amp; ~~ \sum_{i\in N} (v_{i}^{\rm U} - v_{i}^{\rm L}) \\
+            \text{subject to} ~~ &amp; ~~ \sum_{i\in N} (v_{ki}^{\rm U} - v_{ki}^{\rm L}) = \sum_{i\in N} \frac{v_{ki}^{\rm U} + v_{ki}^{\rm L}}{2}\hat{\delta}_{k} , k\in M \\
+            ~~ &amp; ~~ v_{ki}^{\rm L}\leq a_{kij}v_{kj}^{\rm U},\, a_{kij}v_{kj}^{\rm L}\leq v_{ki}^{\rm U},\, i,j,\in N(i&lt;j) , k\in M\\
+            ~~ &amp; ~~ \sum_{j\in N\setminus i} v_{kj}^{\rm U} + v_{ki}^{\rm L}\geq t, k\in M, i\in N, \\
+            ~~ &amp; ~~ \sum_{j\in N\setminus i} v_{kj}^{\rm L} + v_{ki}^{\rm U}\leq t, k\in M, i\in N, \\
+            ~~ &amp; ~~ \sum_{j\in N\setminus i} v_{j}^{\rm U} + v_{i}^{\rm L}\geq 1, i\in N, \\
+            ~~ &amp; ~~ \sum_{j\in N\setminus i} v_{j}^{\rm L} + v_{i}^{\rm U}\leq 1, i\in N, \\
+            ~~ &amp; ~~ \sum_{i\in N} \frac{v_{i}^{\rm U} + v_{i}^{\rm L}}{2} = 1,  \\
+            ~~ &amp; ~~ \epsilon \leq v_{ki}^{\rm L}\leq v_{i}^{\rm L}\leq v_{i}^{\rm U}\leq v_{ki}^{\rm U}, k\in M, i\in N.
+        \end{split}
+    \end{align}
+$$</p>
+<p>Partial incorporation apploach(変更前)
+$$
+    \begin{align}
+        \begin{split}
+            \text{minimize} ~~ &amp; ~~ \sum_{i\in N} (w_{i}^{\rm U} - w_{i}^{\rm L}) \\
+            \text{subject to}  ~~ &amp; ~~ \sum_{i\in N} (w_{ki}^{\rm U} - w_{ki}^{\rm L}) = \sum_{i\in N} \frac{w_{ki}^{\rm U} + w_{ki}^{\rm L}}{2}\hat{\delta}_{k} , k\in M \\
+            ~~ &amp; ~~ w_{ki}^{\rm L}\leq a_{kij}w_{kj}^{\rm U},\, a_{kij}w_{kj}^{\rm L}\leq w_{ki}^{\rm U},\, i,j,\in N(i&lt;j) , k\in M\\
+            ~~ &amp; ~~ \sum_{j\in N\setminus i} w_{kj}^{\rm U} + w_{ki}^{\rm L}\geq 1, k\in M, i\in N, \\
+            ~~ &amp; ~~ \sum_{j\in N\setminus i} w_{kj}^{\rm L} + w_{ki}^{\rm U}\leq 1, k\in M, i\in N, \\
             ~~ &amp; ~~ \sum_{i\in N} w_{ki} = 1, k\in M \\
-            ~~ &amp; ~~ \sum_{i\in N} \frac{w_{i}^{U} + w_{i}^{L}}{2} = 1,   \\
-            ~~ &amp; ~~ \epsilon \leq w_{i}^{L}\leq w_{ki}\leq w_{ki}^{U}, \epsilon \leq w_{ki}^{L}\leq w_{ki}\leq w_{i}^{U}, k\in M, i\in N.
+            ~~ &amp; ~~ \sum_{i\in N} \frac{w_{i}^{\rm U} + w_{i}^{\rm L}}{2} = 1,   \\
+            ~~ &amp; ~~ \epsilon \leq w_{i}^{\rm L}\leq w_{ki}\leq w_{ki}^{\rm U}, \epsilon \leq w_{ki}^{\rm L}\leq w_{ki}\leq w_{i}^{\rm U}, k\in M, i\in N.
         \end{split}
     \end{align}
 $$</p>
+<p>Partial incorporation apploach(変更後?)
+$$
+    \begin{align}
+        \begin{split}
+            \text{minimize} ~~ &amp; ~~ \sum_{i\in N} (v_{i}^{\rm U} - v_{i}^{\rm L}) \\
+            \text{subject to}  ~~ &amp; ~~ \sum_{i\in N} (v_{ki}^{\rm U} - v_{ki}^{\rm L}) = \sum_{i\in N} \frac{v_{ki}^{\rm U} + v_{ki}^{\rm L}}{2}\hat{\delta}_{k} , k\in M \\
+            ~~ &amp; ~~ v_{ki}^{\rm L}\leq a_{kij}v_{kj}^{\rm U},\, a_{kij}v_{kj}^{\rm L}\leq v_{ki}^{\rm U},\, i,j,\in N(i&lt;j) , k\in M\\
+            ~~ &amp; ~~ \sum_{j\in N\setminus i} v_{kj}^{\rm U} + v_{ki}^{\rm L}\geq t, k\in M, i\in N, \\
+            ~~ &amp; ~~ \sum_{j\in N\setminus i} v_{kj}^{\rm L} + v_{ki}^{\rm U}\leq t, k\in M, i\in N, \\
+            ~~ &amp; ~~ \sum_{i\in N} v_{ki} = 1, k\in M \\
+            ~~ &amp; ~~ \sum_{i\in N} \frac{v_{i}^{\rm U} + v_{i}^{\rm L}}{2} = 1,   \\
+            ~~ &amp; ~~ \epsilon \leq v_{i}^{\rm L}\leq v_{ki}\leq v_{ki}^{\rm U}, \epsilon \leq v_{ki}^{\rm L}\leq v_{ki}\leq v_{i}^{\rm U}, k\in M, i\in N.
+        \end{split}
+    \end{align}
+$$</p>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h3 id="%E3%82%AF%E3%83%AA%E3%82%B9%E3%83%97PC%E3%81%AE%E7%94%9F%E6%88%90">クリスプPCの生成<a class="anchor-link" href="#%E3%82%AF%E3%83%AA%E3%82%B9%E3%83%97PC%E3%81%AE%E7%94%9F%E6%88%90">¶</a></h3><h4 id="%E3%82%B9%E3%83%86%E3%83%83%E3%83%97%EF%BC%91">ステップ１<a class="anchor-link" href="#%E3%82%B9%E3%83%86%E3%83%83%E3%83%97%EF%BC%91">¶</a></h4><p>超平面上でのランダム点列の作り方によって総和１の重要度ベクトルを作る<br/>
+このとき、最大の要素と最小の要素の比は8.5〜9.5倍になるまで再生成を繰り返す</p>
+<h4 id="%E3%82%B9%E3%83%86%E3%83%83%E3%83%972">ステップ2<a class="anchor-link" href="#%E3%82%B9%E3%83%86%E3%83%83%E3%83%972">¶</a></h4><p>重要度ベクトルからクリスプなPCMを作る<br/>
+このとき、saatyのスケールに基づいて数値を離散化する</p>
+<h4 id="%E3%82%B9%E3%83%86%E3%83%83%E3%83%973">ステップ3<a class="anchor-link" href="#%E3%82%B9%E3%83%86%E3%83%83%E3%83%973">¶</a></h4><p>ステップ2で作ったPCMをもとに、PCMの各要素の対数をとったものにに-aからaの一様分布から発生させた乱数を加える加える<br/>
+exp()でもとのスケールに戻す<br/>
+aは摂動の強度(今は0.65に設定)</p>
+<h4 id="%E3%82%B9%E3%83%86%E3%83%83%E3%83%974">ステップ4<a class="anchor-link" href="#%E3%82%B9%E3%83%86%E3%83%83%E3%83%974">¶</a></h4><p>ステップ3で生成したPCMをsaatyのスケールに離散化</p>
+<h4 id="%E3%82%B9%E3%83%86%E3%83%83%E3%83%975">ステップ5<a class="anchor-link" href="#%E3%82%B9%E3%83%86%E3%83%83%E3%83%975">¶</a></h4><p>C.I.のチェック<br/>
+0.1以上ならステップ3に戻って再生成</p>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h3 id="%E6%95%B0%E5%80%A4%E5%AE%9F%E9%A8%93">数値実験<a class="anchor-link" href="#%E6%95%B0%E5%80%A4%E5%AE%9F%E9%A8%93">¶</a></h3><p>基準数を4.5.6.7.8<br/>
+人数は3人</p>
+<p>entani論文のPerfectIncorporation<br/>
+中心総和1のPerfectIncorporation<br/>
+解の非唯一性考慮のPerfectIncorporation<br/>
+entani論文のCommonGround<br/>
+中心総和1のCommonGround<br/>
+解の非唯一性考慮のCommonGround<br/>
+entani論文のPartialIncorporation<br/>
+中心総和1のPartialIncorporation<br/>
+解の非唯一性考慮のPartialIncorporation</p>
+<p>の9つで
+$$
+(n-1) \sum_{i\in N} \log w^{\rm U} - \log w^{\rm L}
+$$
+を計算する</p>
 </div>
 </div>
 </div>

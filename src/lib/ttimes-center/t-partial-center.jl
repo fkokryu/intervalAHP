@@ -13,7 +13,8 @@ LPResult_t_2_PartialIncorporation = @NamedTuple{
     ŵᴸ_tpartial_center_1::Matrix{T}, ŵᵁ_tpartial_center_1::Matrix{T},
     ŵ_tpartial_center_1::Vector{Vector{Interval{T}}}, # ([ŵᵢᴸ, ŵᵢᵁ])
     Ŵ_tpartial_center_1::Vector{Vector{T}},
-    optimalValue_tpartial_center_1::T
+    optimalValue_tpartial_center_1::T,
+    s_tpartial_center_1::T
     } where {T <: Real}
 
 function solvetPartialIncorporationLP2(
@@ -51,6 +52,8 @@ function solvetPartialIncorporationLP2(
         # Ŵ_tpartial_center_1ₖᵢ ≥ ε
         @variable(model, Ŵ_tpartial_center_1[k=1:l,i=1:n] ≥ ε)
 
+        @variable(model, s_tpartial_center_1 ≥ ε)
+
         for k = 1:l
             ŵₖᴸ_tpartial_center_1 = ŵᴸ_tpartial_center_1[k,:]; ŵₖᵁ_tpartial_center_1 = ŵᵁ_tpartial_center_1[k,:]
             Ŵ_tpartial_center_1ₖ = Ŵ_tpartial_center_1[k,:]
@@ -84,9 +87,9 @@ function solvetPartialIncorporationLP2(
 
                 # 正規性条件
                 ∑ŵₖⱼᴸ_tpartial_center_1 = sum(map(j -> ŵₖᴸ_tpartial_center_1[j], filter(j -> i != j, 1:n)))
-                @constraint(model, ∑ŵₖⱼᴸ_tpartial_center_1 + ŵₖᵢᵁ_tpartial_center_1 ≤ 1)
+                @constraint(model, ∑ŵₖⱼᴸ_tpartial_center_1 + ŵₖᵢᵁ_tpartial_center_1 ≤ s_tpartial_center_1)
                 ∑ŵₖⱼᵁ_tpartial_center_1 = sum(map(j -> ŵₖᵁ_tpartial_center_1[j], filter(j -> i != j, 1:n)))
-                @constraint(model, ∑ŵₖⱼᵁ_tpartial_center_1 + ŵₖᵢᴸ_tpartial_center_1 ≥ 1)
+                @constraint(model, ∑ŵₖⱼᵁ_tpartial_center_1 + ŵₖᵢᴸ_tpartial_center_1 ≥ s_tpartial_center_1)
 
                 @constraint(model, Ŵ_tpartial_center_1ₖᵢ ≥ wᵢᴸ_tpartial_center_1)
                 @constraint(model, ŵₖᵢᵁ_tpartial_center_1 ≥ Ŵ_tpartial_center_1ₖᵢ)
@@ -129,6 +132,8 @@ function solvetPartialIncorporationLP2(
 
             Ŵ_tpartial_center_1_value = map(k -> value.(Ŵ_tpartial_center_1[k,:]), 1:l)
 
+            s_tpartial_center_1_value = value.(s_tpartial_center_1)
+
             return (
                 wᴸ_tpartial_center_1=wᴸ_tpartial_center_1_value, wᵁ_tpartial_center_1=wᵁ_tpartial_center_1_value,
                 W_tpartial_center_1=W_tpartial_center_1_value,
@@ -136,6 +141,7 @@ function solvetPartialIncorporationLP2(
                 ŵ_tpartial_center_1=ŵ_tpartial_center_1_value,
                 Ŵ_tpartial_center_1=Ŵ_tpartial_center_1_value,
                 optimalValue_tpartial_center_1=optimalValue_tpartial_center_1,
+                s_tpartial_center_1=s_tpartial_center_1_value
             )
         else
             # 解が見つからなかった場合の処理

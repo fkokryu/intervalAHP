@@ -139,11 +139,14 @@ function run_experiments(pcms, n, k, trials, result_filename::String, pcm_filena
                 for (row_index, row) in enumerate(eachrow(pcm))
                     # PCMデータを書き込む
                     write(file, join(row, ","))
-
+                    
+                    # 区間重要度の左端と右端の値を追加するための1列空ける
+                    write(file, ",,")
+                    
                     # 対応する区間重要度の左端と右端の値を追加
                     left = wᴸ[row_index]
                     right = wᵁ[row_index]
-                    write(file, ",[$left, $right]")
+                    write(file, "[$left, $right]")
                     write(file, "\n")
                 end
                 write(file, "\n")

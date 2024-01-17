@@ -13,6 +13,7 @@ LPResult_t_2_CommonGround = @NamedTuple{
     ŵᴸ_tcommon_center_1::Matrix{T}, ŵᵁ_tcommon_center_1::Matrix{T},
     Ŵ_tcommon_center_1::Vector{Vector{Interval{T}}}, # ([ŵᵢᴸ, ŵᵢᵁ])
     optimalValue_tcommon_center_1::T,
+    s_tcommon_center_1::T
     } where {T <: Real}
 
 function solvetCommonGroundLP2(matrices::Vector{Matrix{T}})::Union{LPResult_t_2_CommonGround, Nothing} where {T <: Real}
@@ -44,6 +45,8 @@ function solvetCommonGroundLP2(matrices::Vector{Matrix{T}})::Union{LPResult_t_2_
         # ŵₖᵢᴸ_tcommon_center_1 ≥ ε, ŵₖᵢᵁ_tcommon_center_1 ≥ ε
         @variable(model, ŵᴸ_tcommon_center_1[k=1:l,i=1:n] ≥ ε); @variable(model, ŵᵁ_tcommon_center_1[k=1:l,i=1:n] ≥ ε)
 
+        @variable(model, s_tcommon_center_1 ≥ ε)
+
         for k = 1:l
             ŵₖᴸ_tcommon_center_1 = ŵᴸ_tcommon_center_1[k,:]; ŵₖᵁ_tcommon_center_1 = ŵᵁ_tcommon_center_1[k,:]
 
@@ -69,9 +72,9 @@ function solvetCommonGroundLP2(matrices::Vector{Matrix{T}})::Union{LPResult_t_2_
 
                 # 正規性条件
                 ∑ŵₖⱼᴸ_tcommon_center_1 = sum(map(j -> ŵₖᴸ_tcommon_center_1[j], filter(j -> i != j, 1:n)))
-                @constraint(model, ∑ŵₖⱼᴸ_tcommon_center_1 + ŵₖᵢᵁ_tcommon_center_1 ≤ 1)
+                @constraint(model, ∑ŵₖⱼᴸ_tcommon_center_1 + ŵₖᵢᵁ_tcommon_center_1 ≤ s_tcommon_center_1)
                 ∑ŵₖⱼᵁ_tcommon_center_1 = sum(map(j -> ŵₖᵁ_tcommon_center_1[j], filter(j -> i != j, 1:n)))
-                @constraint(model, ∑ŵₖⱼᵁ_tcommon_center_1 + ŵₖᵢᴸ_tcommon_center_1 ≥ 1)
+                @constraint(model, ∑ŵₖⱼᵁ_tcommon_center_1 + ŵₖᵢᴸ_tcommon_center_1 ≥ s_tcommon_center_1)
 
                 wᵢᴸ_tcommon_center_1 = wᴸ_tcommon_center_1[i]; wᵢᵁ_tcommon_center_1 = wᵁ_tcommon_center_1[i]
                 @constraint(model, wᵢᴸ_tcommon_center_1 ≥ ŵₖᵢᴸ_tcommon_center_1)
@@ -123,6 +126,8 @@ function solvetCommonGroundLP2(matrices::Vector{Matrix{T}})::Union{LPResult_t_2_
             Ŵ_tcommon_center_1_value = map(
                 k -> map(i -> (ŵᴸ_tcommon_center_1_value[k,i])..(ŵᵁ_tcommon_center_1_value[k,i]), 1:n),
                 1:l)
+
+            s_tcommon_center_1_value = value.(s_tcommon_center_1)
     
             return (
                 wᴸ_tcommon_center_1=wᴸ_tcommon_center_1_value, wᵁ_tcommon_center_1=wᵁ_tcommon_center_1_value,
@@ -130,6 +135,7 @@ function solvetCommonGroundLP2(matrices::Vector{Matrix{T}})::Union{LPResult_t_2_
                 ŵᴸ_tcommon_center_1=ŵᴸ_tcommon_center_1_value, ŵᵁ_tcommon_center_1=ŵᵁ_tcommon_center_1_value,
                 Ŵ_tcommon_center_1=Ŵ_tcommon_center_1_value,
                 optimalValue_tcommon_center_1=optimalValue_tcommon_center_1,
+                s_tcommon_center_1=s_tcommon_center_1_value
             )
         else
             # 解が見つからなかった場合の処理
