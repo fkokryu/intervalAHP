@@ -129,8 +129,9 @@ function run_experiments(pcms, n, k, trials, result_filename::String, pcm_filena
 
     # PCMデータと区間重要度をCSVに書き込む
     open(pcm_filename, "w") do file
-        # ヘッダーを書き込む
-        write(file, "Trial,PCM,pcm_1,pcm_2,pcm_3,pcm_4,pcm_5,,w_L,w_U\n")
+        # ヘッダーを動的に生成して書き込む
+        pcm_header = join(["pcm_$i" for i in 1:n], ",")
+        write(file, "Trial,PCM,$pcm_header,,w_L,w_U\n")
 
         for (trial_number, pcms, identifiers, weights) in all_pcms
             for (index, (pcm, (wᴸ, wᵁ))) in enumerate(zip(pcms, weights))
