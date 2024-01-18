@@ -50,7 +50,7 @@ function solveCommonGroundLP(matrices::Vector{Matrix{T}})::Union{LPResult_Common
             Aₖ = matrices[k]
 
             # ∑(ŵₖᵢᵁ_common_entani - ŵₖᵢᴸ_common_entani) ≤ ḋ_common_entaniₖ
-            @constraint(model, sum(ŵₖᵁ_common_entani) - sum(ŵₖᴸ_common_entani) ≤ ḋ_common_entani[k])
+            @constraint(model, sum(ŵₖᵁ_common_entani) - sum(ŵₖᴸ_common_entani) ≤ (ḋ_common_entani[k] + ε))
 
             for i = 1:n-1
                 ŵₖᵢᴸ_common_entani = ŵₖᴸ_common_entani[i]; ŵₖᵢᵁ_common_entani = ŵₖᵁ_common_entani[i]

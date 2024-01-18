@@ -50,7 +50,7 @@ function solvePerfectIncorporationLP(matrices::Vector{Matrix{T}})::Union{LPResul
             Aₖ = matrices[k]
 
             # ∑(ŵₖᵢᵁ_perfect_entani - ŵₖᵢᴸ_perfect_entani) ≤ ḋ_perfect_entaniₖ
-            @constraint(model, sum(ŵₖᵁ_perfect_entani) - sum(ŵₖᴸ_perfect_entani) ≤ ḋ_perfect_entani[k])
+            @constraint(model, sum(ŵₖᵁ_perfect_entani) - sum(ŵₖᴸ_perfect_entani) ≤ (ḋ_perfect_entani[k] + ε))
 
             for i = 1:n-1
                 ŵₖᵢᴸ_perfect_entani = ŵₖᴸ_perfect_entani[i]; ŵₖᵢᵁ_perfect_entani = ŵₖᵁ_perfect_entani[i]

@@ -53,7 +53,7 @@ function solvetCommonGroundLP2(matrices::Vector{Matrix{T}})::Union{LPResult_t_2_
             Aₖ = matrices[k]
 
             # ∑(ŵₖᵢᵁ_tcommon_center_1 - ŵₖᵢᴸ_tcommon_center_1) ≤ sₖḋ_tcommon_center_1ₖ
-            @constraint(model, sum(ŵₖᵁ_tcommon_center_1) - sum(ŵₖᴸ_tcommon_center_1) == (sum(ŵₖᴸ_tcommon_center_1) + sum(ŵₖᵁ_tcommon_center_1)) / 2 * ḋ_tcommon_center_1[k])
+            @constraint(model, sum(ŵₖᵁ_tcommon_center_1) - sum(ŵₖᴸ_tcommon_center_1) ≤ ((sum(ŵₖᴸ_tcommon_center_1) + sum(ŵₖᵁ_tcommon_center_1)) / 2 * (ḋ_tcommon_center_1[k] + ε)))
 
             for i = 1:n-1
                 ŵₖᵢᴸ_tcommon_center_1 = ŵₖᴸ_tcommon_center_1[i]; ŵₖᵢᵁ_tcommon_center_1 = ŵₖᵁ_tcommon_center_1[i]

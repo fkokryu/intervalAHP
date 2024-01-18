@@ -58,7 +58,7 @@ function solveonePartialIncorporationLP(
             Aₖ = matrices[k]
 
             # ∑(ŵₖᵢᵁ_partial_center_1 - ŵₖᵢᴸ_partial_center_1) ≤ ḋ_partial_center_1ₖ
-            @constraint(model, sum(ŵₖᵁ_partial_center_1) - sum(ŵₖᴸ_partial_center_1) ≤ ḋ_partial_center_1[k])
+            @constraint(model, sum(ŵₖᵁ_partial_center_1) - sum(ŵₖᴸ_partial_center_1) ≤ (ḋ_partial_center_1[k] + ε))
 
             for i = 1:n-1
                 ŵₖᵢᴸ_partial_center_1 = ŵₖᴸ_partial_center_1[i]; ŵₖᵢᵁ_partial_center_1 = ŵₖᵁ_partial_center_1[i]

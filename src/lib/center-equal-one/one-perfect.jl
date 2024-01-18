@@ -50,7 +50,7 @@ function solveonePerfectIncorporationLP(matrices::Vector{Matrix{T}})::Union{LPRe
             Aₖ = matrices[k]
 
             # ∑(ŵₖᵢᵁ_perfect_center_1 - ŵₖᵢᴸ_perfect_center_1) ≤ ḋ_perfect_center_1ₖ
-            @constraint(model, sum(ŵₖᵁ_perfect_center_1) - sum(ŵₖᴸ_perfect_center_1) ≤ ḋ_perfect_center_1[k])
+            @constraint(model, sum(ŵₖᵁ_perfect_center_1) - sum(ŵₖᴸ_perfect_center_1) ≤ (ḋ_perfect_center_1[k] + ε))
 
             for i = 1:n-1
                 ŵₖᵢᴸ_perfect_center_1 = ŵₖᴸ_perfect_center_1[i]; ŵₖᵢᵁ_perfect_center_1 = ŵₖᵁ_perfect_center_1[i]

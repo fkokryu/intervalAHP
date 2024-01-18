@@ -58,7 +58,7 @@ function solvePartialIncorporationLP(
             Aₖ = matrices[k]
 
             # ∑(ŵₖᵢᵁ_partial_entani - ŵₖᵢᴸ_partial_entani) ≤ ḋ_partial_entaniₖ
-            @constraint(model, sum(ŵₖᵁ_partial_entani) - sum(ŵₖᴸ_partial_entani) ≤ ḋ_partial_entani[k])
+            @constraint(model, sum(ŵₖᵁ_partial_entani) - sum(ŵₖᴸ_partial_entani) ≤ (ḋ_partial_entani[k] + ε))
 
             for i = 1:n-1
                 ŵₖᵢᴸ_partial_entani = ŵₖᴸ_partial_entani[i]; ŵₖᵢᵁ_partial_entani = ŵₖᵁ_partial_entani[i]

@@ -53,7 +53,7 @@ function solvetPerfectIncorporationLP2(matrices::Vector{Matrix{T}})::Union{LPRes
             Aₖ = matrices[k]
 
             # ∑(ŵₖᵢᵁ_tperfect_center_1 - ŵₖᵢᴸ_tperfect_center_1) ≤ sₖḋ_tperfect_center_1ₖ
-            @constraint(model, sum(ŵₖᵁ_tperfect_center_1) - sum(ŵₖᴸ_tperfect_center_1) == (sum(ŵₖᴸ_tperfect_center_1) + sum(ŵₖᵁ_tperfect_center_1)) / 2 * ḋ_tperfect_center_1[k])
+            @constraint(model, sum(ŵₖᵁ_tperfect_center_1) - sum(ŵₖᴸ_tperfect_center_1) ≤ ((sum(ŵₖᴸ_tperfect_center_1) + sum(ŵₖᵁ_tperfect_center_1)) / 2 * (ḋ_tperfect_center_1[k]) + ε) )
 
             for i = 1:n-1
                 ŵₖᵢᴸ_tperfect_center_1 = ŵₖᴸ_tperfect_center_1[i]; ŵₖᵢᵁ_tperfect_center_1 = ŵₖᵁ_tperfect_center_1[i]

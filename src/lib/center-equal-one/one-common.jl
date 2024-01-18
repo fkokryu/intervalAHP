@@ -50,7 +50,7 @@ function solveoneCommonGroundLP(matrices::Vector{Matrix{T}})::Union{LPResult_one
             Aₖ = matrices[k]
 
             # ∑(ŵₖᵢᵁ_common_center_1 - ŵₖᵢᴸ_common_center_1) ≤ ḋ_common_center_1ₖ
-            @constraint(model, sum(ŵₖᵁ_common_center_1) - sum(ŵₖᴸ_common_center_1) ≤ ḋ_common_center_1[k])
+            @constraint(model, sum(ŵₖᵁ_common_center_1) - sum(ŵₖᴸ_common_center_1) ≤ (ḋ_common_center_1[k] + ε))
 
             for i = 1:n-1
                 ŵₖᵢᴸ_common_center_1 = ŵₖᴸ_common_center_1[i]; ŵₖᵢᵁ_common_center_1 = ŵₖᵁ_common_center_1[i]

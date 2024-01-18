@@ -13,7 +13,7 @@ include("../center-equal-one/one-partial.jl")
 include("../ttimes-center/t-perfect-center.jl")
 include("../ttimes-center/t-common-center.jl")
 include("../ttimes-center/t-partial-center.jl")
-include("../ttimes/optimal-value.jl")
+include("../interval-ahp.jl")
 
 using Random
 using CSV
@@ -51,10 +51,11 @@ function run_experiments(pcms, n, k, trials, result_filename::String, pcm_filena
         # PCMデータと識別子を取得
         pcm_identifiers = []
         pcm_weights = []
+
         for (index, pcm) in enumerate(selected_pcms)
-            W = solveCrispAHPLP(pcm)
+            W = solveIntervalAHPLP(pcm)
             push!(pcm_identifiers, "Trial-$(i)_PCM-$(index)")
-            push!(pcm_weights, (W.wᴸ_center_1, W.wᵁ_center_1))
+            push!(pcm_weights, (W.wᴸ, W.wᵁ))
         end
         push!(all_pcms, (i, selected_pcms, pcm_identifiers, pcm_weights))
 
@@ -128,27 +129,26 @@ function run_experiments(pcms, n, k, trials, result_filename::String, pcm_filena
 
     # PCMデータと区間重要度をCSVに書き込む
     open(pcm_filename, "w") do file
+        # ヘッダーを書き込む
+        write(file, "Trial,PCM,pcm_1,pcm_2,pcm_3,pcm_4,pcm_5,,w_L,w_U\n")
+
         for (trial_number, pcms, identifiers, weights) in all_pcms
             for (index, (pcm, (wᴸ, wᵁ))) in enumerate(zip(pcms, weights))
-                identifier = identifiers[index]
-
-                # 識別子を書き込む
-                write(file, "$identifier\n")
-
-                # PCMデータと区間重要度を書き込む
                 for (row_index, row) in enumerate(eachrow(pcm))
+                    # 最初の行には試行回数とPCMインデックスを書き込む
+                    
+                     write(file, "$trial_number,$index,")
+                   
                     # PCMデータを書き込む
                     write(file, join(row, ","))
-                    
-                    # 区間重要度の左端と右端の値を追加するための1列空ける
-                    write(file, ",,")
-                    
+
                     # 対応する区間重要度の左端と右端の値を追加
                     left = wᴸ[row_index]
                     right = wᵁ[row_index]
-                    write(file, "[$left, $right]")
+                    write(file, ",,$left,$right")
                     write(file, "\n")
                 end
+                # 各PCMデータセットの間に空行を挿入
                 write(file, "\n")
             end
         end

@@ -61,7 +61,7 @@ function solvetPartialIncorporationLP2(
             Aₖ = matrices[k]
 
             # ∑(ŵₖᵢᵁ_tpartial_center_1 - ŵₖᵢᴸ_tpartial_center_1) ≤ sₖḋ_tpartial_center_1ₖ
-            @constraint(model, sum(ŵₖᵁ_tpartial_center_1) - sum(ŵₖᴸ_tpartial_center_1) == (sum(ŵₖᴸ_tpartial_center_1) + sum(ŵₖᵁ_tpartial_center_1)) / 2 * ḋ_tpartial_center_1[k])
+            @constraint(model, sum(ŵₖᵁ_tpartial_center_1) - sum(ŵₖᴸ_tpartial_center_1) ≤ ((sum(ŵₖᴸ_tpartial_center_1) + sum(ŵₖᵁ_tpartial_center_1)) / 2 * (ḋ_tpartial_center_1[k] + ε)))
 
             for i = 1:n-1
                 ŵₖᵢᴸ_tpartial_center_1 = ŵₖᴸ_tpartial_center_1[i]; ŵₖᵢᵁ_tpartial_center_1 = ŵₖᵁ_tpartial_center_1[i]
@@ -78,7 +78,7 @@ function solvetPartialIncorporationLP2(
             @constraint(model, sum(wᵁ_tpartial_center_1) + sum(wᴸ_tpartial_center_1) == 2)
 
             # 正規性条件
-            @constraint(model, sum(Ŵ_tpartial_center_1ₖ) == 1)
+            @constraint(model, sum(Ŵ_tpartial_center_1ₖ) == s_tpartial_center_1)
 
             for i = 1:n
                 ŵₖᵢᴸ_tpartial_center_1 = ŵₖᴸ_tpartial_center_1[i]; ŵₖᵢᵁ_tpartial_center_1 = ŵₖᵁ_tpartial_center_1[i]
