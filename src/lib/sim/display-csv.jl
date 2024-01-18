@@ -136,8 +136,7 @@ function run_experiments(pcms, n, k, trials, result_filename::String, pcm_filena
             for (index, (pcm, (wᴸ, wᵁ))) in enumerate(zip(pcms, weights))
                 for (row_index, row) in enumerate(eachrow(pcm))
                     # 最初の行には試行回数とPCMインデックスを書き込む
-                    
-                     write(file, "$trial_number,$index,")
+                    write(file, "$trial_number,$index,")
                    
                     # PCMデータを書き込む
                     write(file, join(row, ","))
