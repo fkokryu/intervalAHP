@@ -4,13 +4,17 @@ using IntervalArithmetic
 
 include("../ttimes/optimal-value.jl")
 
-function process_pcm_data(input_file1::String, input_file2::String, output_file::String, n::Int, k::Int)
+function process_pcm_data_partial(input_file1::String, input_file2::String, output_file::String, n::Int, k::Int)
     # CSVファイルを読み込む
     df1 = CSV.read(input_file1, DataFrame)
     df2 = CSV.read(input_file2, DataFrame)
 
-    # `entani`論文のPerfectIncorporationが解の非唯一性考慮のPerfectIncorporationより小さいTrial番号を抽出
-    selected_trials = df1[df1[:, :entani論文のPerfectIncorporation] .< df1[:, :解の非唯一性考慮のPerfectIncorporation], :PCM_Identifiers]
+    # `entani`論文のPartialIncorporationが解の非唯一性考慮のPartialIncorporationより小さいTrial番号を抽出
+    selected_trials = df1[
+    (df1[:, :entani論文のPartialIncorporation] .< df1[:, :解の非唯一性考慮のPartialIncorporation]) .&
+    ((df1[:, :解の非唯一性考慮のPartialIncorporation] .- df1[:, :entani論文のPartialIncorporation]) .> 0.000001),
+    :PCM_Identifiers]
+
 
     # 文字列を処理して"Trial-X_PCM-Y"形式に分解
     extracted_trials = String[]

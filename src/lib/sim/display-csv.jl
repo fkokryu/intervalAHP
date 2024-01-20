@@ -39,7 +39,7 @@ function calculate_result(method, n, name)
     end
 end
 
-function result_weights(method, n, name)
+function result_weights(method, name)
     # methodが"Error"の場合、エラーを返す
     if method == "Error"
         return "Error"
@@ -53,6 +53,22 @@ function result_weights(method, n, name)
     end
 end
 
+function result_weights_k(method, k, name)
+    # methodが"Error"の場合、エラーを返す
+    if method == "Error"
+        return "Error"
+    else
+        # Methodのフィールドにアクセスして計算を行う
+        Wᴸ = getfield(method, Symbol("ŵᴸ_", name))
+        Wᵁ = getfield(method, Symbol("ŵᵁ_", name))
+        
+        wᴸ_k = Wᴸ[k, :]
+        wᵁ_k = Wᵁ[k, :]
+
+        # wᴸとwᵁをタプルとして返す
+        return (wᴸ_k, wᵁ_k)
+    end
+end
 
 # 実験を実行する関数（修正版）
 function run_experiments(pcms, n, k, trials, result_filename::String, result_filename2::String, pcm_filename::String)
@@ -136,24 +152,30 @@ function run_experiments(pcms, n, k, trials, result_filename::String, result_fil
         # スレッドごとの結果を一時的に保存
         local_results2 = (
             Trial = i,
-            entani論文のPerfectIncorporation_wᴸ = result_weights(PerfectIncorporation_before, n, "perfect_entani")[1],
-            entani論文のPerfectIncorporation_wᵁ = result_weights(PerfectIncorporation_before, n, "perfect_entani")[2],
-            中心総和1のPerfectIncorporation_wᴸ = result_weights(PerfectIncorporation, n, "perfect_center_1")[1],
-            中心総和1のPerfectIncorporation_wᵁ = result_weights(PerfectIncorporation, n, "perfect_center_1")[2],
-            解の非唯一性考慮のPerfectIncorporation_wᴸ = result_weights(tPerfectIncorporation2, n, "tperfect_center_1")[1],
-            解の非唯一性考慮のPerfectIncorporation_wᵁ = result_weights(tPerfectIncorporation2, n, "tperfect_center_1")[2],
-            entani論文のCommonGround_wᴸ = result_weights(CommonGround_before, n, "common_entani")[1],
-            entani論文のCommonGround_wᵁ = result_weights(CommonGround_before, n, "common_entani")[2],
-            中心総和1のCommonGround_wᴸ = result_weights(CommonGround, n, "common_center_1")[1],
-            中心総和1のCommonGround_wᵁ = result_weights(CommonGround, n, "common_center_1")[2],
-            解の非唯一性考慮のCommonGround_wᴸ = result_weights(tCommonGround2, n, "tcommon_center_1")[1],
-            解の非唯一性考慮のCommonGround_wᵁ = result_weights(tCommonGround2, n, "tcommon_center_1")[2],
-            entani論文のPartialIncorporation_wᴸ = result_weights(PartialIncorporation_before, n, "partial_entani")[1],
-            entani論文のPartialIncorporation_wᵁ = result_weights(PartialIncorporation_before, n, "partial_entani")[2],
-            中心総和1のPartialIncorporation_wᴸ = result_weights(PartialIncorporation, n, "partial_center_1")[1],
-            中心総和1のPartialIncorporation_wᵁ = result_weights(PartialIncorporation, n, "partial_center_1")[2],
-            解の非唯一性考慮のPartialIncorporation_wᴸ = result_weights(tPartialIncorporation2, n, "tpartial_center_1")[1],
-            解の非唯一性考慮のPartialIncorporation_wᵁ = result_weights(tPartialIncorporation2, n, "tpartial_center_1")[2],
+            entani論文のPerfectIncorporation_wᴸ = result_weights(PerfectIncorporation_before, "perfect_entani")[1],
+            entani論文のPerfectIncorporation_wᵁ = result_weights(PerfectIncorporation_before, "perfect_entani")[2],
+            entani論文のPerfectIncorporation_wᴸ_1 = result_weights_k(PerfectIncorporation_before, 1, "perfect_entani")[1],
+            entani論文のPerfectIncorporation_wᵁ_1 = result_weights_k(PerfectIncorporation_before, 1, "perfect_entani")[2],
+            entani論文のPerfectIncorporation_wᴸ_2 = result_weights_k(PerfectIncorporation_before, 2, "perfect_entani")[1],
+            entani論文のPerfectIncorporation_wᵁ_2 = result_weights_k(PerfectIncorporation_before, 2, "perfect_entani")[2],
+            entani論文のPerfectIncorporation_wᴸ_3 = result_weights_k(PerfectIncorporation_before, 3, "perfect_entani")[1],
+            entani論文のPerfectIncorporation_wᵁ_3 = result_weights_k(PerfectIncorporation_before, 3, "perfect_entani")[2],            
+            entani論文のCommonGround_wᴸ = result_weights(CommonGround_before,  "common_entani")[1],
+            entani論文のCommonGround_wᵁ = result_weights(CommonGround_before, "common_entani")[2],
+            entani論文のCommonGround_wᴸ_1 = result_weights_k(CommonGround_before, 1, "common_entani")[1],
+            entani論文のCommonGround_wᵁ_1 = result_weights_k(CommonGround_before, 1, "common_entani")[2],
+            entani論文のCommonGround_wᴸ_2 = result_weights_k(CommonGround_before, 2, "common_entani")[1],
+            entani論文のCommonGround_wᵁ_2 = result_weights_k(CommonGround_before, 2, "common_entani")[2],
+            entani論文のCommonGround_wᴸ_3 = result_weights_k(CommonGround_before, 3, "common_entani")[1],
+            entani論文のCommonGround_wᵁ_3 = result_weights_k(CommonGround_before, 3, "common_entani")[2],
+            entani論文のPartialIncorporation_wᴸ = result_weights(PartialIncorporation_before, "partial_entani")[1],
+            entani論文のPartialIncorporation_wᵁ = result_weights(PartialIncorporation_before, "partial_entani")[2],
+            entani論文のPartialIncorporation_wᴸ_1 = result_weights_k(PartialIncorporation_before, 1, "partial_entani")[1],
+            entani論文のPartialIncorporation_wᵁ_1 = result_weights_k(PartialIncorporation_before, 1, "partial_entani")[2],
+            entani論文のPartialIncorporation_wᴸ_2 = result_weights_k(PartialIncorporation_before, 2, "partial_entani")[1],
+            entani論文のPartialIncorporation_wᵁ_2 = result_weights_k(PartialIncorporation_before, 2, "partial_entani")[2],
+            entani論文のPartialIncorporation_wᴸ_3 = result_weights_k(PartialIncorporation_before, 3, "partial_entani")[1],
+            entani論文のPartialIncorporation_wᵁ_3 = result_weights_k(PartialIncorporation_before, 3, "partial_entani")[2],
         )
 
         temp_results[i] = local_results
