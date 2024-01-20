@@ -39,9 +39,27 @@ function calculate_result(method, n, name)
     end
 end
 
+function result_weights(method, n, name)
+    # methodが"Error"の場合、エラーを返す
+    if method == "Error"
+        return "Error"
+    else
+        # Methodのフィールドにアクセスして計算を行う
+        wᴸ = getfield(method, Symbol("wᴸ_", name))
+        wᵁ = getfield(method, Symbol("wᵁ_", name))
+
+        # wᴸとwᵁをタプルとして返す
+        return (wᴸ, wᵁ)
+    end
+end
+
+
 # 実験を実行する関数（修正版）
-function run_experiments(pcms, n, k, trials, result_filename::String, pcm_filename::String)
+function run_experiments(pcms, n, k, trials, result_filename::String, result_filename2::String, pcm_filename::String)
     temp_results = Array{Any}(undef, trials)
+    temp_results2 = Array{Any}(undef, trials)
+    local_pcms = Array{Any}(undef, trials)
+    
     all_pcms = []  # 全スレッドのPCMデータを保持する配列
 
     # trials回の実験を実行
@@ -57,7 +75,7 @@ function run_experiments(pcms, n, k, trials, result_filename::String, pcm_filena
             push!(pcm_identifiers, "Trial-$(i)_PCM-$(index)")
             push!(pcm_weights, (W.wᴸ, W.wᵁ))
         end
-        push!(all_pcms, (i, selected_pcms, pcm_identifiers, pcm_weights))
+        local_pcms[i] = (i, selected_pcms, pcm_identifiers, pcm_weights)
 
          # PerfectIncorporationの計算
         PerfectIncorporation_before = solvePerfectIncorporationLP(selected_pcms)
@@ -115,17 +133,61 @@ function run_experiments(pcms, n, k, trials, result_filename::String, pcm_filena
             解の非唯一性考慮のPartialIncorporation = calculate_result(tPartialIncorporation2, n, "tpartial_center_1"),
         )
 
+        # スレッドごとの結果を一時的に保存
+        local_results2 = (
+            Trial = i,
+            entani論文のPerfectIncorporation_wᴸ = result_weights(PerfectIncorporation_before, n, "perfect_entani")[1],
+            entani論文のPerfectIncorporation_wᵁ = result_weights(PerfectIncorporation_before, n, "perfect_entani")[2],
+            中心総和1のPerfectIncorporation_wᴸ = result_weights(PerfectIncorporation, n, "perfect_center_1")[1],
+            中心総和1のPerfectIncorporation_wᵁ = result_weights(PerfectIncorporation, n, "perfect_center_1")[2],
+            解の非唯一性考慮のPerfectIncorporation_wᴸ = result_weights(tPerfectIncorporation2, n, "tperfect_center_1")[1],
+            解の非唯一性考慮のPerfectIncorporation_wᵁ = result_weights(tPerfectIncorporation2, n, "tperfect_center_1")[2],
+            entani論文のCommonGround_wᴸ = result_weights(CommonGround_before, n, "common_entani")[1],
+            entani論文のCommonGround_wᵁ = result_weights(CommonGround_before, n, "common_entani")[2],
+            中心総和1のCommonGround_wᴸ = result_weights(CommonGround, n, "common_center_1")[1],
+            中心総和1のCommonGround_wᵁ = result_weights(CommonGround, n, "common_center_1")[2],
+            解の非唯一性考慮のCommonGround_wᴸ = result_weights(tCommonGround2, n, "tcommon_center_1")[1],
+            解の非唯一性考慮のCommonGround_wᵁ = result_weights(tCommonGround2, n, "tcommon_center_1")[2],
+            entani論文のPartialIncorporation_wᴸ = result_weights(PartialIncorporation_before, n, "partial_entani")[1],
+            entani論文のPartialIncorporation_wᵁ = result_weights(PartialIncorporation_before, n, "partial_entani")[2],
+            中心総和1のPartialIncorporation_wᴸ = result_weights(PartialIncorporation, n, "partial_center_1")[1],
+            中心総和1のPartialIncorporation_wᵁ = result_weights(PartialIncorporation, n, "partial_center_1")[2],
+            解の非唯一性考慮のPartialIncorporation_wᴸ = result_weights(tPartialIncorporation2, n, "tpartial_center_1")[1],
+            解の非唯一性考慮のPartialIncorporation_wᵁ = result_weights(tPartialIncorporation2, n, "tpartial_center_1")[2],
+        )
+
         temp_results[i] = local_results
+        temp_results2[i] = local_results2
     end
+    
+    # 全てのスレッドの結果をall_pcmsに統合
+    for result in local_pcms
+        push!(all_pcms, result)
+    end
+
+    # 1からdesired_countまでの数字を含む配列を作成
+    missing_numbers = setdiff(1:desired_count, [x[1] for x in all_pcms])
 
     # 結果をDataFrameに変換
     results = DataFrame(vcat(temp_results...))
+    results2 = DataFrame(vcat(temp_results2...))
 
     # 結果をCSVファイルに保存
     CSV.write(result_filename, results)
+    CSV.write(result_filename2, results2)
 
-    # トライアル番号に基づいてall_pcms配列をソート
+    # all_pcmsをトライアル番号に基づいてソート
     sort!(all_pcms, by = x -> x[1])
+
+    # 1からdesired_countまでの数字を含む配列を作成
+    missing_numbers = setdiff(1:desired_count, [x[1] for x in all_pcms])
+
+    # 欠けている数字があれば表示
+    if isempty(missing_numbers)
+        println("全ての数字が存在します。")
+    else
+        println("欠けている数字: ", join(missing_numbers, ", "))
+    end
 
     # PCMデータと区間重要度をCSVに書き込む
     open(pcm_filename, "w") do file

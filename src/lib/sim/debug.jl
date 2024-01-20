@@ -80,11 +80,11 @@ function process_pcm_data(input_file1::String, input_file2::String, output_file:
         Trial = Int[],
         PCM = Int[],
         式1の解の中心の総和 = Float64[],
-        式5の解に対するt_L = Float64[],
+        式10の解に対するt_L = Float64[],
         式1の最適値 = Float64[],
-        式5の最適値とt_Lの積 = Float64[],
+        式10の最適値とt_Lの積 = Float64[],
         式1の最適値と式1の解の中心の総和の商 = Float64[],
-        式5の最適値 = Float64[]
+        式10の最適値 = Float64[]
     )
 
     # 計算とDataFrameへのデータ追加
@@ -122,11 +122,11 @@ function process_pcm_data(input_file1::String, input_file2::String, output_file:
                 Trial = i,
                 PCM = m,
                 式1の解の中心の総和 = sum_of_centers,
-                式5の解に対するt_L = t_L,
+                式10の解に対するt_L = t_L,
                 式1の最適値 = optimalval,
-                式5の最適値とt_Lの積 = tl_times_optval_center1,
+                式10の最適値とt_Lの積 = tl_times_optval_center1,
                 式1の最適値と式1の解の中心の総和の商 = optval_divided_sumofcenters,
-                式5の最適値 = optimalval_center1
+                式10の最適値 = optimalval_center1
             ))
         end
     end
