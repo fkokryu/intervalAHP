@@ -10,9 +10,9 @@ include("../entani/partial-incorporarion.jl")
 include("../center-equal-one/one-perfect.jl")
 include("../center-equal-one/one-common.jl")
 include("../center-equal-one/one-partial.jl")
-include("../ttimes-center/t-perfect-center.jl")
-include("../ttimes-center/t-common-center.jl")
-include("../ttimes-center/t-partial-center.jl")
+include("perfect-nonunique.jl")
+include("common-nonunique.jl")
+include("partial-nonunique.jl")
 include("../interval-ahp.jl")
 
 using Random
@@ -71,7 +71,7 @@ function result_weights_k(method, k, name)
 end
 
 # 実験を実行する関数（修正版）
-function run_experiments(pcms, n, k, trials, result_filename::String, result_filename2::String, pcm_filename::String)
+function run_experiments_nonunique(pcms, n, k, trials, result_filename::String, result_filename2::String, pcm_filename::String)
     temp_results = Array{Any}(undef, trials)
     temp_results2 = Array{Any}(undef, trials)
     local_pcms = Array{Any}(undef, trials)
@@ -102,7 +102,7 @@ function run_experiments(pcms, n, k, trials, result_filename::String, result_fil
         if PerfectIncorporation === nothing
             PerfectIncorporation = "Error"
         end
-        tPerfectIncorporation2 = solvetPerfectIncorporationLP2(selected_pcms)
+        tPerfectIncorporation2 = solveNonUniquePerfectIncorporationLP(selected_pcms)
         if tPerfectIncorporation2 === nothing
             tPerfectIncorporation2 = "Error"
         end
@@ -116,7 +116,7 @@ function run_experiments(pcms, n, k, trials, result_filename::String, result_fil
         if CommonGround === nothing
             CommonGround = "Error"
         end
-        tCommonGround2 = solvetCommonGroundLP2(selected_pcms)
+        tCommonGround2 = solveNonUniqueCommonGroundLP(selected_pcms)
         if tCommonGround2 === nothing
             tCommonGround2 = "Error"
         end
@@ -130,7 +130,7 @@ function run_experiments(pcms, n, k, trials, result_filename::String, result_fil
         if PartialIncorporation === nothing
             PartialIncorporation = "Error"
         end
-        tPartialIncorporation2 = solvetPartialIncorporationLP2(selected_pcms)
+        tPartialIncorporation2 = solveNonUniquePartialIncorporationLP(selected_pcms)
         if tPartialIncorporation2 === nothing
             tPartialIncorporation2 = "Error"
         end
@@ -140,13 +140,13 @@ function run_experiments(pcms, n, k, trials, result_filename::String, result_fil
             PCM_Identifiers = pcm_identifiers,
             entani論文のPerfectIncorporation = calculate_result(PerfectIncorporation_before, n, "perfect_entani"),
             中心総和1のPerfectIncorporation = calculate_result(PerfectIncorporation, n, "perfect_center_1"),
-            解の非唯一性考慮のPerfectIncorporation = calculate_result(tPerfectIncorporation2, n, "tperfect_center_1"),
+            解の非唯一性考慮のPerfectIncorporation = calculate_result(tPerfectIncorporation2, n, "perfect_nonunique"),
             entani論文のCommonGround = calculate_result(CommonGround_before, n, "common_entani"),
             中心総和1のCommonGround = calculate_result(CommonGround, n, "common_center_1"),
-            解の非唯一性考慮のCommonGround = calculate_result(tCommonGround2, n, "tcommon_center_1"),
+            解の非唯一性考慮のCommonGround = calculate_result(tCommonGround2, n, "common_nonunique"),
             entani論文のPartialIncorporation = calculate_result(PartialIncorporation_before, n, "partial_entani"),
             中心総和1のPartialIncorporation = calculate_result(PartialIncorporation, n, "partial_center_1"),
-            解の非唯一性考慮のPartialIncorporation = calculate_result(tPartialIncorporation2, n, "tpartial_center_1"),
+            解の非唯一性考慮のPartialIncorporation = calculate_result(tPartialIncorporation2, n, "partial_nonunique"),
         )
 
         # スレッドごとの結果を一時的に保存
