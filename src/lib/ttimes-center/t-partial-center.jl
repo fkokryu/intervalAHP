@@ -108,7 +108,11 @@ function solvetPartialIncorporationLP2(
             # 解が見つかった場合の処理
             optimalValue_tpartial_center_1 = sum(value.(wᵁ_tpartial_center_1)) - sum(value.(wᴸ_tpartial_center_1))
 
-            wᴸ_tpartial_center_1_value = value.(wᴸ_tpartial_center_1); wᵁ_tpartial_center_1_value = value.(wᵁ_tpartial_center_1)
+            s_tpartial_center_1_value = value.(s_tpartial_center_1)
+            optimalValue_tpartial_center_1 = optimalValue_tpartial_center_1 / s_tpartial_center_1_value
+
+            wᴸ_tpartial_center_1_value = value.(wᴸ_tpartial_center_1) ./s_tpartial_center_1_value
+            wᵁ_tpartial_center_1_value = value.(wᵁ_tpartial_center_1) ./s_tpartial_center_1_value
             # precision error 対応
             for i = 1:n
                 if wᴸ_tpartial_center_1_value[i] > wᵁ_tpartial_center_1_value[i]
@@ -117,7 +121,8 @@ function solvetPartialIncorporationLP2(
             end
             W_tpartial_center_1_value = map(i -> (wᴸ_tpartial_center_1_value[i])..(wᵁ_tpartial_center_1_value[i]), 1:n)
 
-            ŵᴸ_tpartial_center_1_value = value.(ŵᴸ_tpartial_center_1); ŵᵁ_tpartial_center_1_value = value.(ŵᵁ_tpartial_center_1)
+            ŵᴸ_tpartial_center_1_value = value.(ŵᴸ_tpartial_center_1) ./s_tpartial_center_1_value
+            ŵᵁ_tpartial_center_1_value = value.(ŵᵁ_tpartial_center_1) ./s_tpartial_center_1_value
 
             # precision error 対応
             for k = 1:l, i = 1:n
@@ -131,8 +136,7 @@ function solvetPartialIncorporationLP2(
                 1:l)
 
             Ŵ_tpartial_center_1_value = map(k -> value.(Ŵ_tpartial_center_1[k,:]), 1:l)
-
-            s_tpartial_center_1_value = value.(s_tpartial_center_1)
+            Ŵ_tpartial_center_1_value = Ŵ_tpartial_center_1_value ./s_tpartial_center_1_value
 
             return (
                 wᴸ_tpartial_center_1=wᴸ_tpartial_center_1_value, wᵁ_tpartial_center_1=wᵁ_tpartial_center_1_value,

@@ -193,7 +193,7 @@ function extract_pcm_data(df::DataFrame, unique_trial_numbers::Vector{String})
             pcm_df = filter(row -> row.PCM == pcm_number, trial_df)
             
             # PCMデータと区間重要度データを取得
-            pcm_values = Matrix{Float64}(pcm_df[:, pcm_columns])
+            pcm_values = [float(parse(Rational{Int}, x)) for x in eachcol(pcm_df[:, pcm_columns])]
             w_values = [interval(row.w_L, row.w_U) for row in eachrow(pcm_df)]
             
             # PCMデータ辞書に格納

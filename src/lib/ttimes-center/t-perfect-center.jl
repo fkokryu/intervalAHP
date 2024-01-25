@@ -94,8 +94,11 @@ function solvetPerfectIncorporationLP2(matrices::Vector{Matrix{T}})::Union{LPRes
             # 解が見つかった場合の処理
             optimalValue_tperfect_center_1 = sum(value.(wᵁ_tperfect_center_1)) - sum(value.(wᴸ_tperfect_center_1))
 
-            wᴸ_tperfect_center_1_value = value.(wᴸ_tperfect_center_1)
-            wᵁ_tperfect_center_1_value = value.(wᵁ_tperfect_center_1)
+            s_tperfect_center_1_value = value.(s_tperfect_center_1)
+            optimalValue_tperfect_center_1 = optimalValue_tperfect_center_1 / s_tperfect_center_1_value
+
+            wᴸ_tperfect_center_1_value = value.(wᴸ_tperfect_center_1) ./ s_tperfect_center_1_value
+            wᵁ_tperfect_center_1_value = value.(wᵁ_tperfect_center_1) ./ s_tperfect_center_1_value
 
             # precision error 対応
             for i = 1:n
@@ -105,8 +108,8 @@ function solvetPerfectIncorporationLP2(matrices::Vector{Matrix{T}})::Union{LPRes
             end
             W_tperfect_center_1_value = map(i -> (wᴸ_tperfect_center_1_value[i])..(wᵁ_tperfect_center_1_value[i]), 1:n)
             
-            ŵᴸ_tperfect_center_1_value = value.(ŵᴸ_tperfect_center_1)
-            ŵᵁ_tperfect_center_1_value = value.(ŵᵁ_tperfect_center_1)
+            ŵᴸ_tperfect_center_1_value = value.(ŵᴸ_tperfect_center_1) ./ s_tperfect_center_1_value
+            ŵᵁ_tperfect_center_1_value = value.(ŵᵁ_tperfect_center_1) ./ s_tperfect_center_1_value
 
             # precision error 対応
             for k = 1:l, i = 1:n
@@ -117,8 +120,6 @@ function solvetPerfectIncorporationLP2(matrices::Vector{Matrix{T}})::Union{LPRes
             Ŵ_tperfect_center_1_value = map(
                 k -> map(i -> (ŵᴸ_tperfect_center_1_value[k,i])..(ŵᵁ_tperfect_center_1_value[k,i]), 1:n),
                 1:l)
-            
-            s_tperfect_center_1_value = value.(s_tperfect_center_1)
 
             return (
                 wᴸ_tperfect_center_1=wᴸ_tperfect_center_1_value, wᵁ_tperfect_center_1=wᵁ_tperfect_center_1_value,

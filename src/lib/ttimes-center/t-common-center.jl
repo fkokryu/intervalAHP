@@ -103,9 +103,12 @@ function solvetCommonGroundLP2(matrices::Vector{Matrix{T}})::Union{LPResult_t_2_
             # 解が見つかった場合の処理
             optimalValue_tcommon_center_1 = sum(value.(wᵁ_tcommon_center_1)) - sum(value.(wᴸ_tcommon_center_1))
 
-            wᴸ_tcommon_center_1_value = value.(wᴸ_tcommon_center_1)
-            wᵁ_tcommon_center_1_value = value.(wᵁ_tcommon_center_1)
-    
+            s_tcommon_center_1_value = value.(s_tcommon_center_1)
+            optimalValue_tcommon_center_1 = optimalValue_tcommon_center_1 / s_tcommon_center_1_value
+
+            wᴸ_tcommon_center_1_value = value.(wᴸ_tcommon_center_1) ./ s_tcommon_center_1_value
+            wᵁ_tcommon_center_1_value = value.(wᵁ_tcommon_center_1) ./ s_tcommon_center_1_value
+
             # precision error 対応
             for i = 1:n
                 if wᴸ_tcommon_center_1_value[i] > wᵁ_tcommon_center_1_value[i]
@@ -114,9 +117,9 @@ function solvetCommonGroundLP2(matrices::Vector{Matrix{T}})::Union{LPResult_t_2_
             end
             W_tcommon_center_1_value = map(i -> (wᴸ_tcommon_center_1_value[i])..(wᵁ_tcommon_center_1_value[i]), 1:n)
             
-            ŵᴸ_tcommon_center_1_value = value.(ŵᴸ_tcommon_center_1)
-            ŵᵁ_tcommon_center_1_value = value.(ŵᵁ_tcommon_center_1)
-    
+            ŵᴸ_tcommon_center_1_value = value.(ŵᴸ_tcommon_center_1) ./ s_tcommon_center_1_value
+            ŵᵁ_tcommon_center_1_value = value.(ŵᵁ_tcommon_center_1) ./ s_tcommon_center_1_value
+
             # precision error 対応
             for k = 1:l, i = 1:n
                 if ŵᴸ_tcommon_center_1_value[k,i] > ŵᵁ_tcommon_center_1_value[k,i]
@@ -127,8 +130,6 @@ function solvetCommonGroundLP2(matrices::Vector{Matrix{T}})::Union{LPResult_t_2_
                 k -> map(i -> (ŵᴸ_tcommon_center_1_value[k,i])..(ŵᵁ_tcommon_center_1_value[k,i]), 1:n),
                 1:l)
 
-            s_tcommon_center_1_value = value.(s_tcommon_center_1)
-    
             return (
                 wᴸ_tcommon_center_1=wᴸ_tcommon_center_1_value, wᵁ_tcommon_center_1=wᵁ_tcommon_center_1_value,
                 W_tcommon_center_1=W_tcommon_center_1_value,
@@ -139,7 +140,7 @@ function solvetCommonGroundLP2(matrices::Vector{Matrix{T}})::Union{LPResult_t_2_
             )
         else
             # 解が見つからなかった場合の処理
-            println("The tCommonGround optimization problem had no optimal solution.")
+            println("The tPerfectIncorporation2 optimization problem had no optimal solution.")
             return nothing  # 解が見つからなかったことを示すためにnothingを返す
         end
 

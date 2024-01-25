@@ -71,9 +71,11 @@ function result_weights_k(method, k, name)
 end
 
 # 実験を実行する関数（修正版）
-function run_experiments(pcms, n, k, trials, result_filename::String, result_filename2::String, pcm_filename::String)
+function run_experiments(pcms, n, k, trials, result_filename::String, result_filename2::String, result_filename3::String, result_filename4::String, pcm_filename::String)
     temp_results = Array{Any}(undef, trials)
     temp_results2 = Array{Any}(undef, trials)
+    temp_results3 = Array{Any}(undef, trials)
+    temp_results4 = Array{Any}(undef, trials)
     local_pcms = Array{Any}(undef, trials)
     
     all_pcms = []  # 全スレッドのPCMデータを保持する配列
@@ -150,37 +152,74 @@ function run_experiments(pcms, n, k, trials, result_filename::String, result_fil
         )
 
         # スレッドごとの結果を一時的に保存
-        local_results2 = (
+        local_results_perfect = (
             Trial = i,
             entani論文のPerfectIncorporation_wᴸ = result_weights(PerfectIncorporation_before, "perfect_entani")[1],
+            解の非唯一性考慮のPerfectIncorporation_wᴸ = result_weights(tPerfectIncorporation2, "tperfect_center_1")[1],
             entani論文のPerfectIncorporation_wᵁ = result_weights(PerfectIncorporation_before, "perfect_entani")[2],
+            解の非唯一性考慮のPerfectIncorporation_wᵁ = result_weights(tPerfectIncorporation2, "tperfect_center_1")[2],
             entani論文のPerfectIncorporation_wᴸ_1 = result_weights_k(PerfectIncorporation_before, 1, "perfect_entani")[1],
+            解の非唯一性考慮のPerfectIncorporation_wᴸ_1 = result_weights_k(tPerfectIncorporation2, 1, "tperfect_center_1")[1],
             entani論文のPerfectIncorporation_wᵁ_1 = result_weights_k(PerfectIncorporation_before, 1, "perfect_entani")[2],
+            解の非唯一性考慮のPerfectIncorporation_wᵁ_1 = result_weights_k(tPerfectIncorporation2, 1, "tperfect_center_1")[2],
             entani論文のPerfectIncorporation_wᴸ_2 = result_weights_k(PerfectIncorporation_before, 2, "perfect_entani")[1],
+            解の非唯一性考慮のPerfectIncorporation_wᴸ_2 = result_weights_k(tPerfectIncorporation2, 2, "tperfect_center_1")[1],
             entani論文のPerfectIncorporation_wᵁ_2 = result_weights_k(PerfectIncorporation_before, 2, "perfect_entani")[2],
+            解の非唯一性考慮のPerfectIncorporation_wᵁ_2 = result_weights_k(tPerfectIncorporation2, 2, "tperfect_center_1")[2],
             entani論文のPerfectIncorporation_wᴸ_3 = result_weights_k(PerfectIncorporation_before, 3, "perfect_entani")[1],
-            entani論文のPerfectIncorporation_wᵁ_3 = result_weights_k(PerfectIncorporation_before, 3, "perfect_entani")[2],            
+            解の非唯一性考慮のPerfectIncorporation_wᴸ_3 = result_weights_k(tPerfectIncorporation2, 3, "tperfect_center_1")[1],
+            entani論文のPerfectIncorporation_wᵁ_3 = result_weights_k(PerfectIncorporation_before, 3, "perfect_entani")[2], 
+            解の非唯一性考慮のPerfectIncorporation_wᵁ_3 = result_weights_k(tPerfectIncorporation2, 3, "tperfect_center_1")[2],            
+        )
+
+        # スレッドごとの結果を一時的に保存
+        local_results_common = (
+            Trial = i,      
             entani論文のCommonGround_wᴸ = result_weights(CommonGround_before,  "common_entani")[1],
+            解の非唯一性考慮のCommonGround_wᴸ = result_weights(tCommonGround2,  "tcommon_center_1")[1],
             entani論文のCommonGround_wᵁ = result_weights(CommonGround_before, "common_entani")[2],
+            解の非唯一性考慮のCommonGround_wᵁ = result_weights(tCommonGround2, "tcommon_center_1")[2],
             entani論文のCommonGround_wᴸ_1 = result_weights_k(CommonGround_before, 1, "common_entani")[1],
+            解の非唯一性考慮のCommonGround_wᴸ_1 = result_weights_k(tCommonGround2, 1, "tcommon_center_1")[1],
             entani論文のCommonGround_wᵁ_1 = result_weights_k(CommonGround_before, 1, "common_entani")[2],
+            解の非唯一性考慮のCommonGround_wᵁ_1 = result_weights_k(tCommonGround2, 1, "tcommon_center_1")[2],
             entani論文のCommonGround_wᴸ_2 = result_weights_k(CommonGround_before, 2, "common_entani")[1],
+            解の非唯一性考慮のCommonGround_wᴸ_2 = result_weights_k(tCommonGround2, 2, "tcommon_center_1")[1],
             entani論文のCommonGround_wᵁ_2 = result_weights_k(CommonGround_before, 2, "common_entani")[2],
+            解の非唯一性考慮のCommonGround_wᵁ_2 = result_weights_k(tCommonGround2, 2, "tcommon_center_1")[2],
             entani論文のCommonGround_wᴸ_3 = result_weights_k(CommonGround_before, 3, "common_entani")[1],
+            解の非唯一性考慮のCommonGround_wᴸ_3 = result_weights_k(tCommonGround2, 3, "tcommon_center_1")[1],
             entani論文のCommonGround_wᵁ_3 = result_weights_k(CommonGround_before, 3, "common_entani")[2],
+            解の非唯一性考慮のCommonGround_wᵁ_3 = result_weights_k(tCommonGround2, 3, "tcommon_center_1")[2],
+        )
+
+        # スレッドごとの結果を一時的に保存
+        local_results_partial = (
+            Trial = i,
             entani論文のPartialIncorporation_wᴸ = result_weights(PartialIncorporation_before, "partial_entani")[1],
+            解の非唯一性考慮のPartialIncorporation_wᴸ = result_weights(tPartialIncorporetion2, "tpartial_center_1")[1],
             entani論文のPartialIncorporation_wᵁ = result_weights(PartialIncorporation_before, "partial_entani")[2],
+            解の非唯一性考慮のPartialIncorporation_wᵁ = result_weights(tPartialIncorporetion2, "tpartial_center_1")[2],
             entani論文のPartialIncorporation_wᴸ_1 = result_weights_k(PartialIncorporation_before, 1, "partial_entani")[1],
+            解の非唯一性考慮のPartialIncorporation_wᴸ_1 = result_weights_k(tPartialIncorporetion2, 1, "tpartial_center_1")[1],
             entani論文のPartialIncorporation_wᵁ_1 = result_weights_k(PartialIncorporation_before, 1, "partial_entani")[2],
+            解の非唯一性考慮のPartialIncorporation_wᵁ_1 = result_weights_k(tPartialIncorporetion2, 1, "tpartial_center_1")[2],
             entani論文のPartialIncorporation_wᴸ_2 = result_weights_k(PartialIncorporation_before, 2, "partial_entani")[1],
+            解の非唯一性考慮のPartialIncorporation_wᴸ_2 = result_weights_k(tPartialIncorporetion2, 2, "tpartial_center_1")[1],
             entani論文のPartialIncorporation_wᵁ_2 = result_weights_k(PartialIncorporation_before, 2, "partial_entani")[2],
+            解の非唯一性考慮のPartialIncorporation_wᵁ_2 = result_weights_k(tPartialIncorporetion2, 2, "tpartial_center_1")[2],
             entani論文のPartialIncorporation_wᴸ_3 = result_weights_k(PartialIncorporation_before, 3, "partial_entani")[1],
+            解の非唯一性考慮のPartialIncorporation_wᴸ_3 = result_weights_k(tPartialIncorporetion2, 3, "tpartial_center_1")[1],
             entani論文のPartialIncorporation_wᵁ_3 = result_weights_k(PartialIncorporation_before, 3, "partial_entani")[2],
+            解の非唯一性考慮のPartialIncorporation_wᵁ_3 = result_weights_k(tPartialIncorporetion2, 3, "tpartial_center_1")[2],
             entani論文のPartialIncorporation_Ŵ = getfield(PartialIncorporation_before, :w_partial_entani),
+            解の非唯一性考慮のPartialIncorporation_Ŵ = getfield(tPartialIncorporetion2, :Ŵ_tpartial_center_1),
         )
 
         temp_results[i] = local_results
-        temp_results2[i] = local_results2
+        temp_results2[i] = local_results_perfect
+        temp_results3[i] = local_results_common
+        temp_results4[i] = local_results_partial
     end
     
     # 全てのスレッドの結果をall_pcmsに統合
@@ -194,10 +233,14 @@ function run_experiments(pcms, n, k, trials, result_filename::String, result_fil
     # 結果をDataFrameに変換
     results = DataFrame(vcat(temp_results...))
     results2 = DataFrame(vcat(temp_results2...))
+    results3 = DataFrame(vcat(temp_results3...))
+    results4 = DataFrame(vcat(temp_results4...))
 
     # 結果をCSVファイルに保存
     CSV.write(result_filename, results)
     CSV.write(result_filename2, results2)
+    CSV.write(result_filename3, results3)
+    CSV.write(result_filename4, results4)
 
     # all_pcmsをトライアル番号に基づいてソート
     sort!(all_pcms, by = x -> x[1])

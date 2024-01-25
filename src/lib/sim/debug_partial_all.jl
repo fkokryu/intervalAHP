@@ -4,27 +4,16 @@ using IntervalArithmetic
 
 include("../interval-ahp.jl")
 include("../ttimes/optimal-value.jl")
-include("../entani/perfect-incorporation.jl")
-include("../ttimes-center/t-perfect-center.jl")
+include("../entani/partial-incorporarion.jl")
+include("../ttimes-center/t-partial-center.jl")
 
-function process_pcm_data_perfect(input_file1::String, input_file2::String, output_file::String, n::Int, k::Int)
+function process_pcm_data_partial_all(input_file1::String, input_file2::String, output_file::String, n::Int, k::Int)
     # CSVファイルを読み込む
     df1 = CSV.read(input_file1, DataFrame)
     df2 = CSV.read(input_file2, DataFrame)
 
-    # `entani`論文のPerfectIncorporationが解の非唯一性考慮のPerfectIncorporationより小さいTrial番号を抽出
-    selected_trials = df1[
-    (df1[:, :entani論文のPerfectIncorporation] .< df1[:, :解の非唯一性考慮のPerfectIncorporation]) .&
-    ((df1[:, :解の非唯一性考慮のPerfectIncorporation] .- df1[:, :entani論文のPerfectIncorporation]) .> 0.000001),
-    :PCM_Identifiers]
-
-    # 文字列を処理して"Trial-X_PCM-Y"形式に分解
-    extracted_trials = String[]
-    for trial in selected_trials
-        # 文字列を分解して個々の要素を抽出
-        trial_parts = split(trial[2:end-1], "\", \"")  # "Any["と"]"を除去して分割
-        append!(extracted_trials, trial_parts)
-    end
+    # 全てのTrialのPCM_Identifiersを抽出
+    extracted_trials = df1[:, :PCM_Identifiers]
 
     # 不要な部分を削除して必要な文字列のみを抽出
     cleaned_vector = String[]
@@ -36,26 +25,6 @@ function process_pcm_data_perfect(input_file1::String, input_file2::String, outp
         # 結果のベクターに追加
         push!(cleaned_vector, cleaned_item)
     end
-
-    # Trialの番号を抽出
-    trial_numbers = Int[]
-    for item in cleaned_vector
-        # "Trial-"に続く数字を抽出
-        match_obj = match(r"Trial-(\d+)_PCM", item)
-        if match_obj !== nothing
-            trial_number = parse(Int, match_obj.captures[1])
-            push!(trial_numbers, trial_number)
-        end
-    end
-
-    # 重複を削除してユニークなリストを作成
-    unique_trial_numbers = unique(trial_numbers)
-
-    # PCMデータの列名を動的に生成
-    pcm_columns = ["pcm_$i" for i in 1:n]
-
-    # 各TrialごとにPCMデータと区間重要度データを格納するための辞書を作成
-    trial_data = Dict()
 
     # Trialの番号を抽出
     trial_numbers = Int[]
@@ -172,9 +141,9 @@ function process_pcm_data_perfect(input_file1::String, input_file2::String, outp
                     式20のt = missing
                 ))
             else
-                optimalval_perfect_entani = solvePerfectIncorporationLP([A[1], A[2], A[3]]).optimalValue_perfect_entani
-                optimalval_tperfect = solvetPerfectIncorporationLP2([A[1], A[2], A[3]]).optimalValue_tperfect_center_1
-                t_tperfect = solvetPerfectIncorporationLP2([A[1], A[2], A[3]]).s_tperfect_center_1
+                optimalval_partial_entani = solvePartialIncorporationLP([A[1], A[2], A[3]]).optimalValue_partial_entani
+                optimalval_tpartial = solvetPartialIncorporationLP2([A[1], A[2], A[3]]).optimalValue_tpartial_center_1
+                t_tpartial = solvetPartialIncorporationLP2([A[1], A[2], A[3]]).s_tpartial_center_1
 
                 # 結果をDataFrameに追加
                 push!(results_df, (
@@ -187,9 +156,9 @@ function process_pcm_data_perfect(input_file1::String, input_file2::String, outp
                     式10の最適値 = optimalval_center1,
                     式10の最適値とt_Lの積 = tl_times_optval_center1,
                     式10の最適値とt_Uの積 = tu_times_optval_center1,
-                    式2の最適値 = optimalval_perfect_entani,
-                    式20の最適値 = optimalval_tperfect,
-                    式20のt = t_tperfect
+                    式2の最適値 = optimalval_partial_entani,
+                    式20の最適値 = optimalval_tpartial,
+                    式20のt = t_tpartial
                 ))
             end
         end

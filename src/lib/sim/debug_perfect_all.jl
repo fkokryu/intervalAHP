@@ -7,24 +7,13 @@ include("../ttimes/optimal-value.jl")
 include("../entani/perfect-incorporation.jl")
 include("../ttimes-center/t-perfect-center.jl")
 
-function process_pcm_data_perfect(input_file1::String, input_file2::String, output_file::String, n::Int, k::Int)
+function process_pcm_data_perfect_all(input_file1::String, input_file2::String, output_file::String, n::Int, k::Int)
     # CSVファイルを読み込む
     df1 = CSV.read(input_file1, DataFrame)
     df2 = CSV.read(input_file2, DataFrame)
 
-    # `entani`論文のPerfectIncorporationが解の非唯一性考慮のPerfectIncorporationより小さいTrial番号を抽出
-    selected_trials = df1[
-    (df1[:, :entani論文のPerfectIncorporation] .< df1[:, :解の非唯一性考慮のPerfectIncorporation]) .&
-    ((df1[:, :解の非唯一性考慮のPerfectIncorporation] .- df1[:, :entani論文のPerfectIncorporation]) .> 0.000001),
-    :PCM_Identifiers]
-
-    # 文字列を処理して"Trial-X_PCM-Y"形式に分解
-    extracted_trials = String[]
-    for trial in selected_trials
-        # 文字列を分解して個々の要素を抽出
-        trial_parts = split(trial[2:end-1], "\", \"")  # "Any["と"]"を除去して分割
-        append!(extracted_trials, trial_parts)
-    end
+    # 全てのTrialのPCM_Identifiersを抽出
+    extracted_trials = df1[:, :PCM_Identifiers]
 
     # 不要な部分を削除して必要な文字列のみを抽出
     cleaned_vector = String[]
