@@ -65,7 +65,7 @@ function convert_to_vectors_and_matrices(df::DataFrame)
     return wᴸ_common, wᵁ_common, ŵᴸ_common, ŵᵁ_common
 end
 
-function is_feasible_solution(wᴸ, wᵁ, ŵᴸ, ŵᵁ, s, matrices)
+function is_feasible_solution(wᴸ, wᵁ, s, matrices)
     ε = 1e-8 # << 1
     l = length(matrices) # 人数
     m,n = size(matrices[1])
@@ -84,23 +84,13 @@ function is_feasible_solution(wᴸ, wᵁ, ŵᴸ, ŵᵁ, s, matrices)
     set_silent(model)
 
     # 定義された変数をモデルに追加
-    @variable(model, wᴸ_common_model[i=1:n] >= ε)
-    @variable(model, wᵁ_common_model[i=1:n] >= ε)
     @variable(model, ŵᴸ_common_model[k=1:l, i=1:n] >= ε)
     @variable(model, ŵᵁ_common_model[k=1:l, i=1:n] >= ε)
-    @variable(model, s_common_model ≥ ε)
 
-    # 与えられた解をモデルの変数に代入
-    for i in 1:n
-        set_start_value(wᴸ_common_model[i], wᴸ[i])
-        set_start_value(wᵁ_common_model[i], wᵁ[i])
-        for k in 1:l
-            set_start_value(ŵᴸ_common_model[k, i], ŵᴸ[i, k])
-            set_start_value(ŵᵁ_common_model[k, i], ŵᵁ[i, k])
-        end
-    end
-
-    set_start_value(s_common_model, s)
+    # 定数として wᴸ, wᵁ, s を扱う
+    wᴸ_common_model = wᴸ
+    wᵁ_common_model = wᵁ
+    s_common_model = s
 
     # ここに制約を追加
     for k = 1:l
@@ -150,9 +140,19 @@ function is_feasible_solution(wᴸ, wᵁ, ŵᴸ, ŵᵁ, s, matrices)
         @constraint(model, ∑wⱼᵁ_common_model + wᵢᴸ_common_model ≥ 1)
     end
 
-    # モデルの実行可能性チェック
+    # 目的関数 ∑(wᵢᵁ_tcommon_model - wᵢᴸ_tcommon_model)
+    @objective(model, Max, sum(wᵁ_common_model) - sum(wᴸ_common_model))
+
+    # モデルの実行と実行可能性の確認
     optimize!(model)
-    return termination_status(model) != MOI.INFEASIBLE
+
+    if termination_status(model) != MOI.INFEASIBLE
+        # 実行可能な解が見つかった場合、解を返す
+        return [value.(ŵᴸ_common_model), value.(ŵᵁ_common_model)]
+    else
+        # 実行不可能な場合、Falseが返る
+        termination_status(model) != MOI.INFEASIBLE
+    end
 end
 
 
@@ -193,7 +193,7 @@ function extract_pcm_data(df::DataFrame, unique_trial_numbers::Vector{String})
             pcm_df = filter(row -> row.PCM == pcm_number, trial_df)
             
             # PCMデータと区間重要度データを取得
-            pcm_values = [float(parse(Rational{Int}, x)) for x in eachcol(pcm_df[:, pcm_columns])]
+            pcm_values = Matrix{Float64}(pcm_df[:, pcm_columns])
             w_values = [interval(row.w_L, row.w_U) for row in eachrow(pcm_df)]
             
             # PCMデータ辞書に格納
@@ -226,6 +226,10 @@ function load_and_process_csv_common(input_file1::String, input_file2::String, i
 
     t = calculate_t(wᴸ_common, wᵁ_common)
 
+    println(t)
+    t[1] = 1
+    println(t)
+
     A = extract_pcm_data(df2, unique_trial_numbers)
 
     results_df = DataFrame(Trial = String[], Feasibility = Bool[])
@@ -236,7 +240,7 @@ function load_and_process_csv_common(input_file1::String, input_file2::String, i
         pcm3, w3 = A[unique_trial_numbers[i]][3]
 
         # 実行可能性をチェック
-        feasibility = is_feasible_solution(t[i]*wᴸ_common[i], t[i]*wᵁ_common[i], t[i]*ŵᴸ_common[i], t[i]*ŵᵁ_common[i], t[i], [pcm1,pcm2,pcm3])
+        feasibility = is_feasible_solution(t[i]*wᴸ_common[i], t[i]*wᵁ_common[i], t[i], [pcm1,pcm2,pcm3])
 
         # 結果をDataFrameに追加
         push!(results_df, (Trial = unique_trial_numbers[i], Feasibility = feasibility))
