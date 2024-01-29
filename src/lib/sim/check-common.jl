@@ -65,7 +65,7 @@ function convert_to_vectors_and_matrices(df::DataFrame)
     return wᴸ_common, wᵁ_common, ŵᴸ_common, ŵᵁ_common
 end
 
-function is_feasible_solution(wᴸ, wᵁ, s, matrices)
+function is_feasible_solution(t_L, matrices)
     ε = 1e-8 # << 1
     l = length(matrices) # 人数
     m,n = size(matrices[1])
@@ -84,13 +84,11 @@ function is_feasible_solution(wᴸ, wᵁ, s, matrices)
     set_silent(model)
 
     # 定義された変数をモデルに追加
-    @variable(model, ŵᴸ_common_model[k=1:l, i=1:n] >= ε)
-    @variable(model, ŵᵁ_common_model[k=1:l, i=1:n] >= ε)
-
-    # 定数として wᴸ, wᵁ, s を扱う
-    wᴸ_common_model = wᴸ
-    wᵁ_common_model = wᵁ
-    s_common_model = s
+    @variable(model, wᴸ_common_model[i=1:n] ≥ ε)
+    @variable(model, wᵁ_common_model[i=1:n] ≥ ε)
+    @variable(model, ŵᴸ_common_model[k=1:l,i=1:n] ≥ ε)
+    @variable(model, ŵᵁ_common_model[k=1:l,i=1:n] ≥ ε)
+    @variable(model, s_common_model ≥ ε)
 
     # ここに制約を追加
     for k = 1:l
@@ -100,6 +98,8 @@ function is_feasible_solution(wᴸ, wᵁ, s, matrices)
 
         # ∑(ŵₖᵢᵁ_common_model - ŵₖᵢᴸ_common_model) ≤ sₖḋ_common_modelₖ
         @constraint(model, sum(ŵₖᵁ_common_model) - sum(ŵₖᴸ_common_model) ≤ ((sum(ŵₖᴸ_common_model) + sum(ŵₖᵁ_common_model)) / 2 * (ḋ_common_model[k] + ε)))
+
+        @constraint(model, sum(ŵₖᴸ_common_model) + sum(ŵₖᵁ_common_model)/2 == s_common_model * t_L[k])
 
         for i = 1:n-1
             ŵₖᵢᴸ_common_model = ŵₖᴸ_common_model[i]; ŵₖᵢᵁ_common_model = ŵₖᵁ_common_model[i]
@@ -207,15 +207,22 @@ function extract_pcm_data(df::DataFrame, unique_trial_numbers::Vector{String})
     return trial_data
 end
 
+function get_t_L_value(trial_number::Int, pcm_number::Int, df::DataFrame)
+    row = df[(df.Trial .== trial_number) .& (df.PCM .== pcm_number), :]
+    return isempty(row) ? missing : row[1, :"式10の解に対するt_L"]
+end
+
 # CSVファイルからデータを読み込む関数
 function load_and_process_csv_common(input_file1::String, input_file2::String, input_file3::String , output_file::String)
     # CSVファイルを読み込む
     df1 = CSV.read(input_file1, DataFrame)
     df2 = CSV.read(input_file3, DataFrame)
 
-    # `式(1)の最適値が式(10)の最適値のt_L倍より小さい` 列から数値を取得
-    selected_values = df1[.!(ismissing.(df1[:, :"式(1)の最適値が式(10)の最適値のt_L倍より小さい"])) .& 
-                      (df1[:, :"式(1)の最適値が式(10)の最適値のt_L倍より小さい"] .!= "FALSE"), :"式(1)の最適値が式(10)の最適値のt_L倍より小さい"]
+    # `式(1)の最適値が式(10)の最適値のt_L倍より大きい` 列から数値を取得
+    selected_values = df1[.!(ismissing.(df1[:, :"式(1)の最適値が式(10)の最適値のt_L倍より大きい"])) .& 
+                      (df1[:, :"式(1)の最適値が式(10)の最適値のt_L倍より大きい"] .!= "FALSE"), :"式(1)の最適値が式(10)の最適値のt_L倍より大きい"]
+
+    selected_columns_df = df1[:, ["Trial", "PCM", "式10の解に対するt_L"]]
     
     # String7からStringへの変換
     unique_trial_numbers = String.(unique(selected_values))
@@ -224,23 +231,23 @@ function load_and_process_csv_common(input_file1::String, input_file2::String, i
 
     wᴸ_common, wᵁ_common, ŵᴸ_common, ŵᵁ_common = convert_to_vectors_and_matrices(relevant_data)
 
-    t = calculate_t(wᴸ_common, wᵁ_common)
-
-    println(t)
-    t[1] = 1
-    println(t)
+    #t = calculate_t(wᴸ_common, wᵁ_common)
 
     A = extract_pcm_data(df2, unique_trial_numbers)
 
     results_df = DataFrame(Trial = String[], Feasibility = Bool[])
 
     for i in 1:length(unique_trial_numbers)
+        trial_number_int = parse(Int, unique_trial_numbers[i])  # String を Int に変換
+
         pcm1, w1 = A[unique_trial_numbers[i]][1]
         pcm2, w2 = A[unique_trial_numbers[i]][2]
         pcm3, w3 = A[unique_trial_numbers[i]][3]
 
+        t_L = [get_t_L_value(trial_number_int, 1, selected_columns_df), get_t_L_value(trial_number_int, 2, selected_columns_df), get_t_L_value(trial_number_int, 3, selected_columns_df)]
+
         # 実行可能性をチェック
-        feasibility = is_feasible_solution(t[i]*wᴸ_common[i], t[i]*wᵁ_common[i], t[i], [pcm1,pcm2,pcm3])
+        feasibility = is_feasible_solution(t_L, [pcm1,pcm2,pcm3])
 
         # 結果をDataFrameに追加
         push!(results_df, (Trial = unique_trial_numbers[i], Feasibility = feasibility))

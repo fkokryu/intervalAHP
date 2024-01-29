@@ -7808,121 +7808,6 @@ $$
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h3 id="%E3%83%A2%E3%83%87%E3%83%AB%E3%81%AE%E6%94%B9%E5%96%84%E6%A1%88">モデルの改善案<a class="anchor-link" href="#%E3%83%A2%E3%83%87%E3%83%AB%E3%81%AE%E6%94%B9%E5%96%84%E6%A1%88">¶</a></h3><p>再度、解の非唯一性について考えてみると<br/>
-問題(1)の最適解は唯一でない場合があり、その解集合は問題(10) (中心総和を1とした問題)の最適解を標準解 $[w_{i}^{\rm L}, w_{i}^{\rm U}]$ としたとき
-$$
-    \begin{align}
-            ~~ &amp; ~~ t^{\rm L} = \frac{1}{\min_{j} (\sum_{i≠j} w_{i}^{\rm L} + w_{j}^{\rm U})} \\
-            ~~ &amp; ~~ t^{\rm U} = \frac{1}{\max_{j} (\sum_{i≠j} w_{i}^{\rm U} + w_{j}^{\rm L})}
-    \end{align}
-$$</p>
-<p>なる $t^{\rm L}$ と $t^{\rm U}$ を用いて $[tw_{i}^{\rm L}, tw_{i}^{\rm U}], i\in N, t^{\rm L}\leq t\leq t^{\rm U}$ と表せる。</p>
-<p>いま、問題(10)の最適値を $\hat{\delta}_{k}$ としているがこれは、元を辿れば問題(5)の最適値であり、(同じwを使っていて少しわかりづらいが...)
-$$
-    \begin{equation}
-        t_{k}^{\rm L}\hat{\delta}_{k}\leq \frac{\sum_{i\in N} (w_{ki}^{\rm U} - w_{ki}^{\rm L})}{\sum_{i\in N} \frac{w_{ki}^{\rm U} + w_{ki}^{\rm L}}{2}}\leq t_{k}^{\rm U}\hat{\delta}_{k}
-    \end{equation}
-$$</p>
-<p>ここで式(6)を用いて書き直すと
-$$
-    \begin{equation}
-        t_{k}^{\rm L}\hat{\delta}_{k}\leq \sum_{i\in N} (pw_{ki}^{\rm U} - pw_{ki}^{\rm L})\leq t_{k}^{\rm U}\hat{\delta}_{k}
-    \end{equation}
-$$</p>
-<p>この範囲に入るような $[w_{ki}^{\rm L}, w_{ki}^{\rm U}]$ は全て、問題(10)の最適解である。</p>
-<p>とすると、、、</p>
-<p>問題(2)、問題(3)、問題(4)の一つ目の最適性を保証する制約のところを変更するだけでいいのではないか？？
-$$
-    \begin{align}
-            ~~ &amp; ~~ \sum_{i\in N} (w_{ki}^{\rm U} - w_{ki}^{\rm L}) \leq \hat{d_{k}} , k\in M \\
-            \Rightarrow ~~ &amp; ~~ \sum_{i\in N} (w_{ki}^{\rm U} - w_{ki}^{\rm L}) \geq \sum_{i\in N} \frac{w_{ki}^{\rm U} + w_{ki}^{\rm L}}{2}t_{k}^{\rm L}\hat{\delta}_{k} , k\in M \\
-            ~~ &amp; ~~ \sum_{i\in N} (w_{ki}^{\rm U} - w_{ki}^{\rm L}) \leq \sum_{i\in N} \frac{w_{ki}^{\rm U} + w_{ki}^{\rm L}}{2}t_{k}^{\rm U}\hat{\delta}_{k} , k\in M
-    \end{align}
-$$</p>
-<p>これによって解の非唯一性を考慮して、<br/>
-それぞれのDMの区間を $p_{k} = \frac{1}{\sum_{i\in N} \frac{w_{ki}^{\rm L} + w_{ki}^{\rm U}}{2}}$ によって問題(10)の最適解である中で最も効果的に統合できるように選べるのではないか？</p>
-<p>この案に基づいてモデルを書き換える。</p>
-<p>問題(10)の最適値を $\hat{\delta_{k}}$ 、最適解を $[w_{ki}^{\rm L}, w_{ki}^{\rm U}]$ として
-$$
-    \begin{align}
-            ~~ &amp; ~~ t_{k}^{\rm L} = \frac{1}{\min_{j} (\sum_{i≠j} w_{ki}^{\rm L} + w_{kj}^{\rm U})} \\
-            ~~ &amp; ~~ t_{k}^{\rm U} = \frac{1}{\max_{j} (\sum_{i≠j} w_{ki}^{\rm U} + w_{kxj}^{\rm L})}
-    \end{align}
-$$</p>
-<p>とすると、</p>
-<p>Perfect incorporation apploach
-$$
-    \begin{align}
-        \begin{split}
-            \text{minimize} ~~ &amp; ~~ \sum_{i\in N} (w_{i}^{\rm U} - w_{i}^{\rm L}) \\
-            \text{subject to} ~~ &amp; ~~ \sum_{i\in N} (w_{ki}^{\rm U} - w_{ki}^{\rm L}) \geq \sum_{i\in N} \frac{w_{ki}^{\rm U} + w_{ki}^{\rm L}}{2}t_{k}^{\rm L}\hat{\delta}_{k} , k\in M \\
-            ~~ &amp; ~~ \sum_{i\in N} (w_{ki}^{\rm U} - w_{ki}^{\rm L}) \leq \sum_{i\in N} \frac{w_{ki}^{\rm U} + w_{ki}^{\rm L}}{2}t_{k}^{\rm U}\hat{\delta}_{k} , k\in M, \\
-            ~~ &amp; ~~ w_{ki}^{\rm L}\leq a_{kij}w_{kj}^{R},\, a_{kij}w_{kj}^{\rm L}\leq w_{ki}^{\rm U},\, i&lt;j, i,j\in N , k\in M\\
-            ~~ &amp; ~~ \sum_{j\in N\setminus i} w_{kj}^{R} + w_{ki}^{\rm L}\geq 1, i\in N, k\in M, \\
-            ~~ &amp; ~~ \sum_{j\in N\setminus i} w_{kj}^{\rm L} + w_{ki}^{\rm U}\leq 1, i\in N, k\in M, \\
-            ~~ &amp; ~~ \epsilon \leq w_{i}^{\rm L}\leq w_{ki}^{\rm L}\leq w_{ki}^{\rm U} \leq w_{i}^{\rm U}, k\in M, i\in N
-        \end{split}
-    \end{align}
-$$</p>
-<p>Common ground apploach
-$$
-    \begin{align}
-        \begin{split}
-            \text{maximize} ~~ &amp; ~~ \sum_{i\in N} (w_{i}^{\rm U} - w_{i}^{\rm L}) \\
-            \text{subject to} ~~ &amp; ~~ \sum_{i\in N} (w_{ki}^{\rm U} - w_{ki}^{\rm L}) \geq \sum_{i\in N} \frac{w_{ki}^{\rm U} + w_{ki}^{\rm L}}{2}t_{k}^{\rm L}\hat{\delta}_{k} , k\in M \\
-            ~~ &amp; ~~ \sum_{i\in N} (w_{ki}^{\rm U} - w_{ki}^{\rm L}) \leq \sum_{i\in N} \frac{w_{ki}^{\rm U} + w_{ki}^{\rm L}}{2}t_{k}^{\rm U}\hat{\delta}_{k} , k\in M, \\
-            ~~ &amp; ~~ w_{ki}^{\rm L}\leq a_{kij}w_{kj}^{\rm U},\, a_{kij}w_{kj}^{\rm L}\leq w_{ki}^{\rm U},\, i&lt;j, i,j\in N , k\in M\\
-            ~~ &amp; ~~ \sum_{j\in N\setminus i} w_{kj}^{\rm U} + w_{ki}^{\rm L}\geq 1, i\in N, k\in M, \\
-            ~~ &amp; ~~ \sum_{j\in N\setminus i} w_{kj}^{\rm L} + w_{ki}^{\rm U}\leq 1, i\in N, k\in M, \\
-            ~~ &amp; ~~ \sum_{j\in N\setminus i} w_{j}^{\rm U} + w_{i}^{\rm L}\geq 1, i\in N, \\
-            ~~ &amp; ~~ \sum_{j\in N\setminus i} w_{j}^{\rm L} + w_{i}^{\rm U}\leq 1, i\in N, \\
-            ~~ &amp; ~~ \epsilon \leq w_{ki}^{\rm L}\leq w_{i}^{\rm L}\leq w_{i}^{\rm U}\leq w_{ki}^{\rm U}, k\in M, i\in N
-        \end{split}
-    \end{align}
-$$</p>
-<p>Partial incorporation apploach
-$$
-    \begin{align}
-        \begin{split}
-            \text{minimize} ~~ &amp; ~~ \sum_{i\in N} (w_{i}^{\rm U} - w_{i}^{\rm L}) \\
-            \text{subject to} ~~ &amp; ~~ \sum_{i\in N} (w_{ki}^{\rm U} - w_{ki}^{\rm L}) \geq \sum_{i\in N} \frac{w_{ki}^{\rm U} + w_{ki}^{\rm L}}{2}t_{k}^{\rm L}\hat{\delta}_{k} , k\in M \\
-            ~~ &amp; ~~ \sum_{i\in N} (w_{ki}^{\rm U} - w_{ki}^{\rm L}) \leq \sum_{i\in N} \frac{w_{ki}^{\rm U} + w_{ki}^{\rm L}}{2}t_{k}^{\rm U}\hat{\delta}_{k} , k\in M, \\
-            ~~ &amp; ~~ w_{ki}^{\rm L}\leq a_{kij}w_{kj}^{\rm U},\, a_{kij}w_{kj}^{\rm L}\leq w_{ki}^{\rm U},\, i&lt;j, i,j\in N , k\in M\\
-            ~~ &amp; ~~ \sum_{j\in N\setminus i} w_{kj}^{\rm U} + w_{ki}^{\rm L}\geq 1, i\in N, k\in M, \\
-            ~~ &amp; ~~ \sum_{j\in N\setminus i} w_{kj}^{\rm L} + w_{ki}^{\rm U}\leq 1, i\in N, k\in M, \\
-            ~~ &amp; ~~ \sum_{i\in N} w_{ki} = 1, k\in M \\
-            ~~ &amp; ~~ \epsilon \leq w_{i}^{\rm L}\leq w_{ki}\leq w_{ki}^{\rm U}, \epsilon \leq w_{ki}^{\rm L}\leq w_{ki}\leq w_{i}^{\rm U}, k\in M, i\in N
-        \end{split}
-    \end{align}
-$$</p>
-</div>
-</div>
-</div>
-</div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
-<div class="jp-Cell-inputWrapper" tabindex="0">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<p>実際にこれで計算すると、<br/>
-数値実験(pcmの生成法はこれまでと同様)<br/>
-DM数：3 、pcmのサイズ:5の場合に1000回</p>
-<p>・PerfectIncorporation では995回が問題(2)より問題(34)の方が(25)式の値が小さくなった<br/>
-(後の5回は問題(1)と問題(5)の解集合が異なり、問題(10)の $t^{\rm L}$ が問題(1)の会の中心の総和より小さくない時で<br/>
-問題(2)の最適解は問題(35)で実行可能だった。)</p>
-<p>・CommonGround では問題(3)と問題(36)のどちらの手法でも統合できたのが30回、問題(36)のみで統合できたのが950回</p>
-<p>・PartialIncorporationでは全試行で問題(4)より問題(37)の方が(25)式の値が小さくなった</p>
-</div>
-</div>
-</div>
-</div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
-<div class="jp-Cell-inputWrapper" tabindex="0">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
 <h3 id="%E5%95%8F%E9%A1%8C(9)%E3%81%A8%E5%95%8F%E9%A1%8C(10)%E3%81%8C%E5%90%8C%E5%80%A4%E3%81%A7%E3%81%82%E3%82%8B%E3%81%93%E3%81%A8%E3%81%AE%E8%A8%BC%E6%98%8E">問題(9)と問題(10)が同値であることの証明<a class="anchor-link" href="#%E5%95%8F%E9%A1%8C(9)%E3%81%A8%E5%95%8F%E9%A1%8C(10)%E3%81%8C%E5%90%8C%E5%80%A4%E3%81%A7%E3%81%82%E3%82%8B%E3%81%93%E3%81%A8%E3%81%AE%E8%A8%BC%E6%98%8E">¶</a></h3><p>問題(10)の最適解の一つを $w_{k}^{\ast} = [{w^{\ast}_{k}}^{\rm L}, {w^{\ast}_{k}}^{\rm U}]$ とする。
 $w_{k}^{\ast}$ は問題(10)の制約条件を満たすので以下を満たす。
 $$
@@ -7942,7 +7827,7 @@ $$
     \end{equation}
 $$
 として、新たに $v_{ki}^{\rm L} = p{w^{\ast}_{ki}}^{\rm L}, v_{ki}^{\rm U} = p{w^{\ast}_{ki}}^{\rm U}$ が問題(9)の最適解になるかどうかを考える。</p>
-<p>$p$ の定義より $p=1&gt;0$ であるので(38)式、(39)式、(43)式の両辺を $p$ 倍することで
+<p>$p$ の定義より $p=1&gt;0$ であるので(26)式、(27)式、(31)式の両辺を $p$ 倍することで
 $$
     \begin{align}
         ~~ &amp; ~~ v_{ki}^{\rm L}\leq a_{kij}v_{kj}^{\rm U} \\
@@ -7957,7 +7842,7 @@ $$
         ~~ &amp; ~~ \sum_{j\in N\setminus i} v_{kj}^{\rm L} + v_{ki}v^{\rm U} = p(\sum_{j\in N\setminus i} {w^{\ast}_{kj}}^{\rm L} + {w^{\ast}_{ki}}^{\rm U})\leq p 
     \end{align}
 $$</p>
-<p>(44)式より
+<p>(32)式より
 $$
     \begin{align}
         ~~ &amp; ~~ \sum_{i\in N} \frac{v_{ki}^{\rm L} + v_{ki}^{\rm U}}{2} = 1
@@ -7984,7 +7869,7 @@ $$
     \end{align}
 $$</p>
 <p>このとき、 $w_{ki}^{\rm L} = \frac{{v^{\ast}_{ki}}^{\rm L}}{p}, w_{ki}^{\rm U} = \frac{{v^{\ast}_{ki}}^{\rm U}}{p}$ が問題(10)の最適解になるかどうかを考える。</p>
-<p>$p$ の定義より $p=1&gt;0$ であるので(52)式、(53)式、(57)式の両辺を $\frac{1}{p}$ 倍することで
+<p>$p$ の定義より $p=1&gt;0$ であるので(40)式、(41)式、(45)式の両辺を $\frac{1}{p}$ 倍することで
 $$
     \begin{align}
         ~~ &amp; ~~ w_{ki}^{\rm L}\leq a_{kij}w_{kj}^{\rm U} \\
@@ -7999,14 +7884,14 @@ $$
         ~~ &amp; ~~ \sum_{j\in N\setminus i} w_{kj}^{\rm L} + w_{ki}v^{\rm U} = \frac{1}{p}(\sum_{j\in N\setminus i} {v^{\ast}_{kj}}^{\rm L} + {v^{\ast}_{ki}}^{\rm U})\leq 1 
     \end{align}
 $$</p>
-<p>(44)式より
+<p>(32)式より
 $$
     \begin{align}
         ~~ &amp; ~~ \sum_{i\in N} \frac{w_{ki}^{\rm L} + w_{ki}^{\rm U}}{2} = \frac{1}{p}\sum_{i\in N} \frac{{v^{\ast}_{ki}}^{\rm L} + {v^{\ast}_{ki}}^{\rm U}}{2} = 1
     \end{align}
 $$</p>
 <p>よって $w_{ki}^{\rm L}, w_{ki}^{\rm U}$ は問題(10)の全ての制約を満たす。<br/>
-ここで(51)式を両辺 $\frac{1}{p}$ 倍することで
+ここで(39)式を両辺 $\frac{1}{p}$ 倍することで
 $$
     \begin{align}
         ~~ &amp; ~~ \sum_{i\in N} ({w^{\ast}_{ki}}^{\rm L} - {w^{\ast}_{ki}}^{\rm U}) &gt; \sum_{i\in N} (w_{ki}^{\rm L} - w_{ki}^{\rm U})
