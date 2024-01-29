@@ -180,8 +180,6 @@ function tcommon(input_file1::String, input_file2::String, output_file::String)
             candidate2[l] = ∑wⱼᴸ + wᵢᵁ_check
         end
 
-        display(candidate)
-
         t_L = 1 / minimum(candidate) #式(10)の解に対するt^L        
         t_U = 1 / maximum(candidate2) #式(10)の解に対するt^U 
 
