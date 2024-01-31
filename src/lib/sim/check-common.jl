@@ -7,6 +7,7 @@ import MathOptInterface as MOI  # これを追加
 
 include("../crisp-pcm.jl")
 include("../nearly-equal.jl")
+include("../interval-ahp.jl")
 include("../ttimes/optimal-value.jl")
 
 function extract_relevant_data(input_file::String, trial_numbers::Vector{String})
@@ -65,7 +66,7 @@ function convert_to_vectors_and_matrices(df::DataFrame)
     return wᴸ_common, wᵁ_common, ŵᴸ_common, ŵᵁ_common
 end
 
-function is_feasible_solution(t_L, matrices)
+function is_feasible_solution(matrices)
     ε = 1e-8 # << 1
     l = length(matrices) # 人数
     m,n = size(matrices[1])
@@ -79,6 +80,14 @@ function is_feasible_solution(t_L, matrices)
     end
 
     ḋ_common_model = map(Aₖ -> solveCrispAHPLP(Aₖ).optimalValue_center_1, matrices)
+
+    #数値実験より「式(1)の最適値」÷「式(1)の最適解の中心の総和」＜「式(10)の最適値」、つまり「式(1)の最適値」÷「式(1)の最適解の中心の総和」が正しい解
+    w = map(Aₖ -> solveIntervalAHPLP(Aₖ), matrices)
+    d_common_model = map(result -> result.optimalValue, w)
+    wᴸ_individual = map(result -> result.wᴸ, w)
+    wᵁ_individual = map(result -> result.wᵁ, w)
+    
+    ḋ_common_model[2] = d_common_model[2] / ((sum(wᴸ_individual[2])+sum(wᵁ_individual[2]))/2)
 
     model = Model(HiGHS.Optimizer)
     set_silent(model)
@@ -98,8 +107,6 @@ function is_feasible_solution(t_L, matrices)
 
         # ∑(ŵₖᵢᵁ_common_model - ŵₖᵢᴸ_common_model) ≤ sₖḋ_common_modelₖ
         @constraint(model, sum(ŵₖᵁ_common_model) - sum(ŵₖᴸ_common_model) ≤ ((sum(ŵₖᴸ_common_model) + sum(ŵₖᵁ_common_model)) / 2 * (ḋ_common_model[k] + ε)))
-
-        @constraint(model, sum(ŵₖᴸ_common_model) + sum(ŵₖᵁ_common_model)/2 == s_common_model * t_L[k])
 
         for i = 1:n-1
             ŵₖᵢᴸ_common_model = ŵₖᴸ_common_model[i]; ŵₖᵢᵁ_common_model = ŵₖᵁ_common_model[i]
@@ -140,21 +147,14 @@ function is_feasible_solution(t_L, matrices)
         @constraint(model, ∑wⱼᵁ_common_model + wᵢᴸ_common_model ≥ 1)
     end
 
-    # 目的関数 ∑(wᵢᵁ_tcommon_model - wᵢᴸ_tcommon_model)
+    # 目的関数 ∑(wᵢᵁ_common_model - wᵢᴸ_common_model)
     @objective(model, Max, sum(wᵁ_common_model) - sum(wᴸ_common_model))
 
     # モデルの実行と実行可能性の確認
     optimize!(model)
 
-    if termination_status(model) != MOI.INFEASIBLE
-        # 実行可能な解が見つかった場合、解を返す
-        return [value.(ŵᴸ_common_model), value.(ŵᵁ_common_model)]
-    else
-        # 実行不可能な場合、Falseが返る
-        termination_status(model) != MOI.INFEASIBLE
-    end
+    return termination_status(model) != MOI.INFEASIBLE
 end
-
 
 function calculate_t(wᴸ_common::Vector{Vector{Float64}}, wᵁ_common::Vector{Vector{Float64}})
     n = length(wᴸ_common)
@@ -170,7 +170,6 @@ function calculate_t(wᴸ_common::Vector{Vector{Float64}}, wᵁ_common::Vector{V
 
     return t
 end
-
 
 function extract_pcm_data(df::DataFrame, unique_trial_numbers::Vector{String})
     # PCMデータの列名を動的に生成
@@ -247,7 +246,7 @@ function load_and_process_csv_common(input_file1::String, input_file2::String, i
         t_L = [get_t_L_value(trial_number_int, 1, selected_columns_df), get_t_L_value(trial_number_int, 2, selected_columns_df), get_t_L_value(trial_number_int, 3, selected_columns_df)]
 
         # 実行可能性をチェック
-        feasibility = is_feasible_solution(t_L, [pcm1,pcm2,pcm3])
+        feasibility = is_feasible_solution([pcm1,pcm2,pcm3])
 
         # 結果をDataFrameに追加
         push!(results_df, (Trial = unique_trial_numbers[i], Feasibility = feasibility))
@@ -256,4 +255,3 @@ function load_and_process_csv_common(input_file1::String, input_file2::String, i
     # 結果をCSVファイルに書き出し
     CSV.write(output_file, results_df)
 end
-
