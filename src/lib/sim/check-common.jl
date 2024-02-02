@@ -36,6 +36,29 @@ function extract_relevant_data(input_file::String, trial_numbers::Vector{String}
     return relevant_data
 end
 
+# 特定のトライアルに対してチェックを行う関数
+function check_diff_for_trial(df, trial_number)
+    diffs = []
+    # 特定のトライアルのデータを選択
+    trial_data = filter(row -> row.Trial == trial_number, df)
+    
+    # トライアルデータが空の場合（該当するトライアル番号がない場合）
+    if isempty(trial_data)
+        return "Trial not found"
+    end
+    
+    # DM1, DM2, DM3について差をチェック
+    for dm in 1:3
+        最適値 = trial_data[!, Symbol("DM$(dm)の式1の最適値")][1]
+        積 = trial_data[!, Symbol("DM$(dm)の積")][1]
+        if abs(最適値 - 積) > 1e-6
+            push!(diffs, dm)
+        end
+    end
+    
+    return diffs
+end
+
 function convert_to_vectors_and_matrices(df::DataFrame)
     # ベクトルと行列を初期化
     wᴸ_common = Vector{Float64}[]
@@ -66,7 +89,7 @@ function convert_to_vectors_and_matrices(df::DataFrame)
     return wᴸ_common, wᵁ_common, ŵᴸ_common, ŵᵁ_common
 end
 
-function is_feasible_solution(matrices)
+function is_feasible_solution(diff, matrices)
     ε = 1e-8 # << 1
     l = length(matrices) # 人数
     m,n = size(matrices[1])
@@ -86,8 +109,10 @@ function is_feasible_solution(matrices)
     d_common_model = map(result -> result.optimalValue, w)
     wᴸ_individual = map(result -> result.wᴸ, w)
     wᵁ_individual = map(result -> result.wᵁ, w)
-    
-    ḋ_common_model[2] = d_common_model[2] / ((sum(wᴸ_individual[2])+sum(wᵁ_individual[2]))/2)
+
+    for l in diff
+        ḋ_common_model[l] = d_common_model[l] / ((sum(wᴸ_individual[l])+sum(wᵁ_individual[l]))/2)
+    end
 
     model = Model(HiGHS.Optimizer)
     set_silent(model)
@@ -153,7 +178,7 @@ function is_feasible_solution(matrices)
     # モデルの実行と実行可能性の確認
     optimize!(model)
 
-    return termination_status(model) != MOI.INFEASIBLE
+    return (n - 1) * sum(log.(value.(wᵁ_common_model)) - log.(value.(wᴸ_common_model)))
 end
 
 function calculate_t(wᴸ_common::Vector{Vector{Float64}}, wᵁ_common::Vector{Vector{Float64}})
@@ -212,7 +237,7 @@ function get_t_L_value(trial_number::Int, pcm_number::Int, df::DataFrame)
 end
 
 # CSVファイルからデータを読み込む関数
-function load_and_process_csv_common(input_file1::String, input_file2::String, input_file3::String , output_file::String)
+function load_and_process_csv_common(input_file1::String, input_file2::String, input_file3::String, input_file4::String, output_file::String)
     # CSVファイルを読み込む
     df1 = CSV.read(input_file1, DataFrame)
     df2 = CSV.read(input_file3, DataFrame)
@@ -234,7 +259,9 @@ function load_and_process_csv_common(input_file1::String, input_file2::String, i
 
     A = extract_pcm_data(df2, unique_trial_numbers)
 
-    results_df = DataFrame(Trial = String[], Feasibility = Bool[])
+    results_df = DataFrame(Trial = String[], Feasibility = Float64[])
+
+    df =  CSV.read(input_file4, DataFrame)
 
     for i in 1:length(unique_trial_numbers)
         trial_number_int = parse(Int, unique_trial_numbers[i])  # String を Int に変換
@@ -246,7 +273,7 @@ function load_and_process_csv_common(input_file1::String, input_file2::String, i
         t_L = [get_t_L_value(trial_number_int, 1, selected_columns_df), get_t_L_value(trial_number_int, 2, selected_columns_df), get_t_L_value(trial_number_int, 3, selected_columns_df)]
 
         # 実行可能性をチェック
-        feasibility = is_feasible_solution([pcm1,pcm2,pcm3])
+        feasibility = is_feasible_solution(check_diff_for_trial(df, trial_number_int), [pcm1,pcm2,pcm3])
 
         # 結果をDataFrameに追加
         push!(results_df, (Trial = unique_trial_numbers[i], Feasibility = feasibility))
