@@ -72,7 +72,7 @@ function perturbate_and_discretize_pcm(pcm, perturbation_strength)
     for i in 1:n
         for j in i+1:n  # 上三角行列の要素にのみ摂動を加える
             # 摂動を加える
-            perturbed_value = log(pcm[i, j]) + rand(Uniform(-perturbation_strength, perturbation_strength))
+            perturbed_value = log(pcm[i, j]) + rand(Normal(0, 1))*perturbation_strength
             # 摂動後の値を離散化
             perturbed_pcm[i, j] = discretize_saaty(exp(perturbed_value))
             perturbed_pcm[j, i] = 1 / perturbed_pcm[i, j]  # 対称性を維持
