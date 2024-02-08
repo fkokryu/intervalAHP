@@ -106,6 +106,13 @@ function is_feasible_solution(wᴸ, wᵁ, ŵᴸ, ŵᵁ, s, matrices)
 
     set_start_value(s_perfect_model, s)
 
+    # 最適化を実行する前に各変数の初期値を保存
+    initial_wᴸ = copy(wᴸ) # 深いコピーを使って元のデータを保持
+    initial_wᵁ = copy(wᵁ)
+    initial_ŵᴸ = transpose(ŵᴸ)
+    initial_ŵᵁ = transpose(ŵᵁ)
+    initial_s = s
+
     # ここに制約を追加
     for k = 1:l
         ŵₖᴸ_perfect_model = ŵᴸ_perfect_model[k,:]; ŵₖᵁ_perfect_model = ŵᵁ_perfect_model[k,:]
@@ -145,8 +152,32 @@ function is_feasible_solution(wᴸ, wᵁ, ŵᴸ, ŵᵁ, s, matrices)
 
     @constraint(model, sum(wᵁ_perfect_model) + sum(wᴸ_perfect_model) == 2)
 
+    @objective(model, Min, sum(wᵁ_perfect_model) - sum(wᴸ_perfect_model))
+
     # モデルの実行可能性チェック
     optimize!(model)
+
+    # 最適化後の変数の値を取得
+    optimized_wᴸ_perfect_model = [value(wᴸ_perfect_model[i]) for i in 1:n]
+    optimized_wᵁ_perfect_model = [value(wᵁ_perfect_model[i]) for i in 1:n]
+    optimized_ŵᴸ_perfect_model = [value(ŵᴸ_perfect_model[k, i]) for k in 1:l, i in 1:n]
+    optimized_ŵᵁ_perfect_model = [value(ŵᵁ_perfect_model[k, i]) for k in 1:l, i in 1:n]
+    optimized_s_perfect_model = value(s_perfect_model)
+
+    # 変更を計算
+    Δwᴸ_perfect_model = optimized_wᴸ_perfect_model - initial_wᴸ
+    Δwᵁ_perfect_model = optimized_wᵁ_perfect_model - initial_wᵁ
+    Δŵᴸ_perfect_model = optimized_ŵᴸ_perfect_model - initial_ŵᴸ
+    Δŵᵁ_perfect_model = optimized_ŵᵁ_perfect_model - initial_ŵᵁ
+    Δs_perfect_model = optimized_s_perfect_model - initial_s
+
+    # 変更を出力
+    println("Δwᴸ_perfect_model: ", sum(Δwᴸ_perfect_model))
+    println("Δwᵁ_perfect_model: ", sum(Δwᵁ_perfect_model))
+    println("Δŵᴸ_perfect_model: ", Δŵᴸ_perfect_model)
+    println("Δŵᵁ_perfect_model: ", Δŵᵁ_perfect_model)
+    println("Δs_perfect_model: ", Δs_perfect_model)
+
     return termination_status(model) != MOI.INFEASIBLE
 end
 
