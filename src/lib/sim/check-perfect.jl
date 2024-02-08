@@ -87,24 +87,28 @@ function is_feasible_solution(wᴸ, wᵁ, ŵᴸ, ŵᵁ, s, matrices)
     model = Model(HiGHS.Optimizer)
     set_silent(model)
 
-    # 定義された変数をモデルに追加
+    # 定義された変数をモデルに追加し、与えられた解を変数に代入
     @variable(model, wᴸ_perfect_model[i=1:n] >= ε)
     @variable(model, wᵁ_perfect_model[i=1:n] >= ε)
     @variable(model, ŵᴸ_perfect_model[k=1:l, i=1:n] >= ε)
     @variable(model, ŵᵁ_perfect_model[k=1:l, i=1:n] >= ε)
     @variable(model, s_perfect_model ≥ ε)
 
-    # 与えられた解をモデルの変数に代入
     for i in 1:n
         set_start_value(wᴸ_perfect_model[i], wᴸ[i])
+        fix(wᴸ_perfect_model[i], wᴸ[i], force=true) # force=trueを追加
         set_start_value(wᵁ_perfect_model[i], wᵁ[i])
+        fix(wᵁ_perfect_model[i], wᵁ[i], force=true) # force=trueを追加
         for k in 1:l
             set_start_value(ŵᴸ_perfect_model[k, i], ŵᴸ[i, k])
+            fix(ŵᴸ_perfect_model[k, i], ŵᴸ[i, k], force=true) # force=trueを追加
             set_start_value(ŵᵁ_perfect_model[k, i], ŵᵁ[i, k])
+            fix(ŵᵁ_perfect_model[k, i], ŵᵁ[i, k], force=true) # force=trueを追加
         end
     end
-
+    
     set_start_value(s_perfect_model, s)
+    fix(s_perfect_model, s, force=true) # force=trueを追加
 
     # 最適化を実行する前に各変数の初期値を保存
     initial_wᴸ = copy(wᴸ) # 深いコピーを使って元のデータを保持
@@ -112,6 +116,8 @@ function is_feasible_solution(wᴸ, wᵁ, ŵᴸ, ŵᵁ, s, matrices)
     initial_ŵᴸ = transpose(ŵᴸ)
     initial_ŵᵁ = transpose(ŵᵁ)
     initial_s = s
+
+    println("元の最適値:", sum(initial_wᵁ)-sum(initial_wᴸ))
 
     # ここに制約を追加
     for k = 1:l
@@ -172,6 +178,7 @@ function is_feasible_solution(wᴸ, wᵁ, ŵᴸ, ŵᵁ, s, matrices)
     Δs_perfect_model = optimized_s_perfect_model - initial_s
 
     # 変更を出力
+    println("変更後の最適値:", sum(optimized_wᵁ_perfect_model)-sum(optimized_wᴸ_perfect_model))
     println("Δwᴸ_perfect_model: ", sum(Δwᴸ_perfect_model))
     println("Δwᵁ_perfect_model: ", sum(Δwᵁ_perfect_model))
     println("Δŵᴸ_perfect_model: ", Δŵᴸ_perfect_model)
