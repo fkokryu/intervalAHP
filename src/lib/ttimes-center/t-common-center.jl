@@ -140,7 +140,7 @@ function solvetCommonGroundLP2(matrices::Vector{Matrix{T}})::Union{LPResult_t_2_
             )
         else
             # 解が見つからなかった場合の処理
-            println("The tPerfectIncorporation2 optimization problem had no optimal solution.")
+            println("The tCommonGround2 optimization problem had no optimal solution.")
             return nothing  # 解が見つからなかったことを示すためにnothingを返す
         end
 
