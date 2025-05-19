@@ -563,6 +563,8 @@ function calculate_t_values(wᴸ::Vector{Float64}, wᵁ::Vector{Float64})
     else
         t_U = 1 / max_candidate2  # 式(10)の解に対するt^U
     end
+
+    println(t_L, t_U);
     
     return t_L, t_U
 end
