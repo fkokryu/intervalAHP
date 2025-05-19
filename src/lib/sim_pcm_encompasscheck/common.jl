@@ -498,3 +498,379 @@ function display_specific_pcm(L_str::String, U_str::String, name::String = "区�
         println("行列の解析に失敗しました。")
     end
 end
+
+# 区間重要度の中心を計算する関数
+function calculate_weight_centers(wᴸ::Vector{Float64}, wᵁ::Vector{Float64})
+    n = length(wᴸ)
+    w_center = zeros(Float64, n)
+    
+    for i in 1:n
+        w_center[i] = (wᴸ[i] + wᵁ[i]) / 2.0
+    end
+    
+    return w_center
+end
+
+# 区間重要度を正規化する関数
+function normalize_interval_weights(wᴸ::Vector{Float64}, wᵁ::Vector{Float64})
+    # 中心値を計算
+    w_center = calculate_weight_centers(wᴸ, wᵁ)
+    # 中心値の総和
+    center_sum = sum(w_center)
+    
+    # 正規化
+    n = length(wᴸ)
+    wᴸ_normalized = zeros(Float64, n)
+    wᵁ_normalized = zeros(Float64, n)
+    
+    for i in 1:n
+        wᴸ_normalized[i] = wᴸ[i] / center_sum
+        wᵁ_normalized[i] = wᵁ[i] / center_sum
+    end
+    
+    return wᴸ_normalized, wᵁ_normalized, w_center, center_sum
+end
+
+# t_L値とt_U値を計算する関数
+function calculate_t_values(wᴸ::Vector{Float64}, wᵁ::Vector{Float64})
+    n = length(wᴸ)
+    candidate = zeros(Float64, n)
+    candidate2 = zeros(Float64, n)
+    
+    for l in 1:n
+        wᵢᴸ_check = wᴸ[l]
+        ∑wⱼᵁ = sum(map(j -> wᵁ[j], filter(j -> l != j, 1:n)))
+        candidate[l] = ∑wⱼᵁ + wᵢᴸ_check
+        
+        wᵢᵁ_check = wᵁ[l]
+        ∑wⱼᴸ = sum(map(j -> wᴸ[j], filter(j -> l != j, 1:n)))
+        candidate2[l] = ∑wⱼᴸ + wᵢᵁ_check
+    end
+    
+    # 0や極端に小さい値でt_Lが無限大になることを防ぐための処理
+    min_candidate = minimum(candidate)
+    if min_candidate <= 1e-6  # 非常に小さい値または0
+        println("警告: candidate配列に極端に小さい値があるためt_Lの計算が不安定です。")
+        t_L = 1.0  # デフォルト値
+    else
+        t_L = 1 / min_candidate  # 式(10)の解に対するt^L
+    end
+    
+    max_candidate2 = maximum(candidate2)
+    if max_candidate2 <= 1e-6  # 非常に小さい値または0
+        println("警告: candidate2配列に極端に小さい値があるためt_Uの計算が不安定です。")
+        t_U = 1.0  # デフォルト値
+    else
+        t_U = 1 / max_candidate2  # 式(10)の解に対するt^U
+    end
+    
+    return t_L, t_U
+end
+
+# 区間重要度にt値を掛ける関数
+function apply_t_values(wᴸ::Vector{Float64}, wᵁ::Vector{Float64}, t_L::Float64, t_U::Float64)
+    n = length(wᴸ)
+    wᴸ_t_L = zeros(Float64, n)
+    wᵁ_t_L = zeros(Float64, n)
+    wᴸ_t_U = zeros(Float64, n)
+    wᵁ_t_U = zeros(Float64, n)
+    
+    for i in 1:n
+        wᴸ_t_L[i] = wᴸ[i] * t_L
+        wᵁ_t_L[i] = wᵁ[i] * t_L
+        wᴸ_t_U[i] = wᴸ[i] * t_U
+        wᵁ_t_U[i] = wᵁ[i] * t_U
+    end
+    
+    return wᴸ_t_L, wᵁ_t_L, wᴸ_t_U, wᵁ_t_U
+end
+
+# 拡張版のCSV保存関数
+function process_and_save_interval_pcms_extended(input_file::String, output_file::String)
+    # CSVファイルを読み込む
+    df = CSV.read(input_file, DataFrame)
+    
+    # "entani論文のCommonGround_wᴸ" または "解の非唯一性考慮のCommonGround_wᴸ" 列に数値が存在する行を選択
+    valid_rows = (.!ismissing.(df[:, :"entani論文のCommonGround_wᴸ"]) .&
+                  .!(df[:, :"entani論文のCommonGround_wᴸ"] .== "E")) .| 
+                 (.!ismissing.(df[:, :"解の非唯一性考慮のCommonGround_wᴸ"]) .&
+                  .!(df[:, :"解の非唯一性考慮のCommonGround_wᴸ"] .== "E"))
+                
+    # Trial番号を抽出
+    unique_trial_numbers = unique(df[valid_rows, :"Trial"])
+    
+    # 有効なデータを抽出
+    relevant_data = extract_interval_weights(input_file, unique_trial_numbers)
+    
+    # 区間重要度を抽出
+    entani_wᴸ, entani_wᵁ, nonunique_wᴸ, nonunique_wᵁ, 
+    entani_wᴸ_dms, entani_wᵁ_dms, nonunique_wᴸ_dms, nonunique_wᵁ_dms = 
+        convert_weights_to_matrices(relevant_data)
+    
+    # 結果を格納するDataFrame - 拡張版
+    results_df = DataFrame(
+        Trial = Int[],
+        Entani統合PCM_L = String[],
+        Entani統合PCM_U = String[],
+        非唯一性統合PCM_L = String[],
+        非唯一性統合PCM_U = String[],
+        非唯一性正規化PCM_L = String[],
+        非唯一性正規化PCM_U = String[],
+        非唯一性t_L_PCM_L = String[],
+        非唯一性t_L_PCM_U = String[],
+        非唯一性t_U_PCM_L = String[],
+        非唯一性t_U_PCM_U = String[],
+        Entani_DM1_PCM_L = String[],
+        Entani_DM1_PCM_U = String[],
+        Entani_DM2_PCM_L = String[],
+        Entani_DM2_PCM_U = String[],
+        Entani_DM3_PCM_L = String[],
+        Entani_DM3_PCM_U = String[],
+        非唯一性_DM1_PCM_L = String[],
+        非唯一性_DM1_PCM_U = String[],
+        非唯一性_DM2_PCM_L = String[],
+        非唯一性_DM2_PCM_U = String[],
+        非唯一性_DM3_PCM_L = String[],
+        非唯一性_DM3_PCM_U = String[]
+    )
+    
+    # 各トライアルごとに区間PCMを計算
+    for i in 1:length(unique_trial_numbers)
+        trial = unique_trial_numbers[i]
+        
+        # 初期値を設定
+        entani_pcm_L_str = ""
+        entani_pcm_U_str = ""
+        entani_dm1_pcm_L_str = ""
+        entani_dm1_pcm_U_str = ""
+        entani_dm2_pcm_L_str = ""
+        entani_dm2_pcm_U_str = ""
+        entani_dm3_pcm_L_str = ""
+        entani_dm3_pcm_U_str = ""
+        nonunique_pcm_L_str = ""
+        nonunique_pcm_U_str = ""
+        nonunique_normalized_pcm_L_str = ""
+        nonunique_normalized_pcm_U_str = ""
+        nonunique_t_L_pcm_L_str = ""
+        nonunique_t_L_pcm_U_str = ""
+        nonunique_t_U_pcm_L_str = ""
+        nonunique_t_U_pcm_U_str = ""
+        nonunique_dm1_pcm_L_str = ""
+        nonunique_dm1_pcm_U_str = ""
+        nonunique_dm2_pcm_L_str = ""
+        nonunique_dm2_pcm_U_str = ""
+        nonunique_dm3_pcm_L_str = ""
+        nonunique_dm3_pcm_U_str = ""
+        
+        # Entani論文の区間ウェイトが有効であることを確認
+        if isassigned(entani_wᴸ, i) && !isempty(entani_wᴸ[i]) && isassigned(entani_wᵁ, i) && !isempty(entani_wᵁ[i])
+            # Entani統合PCM
+            entani_pcm_L, entani_pcm_U = calculate_interval_pcm(entani_wᴸ[i], entani_wᵁ[i])
+            entani_pcm_L_str = pcm_to_string(entani_pcm_L)
+            entani_pcm_U_str = pcm_to_string(entani_pcm_U)
+            
+            # 各DMのPCM (Entani)
+            if isassigned(entani_wᴸ_dms, i) && entani_wᴸ_dms[i] !== nothing
+                entani_dm1_pcm_L, entani_dm1_pcm_U = calculate_interval_pcm(
+                    entani_wᴸ_dms[i][:, 1], entani_wᵁ_dms[i][:, 1])
+                entani_dm2_pcm_L, entani_dm2_pcm_U = calculate_interval_pcm(
+                    entani_wᴸ_dms[i][:, 2], entani_wᵁ_dms[i][:, 2])
+                entani_dm3_pcm_L, entani_dm3_pcm_U = calculate_interval_pcm(
+                    entani_wᴸ_dms[i][:, 3], entani_wᵁ_dms[i][:, 3])
+                
+                entani_dm1_pcm_L_str = pcm_to_string(entani_dm1_pcm_L)
+                entani_dm1_pcm_U_str = pcm_to_string(entani_dm1_pcm_U)
+                entani_dm2_pcm_L_str = pcm_to_string(entani_dm2_pcm_L)
+                entani_dm2_pcm_U_str = pcm_to_string(entani_dm2_pcm_U)
+                entani_dm3_pcm_L_str = pcm_to_string(entani_dm3_pcm_L)
+                entani_dm3_pcm_U_str = pcm_to_string(entani_dm3_pcm_U)
+            end
+        end
+        
+        # 非唯一性区間ウェイトが有効であることを確認
+        if isassigned(nonunique_wᴸ, i) && !isempty(nonunique_wᴸ[i]) && isassigned(nonunique_wᵁ, i) && !isempty(nonunique_wᵁ[i])
+            # 非唯一性統合PCM（元の値）
+            nonunique_pcm_L, nonunique_pcm_U = calculate_interval_pcm(nonunique_wᴸ[i], nonunique_wᵁ[i])
+            nonunique_pcm_L_str = pcm_to_string(nonunique_pcm_L)
+            nonunique_pcm_U_str = pcm_to_string(nonunique_pcm_U)
+            
+            # 区間重要度を正規化して新しいPCMを計算
+            nonunique_wᴸ_normalized, nonunique_wᵁ_normalized, w_center, center_sum = 
+                normalize_interval_weights(nonunique_wᴸ[i], nonunique_wᵁ[i])
+            
+            # 正規化した区間PCM
+            nonunique_normalized_pcm_L, nonunique_normalized_pcm_U = 
+                calculate_interval_pcm(nonunique_wᴸ_normalized, nonunique_wᵁ_normalized)
+            nonunique_normalized_pcm_L_str = pcm_to_string(nonunique_normalized_pcm_L)
+            nonunique_normalized_pcm_U_str = pcm_to_string(nonunique_normalized_pcm_U)
+            
+            # t_LとするためのUの計算
+            t_L, t_U = calculate_t_values(nonunique_wᴸ_normalized, nonunique_wᵁ_normalized)
+            
+            # t_L値とt_U値を適用した区間重要度
+            nonunique_wᴸ_t_L, nonunique_wᵁ_t_L, nonunique_wᴸ_t_U, nonunique_wᵁ_t_U = 
+                apply_t_values(nonunique_wᴸ_normalized, nonunique_wᵁ_normalized, t_L, t_U)
+            
+            # t_L値を適用した区間PCM
+            nonunique_t_L_pcm_L, nonunique_t_L_pcm_U = 
+                calculate_interval_pcm(nonunique_wᴸ_t_L, nonunique_wᵁ_t_L)
+            nonunique_t_L_pcm_L_str = pcm_to_string(nonunique_t_L_pcm_L)
+            nonunique_t_L_pcm_U_str = pcm_to_string(nonunique_t_L_pcm_U)
+            
+            # t_U値を適用した区間PCM
+            nonunique_t_U_pcm_L, nonunique_t_U_pcm_U = 
+                calculate_interval_pcm(nonunique_wᴸ_t_U, nonunique_wᵁ_t_U)
+            nonunique_t_U_pcm_L_str = pcm_to_string(nonunique_t_U_pcm_L)
+            nonunique_t_U_pcm_U_str = pcm_to_string(nonunique_t_U_pcm_U)
+            
+            # 各DMのPCM (非唯一性)
+            if isassigned(nonunique_wᴸ_dms, i) && nonunique_wᴸ_dms[i] !== nothing
+                nonunique_dm1_pcm_L, nonunique_dm1_pcm_U = calculate_interval_pcm(
+                    nonunique_wᴸ_dms[i][:, 1], nonunique_wᵁ_dms[i][:, 1])
+                nonunique_dm2_pcm_L, nonunique_dm2_pcm_U = calculate_interval_pcm(
+                    nonunique_wᴸ_dms[i][:, 2], nonunique_wᵁ_dms[i][:, 2])
+                nonunique_dm3_pcm_L, nonunique_dm3_pcm_U = calculate_interval_pcm(
+                    nonunique_wᴸ_dms[i][:, 3], nonunique_wᵁ_dms[i][:, 3])
+                
+                nonunique_dm1_pcm_L_str = pcm_to_string(nonunique_dm1_pcm_L)
+                nonunique_dm1_pcm_U_str = pcm_to_string(nonunique_dm1_pcm_U)
+                nonunique_dm2_pcm_L_str = pcm_to_string(nonunique_dm2_pcm_L)
+                nonunique_dm2_pcm_U_str = pcm_to_string(nonunique_dm2_pcm_U)
+                nonunique_dm3_pcm_L_str = pcm_to_string(nonunique_dm3_pcm_L)
+                nonunique_dm3_pcm_U_str = pcm_to_string(nonunique_dm3_pcm_U)
+            end
+        end
+        
+        # 結果をDataFrameに追加
+        push!(results_df, (
+            Trial = trial,
+            Entani統合PCM_L = entani_pcm_L_str,
+            Entani統合PCM_U = entani_pcm_U_str,
+            非唯一性統合PCM_L = nonunique_pcm_L_str,
+            非唯一性統合PCM_U = nonunique_pcm_U_str,
+            非唯一性正規化PCM_L = nonunique_normalized_pcm_L_str,
+            非唯一性正規化PCM_U = nonunique_normalized_pcm_U_str,
+            非唯一性t_L_PCM_L = nonunique_t_L_pcm_L_str,
+            非唯一性t_L_PCM_U = nonunique_t_L_pcm_U_str,
+            非唯一性t_U_PCM_L = nonunique_t_U_pcm_L_str,
+            非唯一性t_U_PCM_U = nonunique_t_U_pcm_U_str,
+            Entani_DM1_PCM_L = entani_dm1_pcm_L_str,
+            Entani_DM1_PCM_U = entani_dm1_pcm_U_str,
+            Entani_DM2_PCM_L = entani_dm2_pcm_L_str,
+            Entani_DM2_PCM_U = entani_dm2_pcm_U_str,
+            Entani_DM3_PCM_L = entani_dm3_pcm_L_str,
+            Entani_DM3_PCM_U = entani_dm3_pcm_U_str,
+            非唯一性_DM1_PCM_L = nonunique_dm1_pcm_L_str,
+            非唯一性_DM1_PCM_U = nonunique_dm1_pcm_U_str,
+            非唯一性_DM2_PCM_L = nonunique_dm2_pcm_L_str,
+            非唯一性_DM2_PCM_U = nonunique_dm2_pcm_U_str,
+            非唯一性_DM3_PCM_L = nonunique_dm3_pcm_L_str,
+            非唯一性_DM3_PCM_U = nonunique_dm3_pcm_U_str
+        ))
+    end
+    
+    # 結果をCSVファイルに書き出し
+    CSV.write(output_file, results_df)
+    println("拡張区間PCMの計算が完了し、$(output_file)に保存されました。")
+end
+
+"""
+CSVファイルから区間PCMを読み込み、指定された条件に基づいて表示する関数（拡張版）
+引数:
+- csv_file: CSVファイルパス
+- trial_number: 表示するトライアル番号
+- method: 表示する手法名（"Entani", "非唯一性", "非唯一性正規化", "非唯一性t_L", "非唯一性t_U", "All"）
+- dm_number: 表示する意思決定者番号（1, 2, 3, 0(統合PCM), -1(すべて)）
+"""
+function display_filtered_interval_pcm_extended(csv_file::String, trial_number::Int; method::String="All", dm_number::Int=-1)
+    # CSVファイルを読み込む
+    df = CSV.read(csv_file, DataFrame)
+    
+    # 指定されたtrial番号の行を取得
+    row = filter(row -> row.Trial == trial_number, df)
+    
+    if nrow(row) == 0
+        println("Trial $(trial_number)のデータが見つかりませんでした。")
+        return
+    end
+    
+    # 対象のtrial行を取得
+    trial_row = first(row)
+    
+    # フィルタリング条件に基づいてPCM行列のリストを作成
+    pcm_pairs = []
+    
+    # 手法名に基づくフィルタリング
+    methods_to_display = []
+    if method == "All"
+        methods_to_display = ["Entani", "非唯一性", "非唯一性正規化", "非唯一性t_L", "非唯一性t_U"]
+    else
+        methods_to_display = [method]
+    end
+    
+    # 意思決定者番号に基づくフィルタリング
+    dm_numbers_to_display = []
+    if dm_number == -1  # すべての意思決定者
+        dm_numbers_to_display = [0, 1, 2, 3]  # 0は統合PCM
+    else
+        dm_numbers_to_display = [dm_number]
+    end
+    
+    # フィルタリング条件に合致するPCMペアを選択
+    for m in methods_to_display
+        for dm in dm_numbers_to_display
+            if dm == 0  # 統合PCM
+                if m == "Entani"
+                    push!(pcm_pairs, ("Entani統合PCM", trial_row.Entani統合PCM_L, trial_row.Entani統合PCM_U))
+                elseif m == "非唯一性"
+                    push!(pcm_pairs, ("非唯一性統合PCM", trial_row.非唯一性統合PCM_L, trial_row.非唯一性統合PCM_U))
+                elseif m == "非唯一性正規化"
+                    push!(pcm_pairs, ("非唯一性正規化PCM", trial_row.非唯一性正規化PCM_L, trial_row.非唯一性正規化PCM_U))
+                elseif m == "非唯一性t_L"
+                    push!(pcm_pairs, ("非唯一性t_L_PCM", trial_row.非唯一性t_L_PCM_L, trial_row.非唯一性t_L_PCM_U))
+                elseif m == "非唯一性t_U"
+                    push!(pcm_pairs, ("非唯一性t_U_PCM", trial_row.非唯一性t_U_PCM_L, trial_row.非唯一性t_U_PCM_U))
+                end
+            else  # 個別DM
+                if m == "Entani"
+                    col_L = Symbol("Entani_DM$(dm)_PCM_L")
+                    col_U = Symbol("Entani_DM$(dm)_PCM_U")
+                    if hasproperty(trial_row, col_L) && hasproperty(trial_row, col_U)
+                        push!(pcm_pairs, ("Entani_DM$(dm)_PCM", trial_row[col_L], trial_row[col_U]))
+                    end
+                elseif m == "非唯一性" || m == "非唯一性正規化" || m == "非唯一性t_L" || m == "非唯一性t_U"
+                    col_L = Symbol("非唯一性_DM$(dm)_PCM_L")
+                    col_U = Symbol("非唯一性_DM$(dm)_PCM_U")
+                    if hasproperty(trial_row, col_L) && hasproperty(trial_row, col_U)
+                        push!(pcm_pairs, ("非唯一性_DM$(dm)_PCM", trial_row[col_L], trial_row[col_U]))
+                    end
+                end
+            end
+        end
+    end
+    
+    # 選択されたPCMを表示
+    if isempty(pcm_pairs)
+        println("指定された条件に合致するPCMデータがありません。")
+        return
+    end
+    
+    for (name, pcm_L_str, pcm_U_str) in pcm_pairs
+        if !isempty(pcm_L_str) && !isempty(pcm_U_str)
+            println("\n### $(name) (Trial $(trial_number))")
+            
+            # 文字列からPCM行列を解析
+            pcm_L = parse_matrix_string_improved(pcm_L_str)
+            pcm_U = parse_matrix_string_improved(pcm_U_str)
+            
+            # 解析に成功した場合のみ表示
+            if !isempty(pcm_L) && !isempty(pcm_U)
+                # 区間PCM行列をLaTeX形式で表示
+                display_interval_pcm_latex(pcm_L, pcm_U)
+                
+                # 数値表形式で表示
+                display_interval_pcm_table(pcm_L, pcm_U)
+            end
+        end
+    end
+end

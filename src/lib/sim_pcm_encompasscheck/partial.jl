@@ -97,10 +97,16 @@ function calculate_interval_pcm(wᴸ::Vector{Float64}, wᵁ::Vector{Float64})
     
     for i in 1:n
         for j in 1:n
-            # 区間PCMの下限 = wiᴸ / wjᵁ
-            pcm_L[i, j] = wᴸ[i] / wᵁ[j]
-            # 区間PCMの上限 = wiᵁ / wjᴸ
-            pcm_U[i, j] = wᵁ[i] / wᴸ[j]
+            if i == j
+                # 対角成分は[1,1]に設定
+                pcm_L[i, j] = 1.0
+                pcm_U[i, j] = 1.0
+            else
+                # 区間PCMの下限 = wiᴸ / wjᵁ
+                pcm_L[i, j] = wᴸ[i] / wᵁ[j]
+                # 区間PCMの上限 = wiᵁ / wjᴸ
+                pcm_U[i, j] = wᵁ[i] / wᴸ[j]
+            end
         end
     end
     
